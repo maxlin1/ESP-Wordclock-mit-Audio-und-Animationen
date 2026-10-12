@@ -30,6 +30,7 @@
 #include "WebPageAdapter.h"
 
 #include "EEPROMAnything.h"
+#include "Extras/Extras.h"
 
 ClockType *usedClockType = nullptr;
 
@@ -683,6 +684,11 @@ void setup() {
     transition->init();
 
     //-------------------------------------
+    // Extras: sound, animations, events, BME280 (ESP32 only)
+    //-------------------------------------
+    extras::setup();
+
+    //-------------------------------------
     // Setup Done
     //-------------------------------------
     parametersChanged = true;
@@ -732,6 +738,16 @@ void loop() {
     //------------------------------------------------
     if (secondsFrame) {
         secondsFrame->loop();
+    }
+
+    //------------------------------------------------
+    // Extras (sound, animations, events, sensor)
+    //------------------------------------------------
+    extras::loop();
+
+    // While an animation is shown the clock must not draw.
+    if (extras::ownsDisplay()) {
+        return;
     }
 
     //------------------------------------------------

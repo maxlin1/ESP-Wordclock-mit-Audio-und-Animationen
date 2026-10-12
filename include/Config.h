@@ -6,15 +6,16 @@
 //--------------------------------------------------------------------------
 // PIN Configuration
 //--------------------------------------------------------------------------
-#define LED_PIN 3 // Use direct pin number (ESP8266 currently unsupported)
+// Fork default: GPIO 5 = pin "D8" of an ESP32 D1 mini (see ExtrasConfig.h)
+#define LED_PIN 5 // Use direct pin number (ESP8266 currently unsupported)
 // Use GPIO 0-39, or 255 to disable an individual hardware button.
 #define POWER_BUTTON_PIN 255
 #define MODE_BUTTON_PIN 255
 #define SPEED_BUTTON_PIN 255
 
 // ESP32: use direct pin numbers
-#define SDA_PIN_ESP32 255
-#define SCL_PIN_ESP32 255
+#define SDA_PIN_ESP32 21 // fork default: "D2" of an ESP32 D1 mini
+#define SCL_PIN_ESP32 22 // fork default: "D1" of an ESP32 D1 mini
 
 // ESP32-C3: use direct pin numbers
 #define SDA_PIN_ESP32C3 255
@@ -34,7 +35,12 @@
 // #define DEFAULT_LAYOUT Ger10x11
 // 10 rows, 11 LEDs per row + 4 LEDs for minutes
 //
-#define DEFAULT_LAYOUT Ger10x11Alternative
+// Fork default: classic German layout (ES IST ... VOR FUNK NACH ...)
+#define DEFAULT_LAYOUT Ger10x11Clock
+// 10 rows, each 11 LED's per row + 4 LED's for minutes, with the layout
+// from the original manufacturer
+//
+// #define DEFAULT_LAYOUT Ger10x11Alternative
 // 10 rows, each 11 LED's per row + 4 LED's for minutes, with modified
 // layout for extra words in the matrix from the Github user @dbambus
 //
@@ -42,10 +48,6 @@
 // 10 rows, each 11 LED's per row + 4 LED's (minutes)+ 48 LED's (seconds) in a
 // Frame around with modified layout for extra words in the matrix from the
 // Github user @dbambus
-//
-// #define DEFAULT_LAYOUT Ger10x11Clock
-// 10 rows, each 11 LED's per row + 4 LED's for minutes, with the layout
-// from the original manufacturer
 //
 // #define DEFAULT_LAYOUT Ger10x11schwaebisch
 // 10 rows, each 11 LED's per row + 4 LED's for minutes, with the layout

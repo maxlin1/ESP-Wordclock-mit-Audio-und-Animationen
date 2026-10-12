@@ -1937,7 +1937,9 @@ void ClockWork::loop(struct tm &tm) {
         if (countMillisSpeed >= (11u - G.effectSpeed) * 30u) {
             switch (G.prog) {
             case COMMAND_MODE_SCROLLINGTEXT: {
-                scrollingText(G.scrollingText);
+                // Events of the extras show their own text.
+                const char *text = extras::scrollingTextOverride();
+                scrollingText(text != nullptr ? text : G.scrollingText);
                 break;
             }
             case COMMAND_MODE_RAINBOWCYCLE: {
