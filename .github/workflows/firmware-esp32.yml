@@ -1,0 +1,113 @@
+name: Firmware ESP32 (Sound & Animationen)
+
+# Builds the ESP32 firmware of this fork and provides two files:
+#   wortuhr-esp32-komplett.bin  first installation via USB, e.g. with
+#                               https://web.esphome.io (flash address 0x0)
+#   wortuhr-esp32-update.bin    update over WiFi: http://<clock-ip>:81/update
+# On the main branch the files are published as GitHub release "firmware".
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: firmware-esp32-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.platformio/.cache
+            ~/.platformio/packages
+            ~/.platformio/platforms
+          key: pio-esp32-${{ runner.os }}-${{ hashFiles('platformio.ini') }}
+          restore-keys: pio-esp32-${{ runner.os }}-
+
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade platformio
+
+      - name: Build
+        run: |
+          set -o pipefail
+          pio run -e ESP32 2>&1 | tee build.log
+
+      - name: Flash and RAM usage
+        if: always()
+        run: |
+          {
+            echo "### ESP32"
+            echo '```'
+            grep -E '^(RAM|Flash):' build.log || echo "no size information"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create firmware files
+        run: |
+          set -e
+          build=.pio/build/ESP32
+          framework=~/.platformio/packages/framework-arduinoespressif32
+          esptool=~/.platformio/packages/tool-esptoolpy/esptool.py
+          mkdir -p dist
+          python "$esptool" --chip esp32 merge_bin \
+            -o dist/wortuhr-esp32-komplett.bin \
+            --flash_mode dio --flash_freq 40m --flash_size 4MB \
+            0x1000 "$build/bootloader.bin" \
+            0x8000 "$build/partitions.bin" \
+            0xe000 "$framework/tools/partitions/boot_app0.bin" \
+            0x10000 "$build/firmware.bin"
+          cp "$build/firmware.bin" dist/wortuhr-esp32-update.bin
+          cp "$build/firmware.elf" dist/wortuhr-esp32.elf
+          (cd dist && sha256sum -- *.bin > SHA256SUMS.txt)
+          ls -l dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wortuhr-esp32-${{ github.sha }}
+          path: dist/*
+          retention-days: 30
+
+      - name: Publish release "firmware"
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          tag=firmware
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then tag="${GITHUB_REF#refs/tags/}"; fi
+          version=$(node -p "require('./package.json').version")
+          notes="Firmware für ESP32 D1 mini (Sound, Animationen, Home Assistant).
+          Stand: ${GITHUB_SHA::7}, ESPWortuhr ${version}
+
+          - **wortuhr-esp32-komplett.bin** – Erstinstallation per USB, z. B. mit https://web.esphome.io
+          - **wortuhr-esp32-update.bin** – Update über WLAN: http://<IP-der-Uhr>:81/update"
+          if [ "$tag" = "firmware" ]; then
+            gh release delete firmware --yes --cleanup-tag || true
+          fi
+          gh release create "$tag" dist/*.bin dist/SHA256SUMS.txt \
+            --title "Wortuhr-Firmware ESP32 (${GITHUB_SHA::7})" \
+            --notes "$notes" --target "$GITHUB_SHA"

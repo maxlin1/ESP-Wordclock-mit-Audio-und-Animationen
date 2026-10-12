@@ -1,3 +1,5 @@
+> **Dieser Fork:** Wortuhr mit **Sound (DFPlayer), den Animationen von Manfred Hofmanns Wortuhr_mp3, Ereignissen, BME280 und Home Assistant** – siehe **[ERWEITERUNGEN.md](ERWEITERUNGEN.md)**. Fertige Firmware unter *Releases*.
+
 ![GitHub release (with filter)](https://img.shields.io/github/v/release/ESPWortuhr/Multilayout-ESP-Wordclock)
 ![GitHub all releases](https://img.shields.io/github/downloads/ESPWortuhr/Multilayout-ESP-Wordclock/total)
 ![Platform](https://img.shields.io/badge/platform-ESP8266%20%7C%20ESP32%20%7C%20ESP32--C3-blue)
