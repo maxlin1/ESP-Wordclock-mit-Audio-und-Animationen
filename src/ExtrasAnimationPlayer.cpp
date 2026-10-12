@@ -83,7 +83,10 @@ void AnimationPlayer::stop() {
     running = false;
     led.clear();
     led.show();
-    // Let the clock redraw its face.
+    // Let the clock redraw its face right away (not only at the next second).
+    if (G.prog == COMMAND_IDLE) {
+        G.prog = COMMAND_MODE_WORD_CLOCK;
+    }
     parametersChanged = true;
 }
 
