@@ -64,3 +64,18 @@ grunt_build = env.Command(
 env.Depends(grunt_build, npm_ci)
 env.Depends(grunt_build, package_json)
 env.Depends(grunt_build, env.Glob("webpage/*"))
+
+#
+# convert the animations (data/animations/ani_*.json) into
+# `include/Extras/AnimationData.gen.h`; the file is only rewritten when the
+# content changes, so this does not trigger unnecessary rebuilds
+#
+import subprocess
+import sys
+
+subprocess.check_call([
+    sys.executable,
+    env.subst("$PROJECT_DIR/tools/convert_animations.py"),
+    env.subst("$PROJECT_DIR/data/animations"),
+    env.subst("$PROJECT_DIR/include/Extras/AnimationData.gen.h"),
+])

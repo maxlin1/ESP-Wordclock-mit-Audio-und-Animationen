@@ -6,6 +6,7 @@
 
 #include "Mqtt.h"
 
+#include "Extras/Extras.h"
 #include "Led.h"
 #include "WebPageAdapter.h"
 #include <ArduinoJson.h>
@@ -434,6 +435,10 @@ None
 */
 
 void Mqtt::init() {
+#if EXTRAS_ENABLED
+    // Room for the JSON commands of the extras (e.g. events with text).
+    mqttClient.setBufferSize(1024);
+#endif
     mqttClient.setServer(G.mqtt.serverAdress, G.mqtt.port);
     mqttClient.setCallback(callback);
 
@@ -488,6 +493,10 @@ void Mqtt::init() {
     delay(50);
     mqttClient.subscribe(
         (std::string(G.mqtt.topic) + "/transition_speed/set").c_str());
+    delay(50);
+
+    // Extras: sound, animations, events
+    extras::mqttSubscribe();
     delay(50);
 
     if (isConnected()) {
@@ -657,6 +666,11 @@ void Mqtt::callback(char *topic, byte *payload, unsigned int length) {
             mqttInstance->sendDiscovery();
             mqttInstance->sendState();
         }
+        return;
+    }
+
+    // Commands for the extras (sound, animations, events)
+    if (extras::mqttHandle(topicStr, msg)) {
         return;
     }
 
@@ -916,6 +930,9 @@ void Mqtt::sendState() {
             String(G.transitionSpeed).c_str(), true);
     }
 
+    // Extras: sound, animations, sensor values
+    extras::mqttPublishState();
+
     // Update online status
     mqttClient.publish((std::string(G.mqtt.topic) + "/availability").c_str(),
                        "online", true);
@@ -968,7 +985,11 @@ void Mqtt::sendDiscovery() {
     // rather than the "~" shorthand: "~" is not one of Home Assistant's shared
     // root options, so it is not expanded for components in a device bundle.
     String base = String(G.mqtt.topic);
+#if EXTRAS_ENABLED
+    DynamicJsonDocument doc(16384); // extras add sound/animation entities
+#else
     DynamicJsonDocument doc(8192);
+#endif
 
     doc["avty_t"] = base + "/availability";
     doc["pl_avail"] = "online";
@@ -1116,6 +1137,9 @@ void Mqtt::sendDiscovery() {
                   "mdi:ip-network", nullptr, "{{ value_json.ip }}");
     addDiagSensor(cmps, unique_id, "uptime", "Uptime", "duration", "s", nullptr,
                   "total_increasing", "{{ value_json.uptime }}");
+
+    // Extras: sound, animations, events, BME280
+    extras::mqttAddDiscovery(cmps, unique_id, base);
 
     publishJsonStream(String(HOMEASSISTANT_DISCOVERY_TOPIC) + "/device/" +
                           discoveryNode + "/config",

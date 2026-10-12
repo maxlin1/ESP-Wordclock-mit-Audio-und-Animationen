@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../ExtrasConfig.h" // MINUTE_LEDS_FIRST
+
 enum class LanguageAbbreviation {
     DE,
     EN,
@@ -326,6 +328,12 @@ public:
             }
         }
 
+#if MINUTE_LEDS_FIRST
+        // The minute LEDs sit at the start of the chain, the matrix follows.
+        returnValue += MINUTE_LEDS_FIRST_COUNT;
+        numPixelsWordMatrix += MINUTE_LEDS_FIRST_COUNT;
+#endif
+
         return checkedFrontMatrixIndex(returnValue, numPixelsWordMatrix);
     };
 
@@ -342,6 +350,11 @@ public:
                 numPixelsWordMatrix += colsWordMatrix() - 1;
             }
         }
+
+#if MINUTE_LEDS_FIRST
+        // Minute LEDs are the first LEDs of the chain.
+        numPixelsWordMatrix = 0;
+#endif
 
         for (uint8_t i = 0; i < 4; i++) {
             switch (col) {
