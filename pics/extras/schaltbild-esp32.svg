@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 740" width="1120" height="740" font-family="Helvetica, Arial, sans-serif">
+  <title>Schaltbild: ESP32 D1 mini mit DFPlayer Mini, BME280 und LED-Streifen</title>
+  <defs>
+    <style>
+      .box { fill: #f6f8fb; stroke: #33475b; stroke-width: 2; rx: 10; }
+      .title { font-size: 17px; font-weight: bold; fill: #1d2b3a; }
+      .sub { font-size: 12px; fill: #5b6b7c; }
+      .pin { font-size: 13px; fill: #1d2b3a; }
+      .pinR { font-size: 13px; fill: #1d2b3a; text-anchor: end; }
+      .lbl { font-size: 12px; fill: #33475b; }
+      .w5v { stroke: #d62828; stroke-width: 3; fill: none; }
+      .w3v { stroke: #f08c00; stroke-width: 3; fill: none; }
+      .wgnd { stroke: #222; stroke-width: 3; fill: none; }
+      .wtx { stroke: #1971c2; stroke-width: 3; fill: none; }
+      .wrx { stroke: #2f9e44; stroke-width: 3; fill: none; }
+      .wbusy { stroke: #9c36b5; stroke-width: 3; fill: none; }
+      .wscl { stroke: #e8590c; stroke-width: 3; fill: none; stroke-dasharray: 9 4; }
+      .wsda { stroke: #0c8599; stroke-width: 3; fill: none; }
+      .wled { stroke: #c2255c; stroke-width: 3; fill: none; }
+      .wspk { stroke: #495057; stroke-width: 3; fill: none; }
+      .res { fill: #fff; stroke: #33475b; stroke-width: 2; }
+      .dot { fill: #222; }
+      .dot5 { fill: #d62828; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1120" height="740" fill="#ffffff"/>
+
+  <!-- Rails -->
+  <path class="w5v" d="M200 60 H740"/>
+  <text class="lbl" x="420" y="50" fill="#d62828">+5 V</text>
+  <path class="wgnd" d="M215 670 H1085"/>
+  <text class="lbl" x="620" y="690">GND (alle Massen verbinden)</text>
+
+  <!-- Power supply -->
+  <rect class="box" x="30" y="90" width="150" height="110"/>
+  <text class="title" x="45" y="120">Netzteil</text>
+  <text class="sub" x="45" y="140">5 V, ≥ 4 A</text>
+  <text class="pinR" x="172" y="166">+5 V</text>
+  <text class="pinR" x="172" y="190">GND</text>
+  <path class="w5v" d="M180 162 H200 V60"/>
+  <path class="wgnd" d="M180 186 H215 V670"/>
+  <circle class="dot5" cx="200" cy="60" r="5"/>
+  <circle class="dot" cx="215" cy="670" r="5"/>
+
+  <!-- ESP32 D1 mini -->
+  <rect class="box" x="330" y="130" width="200" height="430"/>
+  <text class="title" x="355" y="160">ESP32 D1 mini</text>
+  <text class="sub" x="355" y="178">steckt im Sockel des D1 mini</text>
+  <text class="pin" x="340" y="214">5V (VCC)</text>
+  <text class="pin" x="340" y="274">GND</text>
+  <text class="pinR" x="522" y="214">IO18 (D5)</text>
+  <text class="pinR" x="522" y="264">IO17 (D3)</text>
+  <text class="pinR" x="522" y="314">IO26 (D0)</text>
+  <text class="pinR" x="522" y="404">3.3V</text>
+  <text class="pinR" x="522" y="459">IO22 (D1)</text>
+  <text class="pinR" x="522" y="499">IO21 (D2)</text>
+  <text class="pinR" x="522" y="539">IO5 (D8)</text>
+
+  <!-- ESP power -->
+  <path class="w5v" d="M330 210 H290 V60"/>
+  <circle class="dot5" cx="290" cy="60" r="5"/>
+  <path class="wgnd" d="M330 270 H260 V670"/>
+  <circle class="dot" cx="260" cy="670" r="5"/>
+
+  <!-- DFPlayer Mini -->
+  <rect class="box" x="760" y="110" width="200" height="230"/>
+  <text class="title" x="780" y="140">DFPlayer Mini</text>
+  <text class="sub" x="780" y="158">microSD: Ordner „mp3“</text>
+  <text class="pin" x="770" y="184">VCC</text>
+  <text class="pin" x="770" y="214">RX</text>
+  <text class="pin" x="770" y="264">TX</text>
+  <text class="pin" x="770" y="314">BUSY</text>
+  <text class="pinR" x="952" y="234">SPK1</text>
+  <text class="pinR" x="952" y="274">SPK2</text>
+  <text class="sub" x="868" y="330">GND</text>
+
+  <!-- DFPlayer VCC / GND -->
+  <path class="w5v" d="M760 180 H740 V60"/>
+  <circle class="dot5" cx="740" cy="60" r="5"/>
+  <path class="wgnd" d="M880 340 V355 H1085 V670"/>
+  <circle class="dot" cx="1085" cy="670" r="5"/>
+
+  <!-- ESP TX -> DFPlayer RX (1 kOhm) -->
+  <path class="wtx" d="M530 210 H612 M652 210 H760"/>
+  <rect class="res" x="612" y="202" width="40" height="16" rx="2"/>
+  <text class="lbl" x="612" y="196">1 kΩ</text>
+  <text class="lbl" x="672" y="200" fill="#1971c2">ESP → MP3</text>
+
+  <!-- DFPlayer TX -> ESP RX (1 kOhm) -->
+  <path class="wrx" d="M760 260 H652 M612 260 H530"/>
+  <rect class="res" x="612" y="252" width="40" height="16" rx="2"/>
+  <text class="lbl" x="612" y="246">1 kΩ</text>
+  <text class="lbl" x="672" y="250" fill="#2f9e44">MP3 → ESP</text>
+
+  <!-- BUSY -->
+  <path class="wbusy" d="M760 310 H530"/>
+  <text class="lbl" x="640" y="302" fill="#9c36b5">BUSY (LOW = spielt)</text>
+
+  <!-- Speaker -->
+  <path class="wspk" d="M960 230 H1010 M960 270 H1010"/>
+  <rect x="1010" y="225" width="22" height="50" fill="#dee2e6" stroke="#33475b" stroke-width="2"/>
+  <path d="M1032 225 L1065 200 V300 L1032 275 Z" fill="#dee2e6" stroke="#33475b" stroke-width="2"/>
+  <text class="sub" x="995" y="322">Lautsprecher</text>
+  <text class="sub" x="995" y="338">3 W, 4–8 Ω</text>
+
+  <!-- BME280 -->
+  <rect class="box" x="760" y="380" width="200" height="150"/>
+  <text class="title" x="780" y="410">BME280 / BMP280</text>
+  <text class="sub" x="780" y="428">I²C-Adresse 0x76 / 0x77</text>
+  <text class="pin" x="770" y="454">VIN</text>
+  <text class="pin" x="770" y="479">SCL</text>
+  <text class="pin" x="770" y="504">SDA</text>
+  <text class="sub" x="868" y="522">GND</text>
+
+  <path class="w3v" d="M530 400 H600 V450 H760"/>
+  <text class="lbl" x="610" y="440" fill="#f08c00">3,3 V</text>
+  <path class="wscl" d="M530 455 H580 V475 H760"/>
+  <text class="lbl" x="680" y="470" fill="#e8590c">SCL</text>
+  <path class="wsda" d="M530 495 H560 V500 H760"/>
+  <text class="lbl" x="680" y="495" fill="#0c8599">SDA</text>
+  <path class="wgnd" d="M880 530 V670"/>
+  <circle class="dot" cx="880" cy="670" r="5"/>
+
+  <!-- LED strip -->
+  <rect class="box" x="400" y="600" width="440" height="46"/>
+  <text class="title" x="455" y="629">LED-Streifen WS2812B · 114 LEDs (GRB)</text>
+  <text class="sub" x="410" y="596">5V</text>
+  <text class="sub" x="538" y="596">DIN</text>
+  <text class="sub" x="792" y="596">GND</text>
+  <!-- 5 V from the rail -->
+  <path class="w5v" d="M290 210 V585 H420 V600"/>
+  <circle class="dot5" cx="290" cy="210" r="5"/>
+  <!-- data -->
+  <path class="wled" d="M530 535 H545 V560 M545 580 V600"/>
+  <rect class="res" x="537" y="560" width="16" height="20" rx="2"/>
+  <text class="lbl" x="560" y="575" fill="#c2255c">330 Ω (optional)</text>
+  <text class="lbl" x="560" y="550" fill="#c2255c">Daten</text>
+  <!-- GND -->
+  <path class="wgnd" d="M815 646 V670"/>
+  <circle class="dot" cx="815" cy="670" r="5"/>
+  <!-- capacitor -->
+  <path class="w5v" d="M330 585 V612"/>
+  <path d="M316 612 H344 M316 622 H344" stroke="#33475b" stroke-width="3"/>
+  <path class="wgnd" d="M330 622 V670"/>
+  <circle class="dot5" cx="330" cy="585" r="5"/>
+  <circle class="dot" cx="330" cy="670" r="5"/>
+  <text class="lbl" x="200" y="625">1000 µF</text>
+
+  <!-- notes -->
+  <text class="sub" x="30" y="250">Minuten-LEDs: LED 0–3</text>
+  <text class="sub" x="30" y="268">am Anfang der Kette,</text>
+  <text class="sub" x="30" y="286">danach die Buchstaben</text>
+  <text class="sub" x="30" y="304">(Schlangenlinie, oben links).</text>
+  <text class="sub" x="30" y="716">Pins sind ab Werk so eingestellt und lassen sich in der Weboberfläche ändern (Einstellungen → Hardware-Pins / Sound).</text>
+</svg>

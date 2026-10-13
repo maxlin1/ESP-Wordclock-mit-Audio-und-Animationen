@@ -1,4 +1,104 @@
-> **Dieser Fork:** Wortuhr mit **Sound (DFPlayer), den Animationen von Manfred Hofmanns Wortuhr_mp3, Ereignissen, BME280 und Home Assistant** – siehe **[ERWEITERUNGEN.md](ERWEITERUNGEN.md)**. Fertige Firmware unter *Releases*.
+# Wortuhr mit Sound, Animationen & Home Assistant
+
+[![Firmware ESP32](https://github.com/maxlin1/ESP-Wordclock-mit-Audio-und-Animationen/actions/workflows/firmware-esp32.yml/badge.svg)](https://github.com/maxlin1/ESP-Wordclock-mit-Audio-und-Animationen/actions/workflows/firmware-esp32.yml)
+[![Release](https://img.shields.io/github/v/release/maxlin1/ESP-Wordclock-mit-Audio-und-Animationen?label=Firmware)](https://github.com/maxlin1/ESP-Wordclock-mit-Audio-und-Animationen/releases/latest)
+
+Dieser Fork von [ESPWortuhr](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock) bringt die Funktionen der Wortuhr **Wortuhr_mp3 von Manfred Hofmann** auf einen **ESP32**: Töne und Ansagen über einen DFPlayer Mini, die 58 Animationen, Ereignisse wie Geburtstage und ein Raumklima-Sensor – alles direkt in der Weboberfläche der Uhr und per MQTT in Home Assistant.
+
+Die Hardware einer bestehenden Wortuhr_mp3 (WeMos D1 mini, DFPlayer, BME280) kann weiterverwendet werden: Statt des WeMos D1 mini steckt einfach ein **ESP32 D1 mini** im selben Sockel. Die SD-Karte mit den Sounds bleibt unverändert.
+
+> Ausführliche Anleitung: **[ERWEITERUNGEN.md](ERWEITERUNGEN.md)**
+
+## Neue Funktionen
+
+| | |
+|---|---|
+| 🔔 **Stundengong** | 17 Klänge (Kirche, Westminster, Kuckuck, Vicki/Hans …), pro Wochentag wählbar, Einzelschlag oder Stundenzahl |
+| 🗣️ **Ansagen** | Uhrzeit, Datum und Raumklima mit den Sprechern Vicki oder Hans |
+| 🎞️ **Animationen** | alle 58 Animationen der alten Uhr (Herz, Feuerwerk, Kerze, Pacman …), fest in der Firmware |
+| ⏰ **Zur vollen Stunde** | Uhrzeit-Animationen (`Z0800` …), eine Zufallsanimation oder eine bestimmte Animation |
+| 🎂 **Ereignisse** | Geburtstage, Feiertage usw. mit Uhrzeit, Ende, Wiederholung, Lauftext (Alter über „YY“), Ton und Animationen; Import der `events.json` der alten Uhr |
+| 🎲 **Zufallstöne** | ein zufälliger Titel aus Geburtstag, Weihnachten, Silvester, Natur, Tiere oder Musik |
+| 🌈 **Automatischer Farbwechsel** | neue Farbe alle 5 Minuten, stündlich oder täglich – sanft überblendet – oder fließend durch alle Farben |
+| 🔊 **Sound-Einstellungen** | Lautstärke, nachts leiser, Wochenende später laut, Nachtruhe; keine Töne, wenn die Uhr aus ist |
+| 🌡️ **Raumklima** | Temperatur, Luftfeuchte und Luftdruck mit BME280 / BMP280 |
+| 🏠 **Home Assistant** | alles per MQTT mit automatischer Erkennung: Schalter, Auswahlen, Tasten, Sensoren, Nachrichten mit Ton und Animation |
+| ⬆️ **Firmware-Update** | in der Weboberfläche mit Fortschrittsanzeige |
+
+## Weboberfläche
+
+Die Erweiterungen sind in die bestehenden Seiten der Uhr eingebaut.
+
+**Ereignisse** – eigener Menüpunkt mit Datum, Uhrzeit, Wiederholung, Text, Ton und Animationen:
+
+<img src="pics/extras/uebersicht.png" alt="Ereignisse in der Weboberfläche" width="800"/>
+
+| Funktionen → Übergang → Zur vollen Stunde | Funktionen → Animationen & Ansagen |
+|---|---|
+| <img src="pics/extras/volle-stunde.png" alt="Stundengong und Animation zur vollen Stunde" width="420"/> | <img src="pics/extras/animationen-ansagen.png" alt="Animationen und Ansagen" width="420"/> |
+
+| Farben → Automatischer Farbwechsel | Einstellungen → Firmware-Update |
+|---|---|
+| <img src="pics/extras/farbwechsel.png" alt="Automatischer Farbwechsel" width="420"/> | <img src="pics/extras/firmware-update.png" alt="Firmware-Update" width="420"/> |
+
+| Einstellungen → Sound | Einstellungen → Raumklima | Auf dem Handy |
+|---|---|---|
+| <img src="pics/extras/sound.png" alt="Sound-Einstellungen" width="300"/> | <img src="pics/extras/raumklima.png" alt="Raumklima" width="300"/> | <img src="pics/extras/handy-ereignisse.png" alt="Ereignisse auf dem Handy" width="200"/> |
+
+## Hardware und Schaltbild
+
+![Schaltbild ESP32 D1 mini mit DFPlayer Mini, BME280 und LED-Streifen](pics/extras/schaltbild-esp32.svg)
+
+| Funktion | WeMos D1 mini (alt) | ESP32 D1 mini (neu) | Anschluss |
+|---|---|---|---|
+| LED-Daten | D8 | GPIO 5 | DIN des LED-Streifens (optional über 330 Ω) |
+| ESP → DFPlayer | D5 | GPIO 18 | DFPlayer RX über 1 kΩ |
+| DFPlayer → ESP | D3 | GPIO 17 | DFPlayer TX über 1 kΩ |
+| DFPlayer BUSY | D0 | GPIO 26 | BUSY (LOW, solange ein Ton spielt) |
+| I²C SDA | D2 | GPIO 21 | SDA des BME280 |
+| I²C SCL | D1 | GPIO 22 | SCL des BME280 |
+| Versorgung | 5V / GND | 5V / GND | Netzteil 5 V (≥ 4 A für 114 LEDs) |
+
+- **ESP32 D1 mini**: Nur die D1-mini-kompatible (innere) Stiftreihe bestücken, dann passt er in den Sockel des WeMos D1 mini. Auf die Ausrichtung achten: TXD/RXD dorthin, wo beim WeMos TX/RX waren.
+- **DFPlayer Mini** an 5 V, Lautsprecher (3 W, 4–8 Ω) an SPK1/SPK2. Auf der microSD-Karte liegen die Sounds im Ordner `mp3` (`0001_….mp3` …), wie bei Wortuhr_mp3.
+- **BME280 / BMP280** an 3,3 V. Ein BMP280 liefert keine Luftfeuchte.
+- **LED-Kette**: 114 LEDs (110 Buchstaben + 4 Minuten-LEDs). Die Minuten-LEDs sind die ersten 4 LEDs der Kette, danach folgen die Buchstaben in Schlangenlinie von oben links (`MINUTE_LEDS_FIRST` in `include/ExtrasConfig.h`).
+- Alle Pins lassen sich später in der Weboberfläche ändern (Einstellungen → Hardware-Pins bzw. Sound).
+
+## Installation
+
+1. Unter **[Releases](https://github.com/maxlin1/ESP-Wordclock-mit-Audio-und-Animationen/releases/latest)** die Datei **`wortuhr-esp32-komplett.bin`** herunterladen.
+2. In Chrome oder Edge **[web.esphome.io](https://web.esphome.io)** öffnen → **Connect** → **Install** → Datei auswählen.
+   Klappt die Verbindung nicht, beim Einstecken **IO0** mit **GND** verbinden (Flash-Modus) bzw. den Treiber für den USB-Chip installieren (z. B. [CH9102/CH340](https://github.com/WCHSoftGroup/ch34xser_macos)).
+3. Mit dem WLAN **„Connect_to_Wordclock“** verbinden und das eigene WLAN eintragen.
+4. Auf der Webseite der Uhr Layout (**🇩🇪 10 × 11 Uhr**), LED-Typ (**WS2812 GRB**) und MQTT prüfen.
+
+**Updates** danach über WLAN: Einstellungen → **Firmware-Update** → `wortuhr-esp32-update.bin`.
+
+## Home Assistant
+
+Nach dem Einrichten von MQTT (Smart Home → MQTT, „Sende HA Discovery“) erscheint die Uhr als Gerät – als Licht (an/aus, Helligkeit, Farbe, Modus) und mit den Entitäten der Erweiterungen. Eine Nachricht mit Ton und Animationen:
+
+```yaml
+action: mqtt.publish
+data:
+  topic: ESPWordclock/extras/event/set
+  payload: '{"text": "Essen ist fertig!", "sound": 701, "pre": "HERZ", "post": "HERZ"}'
+```
+
+Alle Befehle stehen in [ERWEITERUNGEN.md](ERWEITERUNGEN.md#5-home-assistant).
+
+## Danke & Lizenz
+
+- [ESPWortuhr](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock) – Basis dieser Firmware (BSD-3-Clause)
+- **Manfred Hofmann** – Wortuhr_mp3: Animationen, Sound-Paket und Ideen (GPLv3)
+
+Die Animationen in `data/animations` stehen unter der GPLv3, damit gilt für die gebaute Firmware dieses Forks die GPLv3.
+
+---
+
+<details>
+<summary><b>Original-README von ESPWortuhr</b> (Aufbau, Layouts, Konfiguration)</summary>
 
 ![GitHub release (with filter)](https://img.shields.io/github/v/release/ESPWortuhr/Multilayout-ESP-Wordclock)
 ![GitHub all releases](https://img.shields.io/github/downloads/ESPWortuhr/Multilayout-ESP-Wordclock/total)
@@ -489,3 +589,5 @@ Diese Software ist unter der BSD-Lizenz lizenziert und darf frei verwendet werde
 Die einzige Bedingung ist, dass der Copyright-Hinweis des Originalprogramms nicht entfernt werden darf.
 
 Der vollständige Lizenztext steht in der Datei [LICENSE](LICENSE).
+
+</details>
