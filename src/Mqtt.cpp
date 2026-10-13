@@ -1048,7 +1048,7 @@ void Mqtt::sendDiscovery() {
         JsonObject text = cmps.createNestedObject("scrolltext");
         text["p"] = "text";
         text["uniq_id"] = unique_id + "_scrolltext";
-        text["name"] = "Lauftext";
+        text["name"] = "Lauftext-Modus: Text";
         text["ic"] = "mdi:text";
         text["stat_t"] = base + "/scrolltext/state";
         text["cmd_t"] = base + "/scrolltext/set";
@@ -1064,7 +1064,7 @@ void Mqtt::sendDiscovery() {
         JsonObject notify = cmps.createNestedObject("message");
         notify["p"] = "notify";
         notify["uniq_id"] = unique_id + "_message";
-        notify["name"] = "Nachricht anzeigen";
+        notify["name"] = "Lauftext sofort anzeigen";
         notify["ic"] = "mdi:message-text";
         notify["cmd_t"] = base + "/cmd";
         notify["cmd_tpl"] = "{\"scrolling_text\": \"{{ value }}\", \"effect\": "
