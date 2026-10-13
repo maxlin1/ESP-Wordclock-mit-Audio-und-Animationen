@@ -198,6 +198,43 @@
                     </div>
                 </div>
 
+                <div class="box extras-only" id="color-auto-box">
+                    <h2 data-i18next="extras.color.h2"></h2>
+                    <p data-i18next="extras.color.help"></p>
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <label for="color-auto-mode" data-i18next="extras.color.mode"></label>
+                            <select id="color-auto-mode" class="extras-setting" size="1">
+                                <option value="0" data-i18next="extras.color.off"></option>
+                                <option value="1" data-i18next="extras.color.minutes5"></option>
+                                <option value="2" data-i18next="extras.color.hourly"></option>
+                                <option value="3" data-i18next="extras.color.daily"></option>
+                                <option value="4" data-i18next="extras.color.continuous"></option>
+                            </select>
+                        </div>
+                        <div class="pure-control-group color-auto-fade-row">
+                            <label for="color-auto-fade" data-i18next="extras.color.fade"></label>
+                            <select id="color-auto-fade" class="extras-setting" size="1">
+                                <option value="0" data-i18next="extras.color.fade-0"></option>
+                                <option value="10" data-i18next="extras.color.fade-10"></option>
+                                <option value="60" data-i18next="extras.color.fade-60"></option>
+                                <option value="300" data-i18next="extras.color.fade-300"></option>
+                                <option value="900" data-i18next="extras.color.fade-900"></option>
+                            </select>
+                        </div>
+                        <div class="pure-control-group color-auto-cycle-row">
+                            <label for="color-auto-cycle" data-i18next="extras.color.cycle"></label>
+                            <select id="color-auto-cycle" class="extras-setting" size="1">
+                                <option value="1" data-i18next="extras.color.cycle-1"></option>
+                                <option value="6" data-i18next="extras.color.cycle-6"></option>
+                                <option value="12" data-i18next="extras.color.cycle-12"></option>
+                                <option value="24" data-i18next="extras.color.cycle-24"></option>
+                                <option value="168" data-i18next="extras.color.cycle-168"></option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="box box-brightness">
                     <h2 data-i18next="settings.brightness.h2"></h2>
                     <form class="pure-form pure-form-aligned">
@@ -941,6 +978,29 @@
                                 <button type="button" id="sound-reset-button" class="pure-button button-secondary" data-i18next="extras.sound.reset"></button>
                             </div>
                         </fieldset>
+                    </form>
+                </div>
+
+                <div class="box extras-only" id="update-box">
+                    <h2 data-i18next="extras.update.h2"></h2>
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <label for="update-version" data-i18next="extras.update.installed"></label>
+                            <input id="update-version" type="text" readonly>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="update-file" data-i18next="extras.update.file"></label>
+                            <input id="update-file" type="file" accept=".bin,application/octet-stream">
+                        </div>
+                        <div class="pure-control-group extras-collapsed" id="update-progress-row">
+                            <label for="update-progress" data-i18next="extras.update.progress"></label>
+                            <progress id="update-progress" max="100" value="0"></progress>
+                        </div>
+                        <p id="update-message" class="update-message"></p>
+                        <div class="pure-controls extras-buttons">
+                            <button type="button" id="update-button" class="pure-button" data-i18next="extras.update.start" disabled></button>
+                            <a id="update-download" class="pure-button button-secondary" href="https://github.com/maxlin1/ESP-Wordclock-mit-Audio-und-Animationen/releases/latest" target="_blank" rel="noopener" data-i18next="extras.update.download"></a>
+                        </div>
                     </form>
                 </div>
 

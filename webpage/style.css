@@ -1093,3 +1093,22 @@ label.pure-button {
 .extras-toast.visible {
     opacity: 1;
 }
+
+#update-progress {
+    width: 15em;
+    height: 1em;
+    vertical-align: middle;
+}
+
+.update-message {
+    min-height: 1.4em;
+    margin: 0.6em 0;
+}
+
+.update-message.update-error {
+    color: #b33a3a;
+}
+
+a.pure-button {
+    text-decoration: none;
+}

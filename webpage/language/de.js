@@ -370,6 +370,43 @@ let TRANSLATION_DE_DE = {
 		}
 	},
 	"extras": {
+		"color": {
+			"h2": "Automatischer Farbwechsel",
+			"help": "Die Uhr wechselt die Farbe der Buchstaben von selbst – wahlweise mit einer neuen Farbe in festen Abständen oder ganz langsam fließend durch alle Farben.",
+			"mode": "Farbwechsel",
+			"off": "Aus",
+			"minutes5": "Alle 5 Minuten",
+			"hourly": "Jede Stunde",
+			"daily": "Jeden Tag",
+			"continuous": "Fließend (sehr langsam)",
+			"fade": "Überblenden",
+			"fade-0": "sofort",
+			"fade-10": "10 Sekunden",
+			"fade-60": "1 Minute",
+			"fade-300": "5 Minuten",
+			"fade-900": "15 Minuten",
+			"cycle": "Einmal durch alle Farben in",
+			"cycle-1": "1 Stunde",
+			"cycle-6": "6 Stunden",
+			"cycle-12": "12 Stunden",
+			"cycle-24": "24 Stunden",
+			"cycle-168": "1 Woche"
+		},
+		"update": {
+			"h2": "Firmware-Update",
+			"installed": "Installiert",
+			"file": "Neue Firmware",
+			"progress": "Fortschritt",
+			"start": "Update starten",
+			"download": "Neueste Firmware herunterladen",
+			"choose": "Bitte die Datei „wortuhr-esp32-update.bin“ auswählen.",
+			"wrong-file": "Das ist die Datei für die Erstinstallation per USB. Für das Update bitte „wortuhr-esp32-update.bin“ verwenden.",
+			"uploading": "Firmware wird übertragen … Bitte die Seite nicht schließen.",
+			"restarting": "Update erfolgreich. Die Uhr startet neu …",
+			"done": "Fertig – die neue Firmware läuft.",
+			"failed": "Update fehlgeschlagen:",
+			"timeout": "Die Uhr meldet sich noch nicht. Bitte die Seite in einer Minute neu laden."
+		},
 		"hour": {
 			"legend": "Zur vollen Stunde",
 			"chime": "Stundengong",
