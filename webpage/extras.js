@@ -347,6 +347,11 @@
 		const time = inputElement("time", `${hh}:${mm}`, {});
 		time.dataset.key = "time";
 
+		const endHour = eventData.endHour == null ? 23 : eventData.endHour;
+		const endMinute = eventData.endMinute == null ? 59 : eventData.endMinute;
+		const endTime = inputElement("time", `${String(endHour).padStart(2, "0")}:${String(endMinute).padStart(2, "0")}`, {});
+		endTime.dataset.key = "end";
+
 		const repeat = document.createElement("select");
 		repeat.dataset.key = "interval";
 		const options = REPEAT_OPTIONS.indexOf(eventData.interval) >= 0 ? REPEAT_OPTIONS : REPEAT_OPTIONS.concat([eventData.interval]);
@@ -377,6 +382,12 @@
 		grid.appendChild(labelled(tr("events.fields.year"), year));
 		grid.appendChild(labelled(tr("events.fields.time"), time));
 		grid.appendChild(labelled(tr("events.fields.repeat"), repeat));
+		const endField = labelled(tr("events.fields.until"), endTime);
+		grid.appendChild(endField);
+		// an end time only makes sense for repeated events
+		const updateEnd = () => endField.classList.toggle("extras-collapsed", Number(repeat.value) === 0);
+		repeat.addEventListener("change", updateEnd);
+		updateEnd();
 		grid.appendChild(labelled(tr("events.fields.text"), text, true));
 		grid.appendChild(labelled(tr("events.fields.sound"), sound));
 		grid.appendChild(labelled(tr("events.fields.pre"), pre));
@@ -418,12 +429,15 @@
 			values[el.dataset.key] = el.value;
 		});
 		const timeParts = (values.time || "08:00").split(":");
+		const endParts = (values.end || "23:59").split(":");
 		return {
 			day: Number(values.day),
 			month: Number(values.month),
 			year: Number(values.year || 0),
 			hour: Number(timeParts[0]),
 			minute: Number(timeParts[1]),
+			endHour: Number(endParts[0]),
+			endMinute: Number(endParts[1]),
 			interval: Number(values.interval),
 			text: values.text,
 			sound: Number(values.sound),
@@ -534,6 +548,8 @@
 				year: 0,
 				hour: 8,
 				minute: 0,
+				endHour: 21,
+				endMinute: 0,
 				interval: 0,
 				text: "",
 				sound: 0,

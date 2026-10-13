@@ -118,6 +118,8 @@ struct Event {
     String post;      // animation after the text
     uint8_t hour = 8; // time of the first show on that day
     uint8_t minute = 0;
+    uint8_t endHour = 23; // no repetitions after this time
+    uint8_t endMinute = 59;
     uint8_t interval = 0; // repeat every n minutes, 0 = only once
 };
 
@@ -181,8 +183,10 @@ bool isQuietHour(uint8_t hour) {
     return hour >= cfg.quietFrom || hour < cfg.quietTo;
 }
 
+// Automatic sounds (chime, events, startup) only play while the clock is
+// switched on (also via MQTT / Home Assistant) and outside the quiet hours.
 bool soundAllowedNow() {
-    if (!cfg.sound || !audio.isStarted()) {
+    if (!cfg.sound || !audio.isStarted() || !led.getState()) {
         return false;
     }
     struct tm tm;
@@ -609,7 +613,8 @@ const Event *dueEvent(const struct tm &tm) {
             continue;
         }
         const uint16_t start = e.hour * 60 + e.minute;
-        if (minuteOfDay < start) {
+        const uint16_t end = e.endHour * 60 + e.endMinute;
+        if (minuteOfDay < start || minuteOfDay > end) {
             continue;
         }
         if (e.interval == 0 ? minuteOfDay == start
@@ -625,9 +630,7 @@ const Event *dueEvent(const struct tm &tm) {
 //------------------------------------------------------------------------------
 
 void onNewMinute(const struct tm &tm) {
-    const bool quiet = isQuietHour(tm.tm_hour);
-
-    if (tm.tm_min == 0 && cfg.chime && cfg.sound && !quiet) {
+    if (tm.tm_min == 0 && cfg.chime && soundAllowedNow()) {
         playChime(tm);
     }
 
@@ -748,6 +751,8 @@ void eventsToJson(JsonArray a) {
         o["post"] = e.post;
         o["hour"] = e.hour;
         o["minute"] = e.minute;
+        o["endHour"] = e.endHour;
+        o["endMinute"] = e.endMinute;
         o["interval"] = e.interval;
     }
 }
@@ -789,6 +794,8 @@ bool eventsFromJson(JsonVariantConst root) {
         } else {
             e.hour = constrain(o["hour"] | 0, 0, 23);
             e.minute = constrain(o["minute"] | 0, 0, 59);
+            e.endHour = constrain(o["endHour"] | 23, 0, 23);
+            e.endMinute = constrain(o["endMinute"] | 59, 0, 59);
             e.interval = constrain(o["interval"] | 0, 0, 255);
         }
         if (e.month < 1 || e.month > 12 || e.day < 1 || e.day > 31) {
