@@ -101,6 +101,8 @@ Nach dem Verbinden erscheint die Uhr als Gerät mit zusätzlichen Entitäten:
 
 | Entität | Typ | Funktion |
 |---|---|---|
+| Wortuhr | Licht | an/aus, Helligkeit, Farbe, Modus (Wortuhr, Sekunden, Lauftext …) |
+| Helligkeit | Zahl | 1–100 % (wirkt nicht, solange „Helligkeit automatisch“ an ist) |
 | Sound | Schalter | alle Töne an/aus |
 | Lautstärke | Zahl | 0–100 % |
 | Stundengong | Schalter | Gong zur vollen Stunde |

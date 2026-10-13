@@ -116,16 +116,42 @@ struct LabeledValue {
 
 #define LABELED_VALUE_COUNT(table) (sizeof(table) / sizeof((table)[0]))
 
-static const LabeledValue TRANSITION_TYPES[] = {
-    {"Off", 0},         {"Roll Up", 1}, {"Roll Down", 2}, {"Shift Left", 3},
-    {"Shift Right", 4}, {"Fade", 5},    {"Laser", 6},     {"Matrix Rain", 7},
-    {"Balls", 8},       {"Fire", 9},    {"Snake", 10},    {"Random", 11}};
+static const LabeledValue TRANSITION_TYPES[] = {{"Kein Übergang", 0},
+                                                {"Nach oben rollen", 1},
+                                                {"Nach unten rollen", 2},
+                                                {"Nach links schieben", 3},
+                                                {"Nach rechts schieben", 4},
+                                                {"Überblenden", 5},
+                                                {"Laser", 6},
+                                                {"Matrix-Regen", 7},
+                                                {"Bälle", 8},
+                                                {"Feuer", 9},
+                                                {"Schlange", 10},
+                                                {"Zufall", 11}};
 
 static const LabeledValue TRANSITION_COLORIZE[] = {
-    {"Off", 0}, {"Words", 1}, {"Characters", 2}};
+    {"Aus", 0}, {"Wörter", 1}, {"Buchstaben", 2}};
 
 static const LabeledValue TRANSITION_DURATION[] = {
-    {"Short", 1}, {"Medium", 2}, {"Long", 3}};
+    {"Kurz", 1}, {"Mittel", 2}, {"Lang", 3}};
+
+// Light effects (= clock modes). Home Assistant shows the German label; the
+// English names of the upstream project are still accepted in commands.
+struct EffectName {
+    const char *label;
+    const char *legacy;
+    uint16_t prog;
+};
+
+static const EffectName EFFECTS[] = {
+    {"Wortuhr", "Wordclock", COMMAND_MODE_WORD_CLOCK},
+    {"Sekunden", "Seconds", COMMAND_MODE_SECONDS},
+    {"Digitaluhr", "Digitalclock", COMMAND_MODE_DIGITAL_CLOCK},
+    {"Lauftext", "Scrollingtext", COMMAND_MODE_SCROLLINGTEXT},
+    {"Regenbogen-Zyklus", "Rainbowcycle", COMMAND_MODE_RAINBOWCYCLE},
+    {"Regenbogen", "Rainbow", COMMAND_MODE_RAINBOW},
+    {"Farbe", "Color", COMMAND_MODE_COLOR},
+    {"Symbol", "Symbol", COMMAND_MODE_SYMBOL}};
 
 // Return the label for a stored value, or fallback if the value is unknown.
 static const char *labelForValue(const LabeledValue *table, size_t count,
@@ -236,30 +262,12 @@ void Mqtt::processEffect(const JsonDocument &doc) {
         const char *effect = doc["effect"] | "";
         bool effectChanged = false;
 
-        if (!strcmp("Wordclock", effect)) {
-            G.prog = COMMAND_MODE_WORD_CLOCK;
-            effectChanged = true;
-        } else if (!strcmp("Seconds", effect)) {
-            G.prog = COMMAND_MODE_SECONDS;
-            effectChanged = true;
-        } else if (!strcmp("Digitalclock", effect)) {
-            G.prog = COMMAND_MODE_DIGITAL_CLOCK;
-            effectChanged = true;
-        } else if (!strcmp("Scrollingtext", effect)) {
-            G.prog = COMMAND_MODE_SCROLLINGTEXT;
-            effectChanged = true;
-        } else if (!strcmp("Rainbowcycle", effect)) {
-            G.prog = COMMAND_MODE_RAINBOWCYCLE;
-            effectChanged = true;
-        } else if (!strcmp("Rainbow", effect)) {
-            G.prog = COMMAND_MODE_RAINBOW;
-            effectChanged = true;
-        } else if (!strcmp("Color", effect)) {
-            G.prog = COMMAND_MODE_COLOR;
-            effectChanged = true;
-        } else if (!strcmp("Symbol", effect)) {
-            G.prog = COMMAND_MODE_SYMBOL;
-            effectChanged = true;
+        for (const EffectName &e : EFFECTS) {
+            if (!strcmp(e.label, effect) || !strcmp(e.legacy, effect)) {
+                G.prog = e.prog;
+                effectChanged = true;
+                break;
+            }
         }
 
         if (effectChanged) {
@@ -831,31 +839,11 @@ void Mqtt::sendState() {
         color["h"] = round(G.color[Foreground].H * 360); // Hue 0-360
         color["s"] = round(G.color[Foreground].S * 100); // Saturation 0-100
 
-        switch (G.prog) {
-        case COMMAND_MODE_WORD_CLOCK:
-            doc["effect"] = "Wordclock";
-            break;
-        case COMMAND_MODE_SECONDS:
-            doc["effect"] = "Seconds";
-            break;
-        case COMMAND_MODE_DIGITAL_CLOCK:
-            doc["effect"] = "Digitalclock";
-            break;
-        case COMMAND_MODE_SCROLLINGTEXT:
-            doc["effect"] = "Scrollingtext";
-            break;
-        case COMMAND_MODE_RAINBOWCYCLE:
-            doc["effect"] = "Rainbowcycle";
-            break;
-        case COMMAND_MODE_RAINBOW:
-            doc["effect"] = "Rainbow";
-            break;
-        case COMMAND_MODE_COLOR:
-            doc["effect"] = "Color";
-            break;
-        case COMMAND_MODE_SYMBOL:
-            doc["effect"] = "Symbol";
-            break;
+        for (const EffectName &e : EFFECTS) {
+            if (e.prog == G.prog) {
+                doc["effect"] = e.label;
+                break;
+            }
         }
 
         char buffer[200];
@@ -1030,14 +1018,29 @@ void Mqtt::sendDiscovery() {
         light["optimistic"] = false;
         light["effect"] = true;
         JsonArray effectList = light.createNestedArray("fx_list");
-        effectList.add("Wordclock");
-        effectList.add("Seconds");
-        effectList.add("Digitalclock");
-        effectList.add("Scrollingtext");
-        effectList.add("Rainbowcycle");
-        effectList.add("Rainbow");
-        effectList.add("Color");
-        effectList.add("Symbol");
+        for (const EffectName &e : EFFECTS)
+            effectList.add(e.label);
+    }
+
+    // Brightness as its own slider (0-100 %). It talks to the light's JSON
+    // command topic, so no extra handling is needed in the firmware.
+    {
+        JsonObject bri = cmps.createNestedObject("brightness");
+        bri["p"] = "number";
+        bri["uniq_id"] = unique_id + "_brightness";
+        bri["name"] = "Helligkeit";
+        bri["ic"] = "mdi:brightness-6";
+        bri["unit_of_meas"] = "%";
+        bri["min"] = 1;
+        bri["max"] = 100;
+        bri["step"] = 1;
+        bri["mode"] = "slider";
+        bri["stat_t"] = base + "/status";
+        bri["val_tpl"] =
+            "{{ ((value_json.brightness | int(0)) / 2.55) | round(0) | int }}";
+        bri["cmd_t"] = base + "/cmd";
+        bri["cmd_tpl"] = "{\"brightness\": {{ (value | float(0) * 2.55) | "
+                         "round(0) | int }}}";
     }
 
     // Text entity for the scrolling text mode.
@@ -1045,7 +1048,7 @@ void Mqtt::sendDiscovery() {
         JsonObject text = cmps.createNestedObject("scrolltext");
         text["p"] = "text";
         text["uniq_id"] = unique_id + "_scrolltext";
-        text["name"] = "Scrolling Text";
+        text["name"] = "Lauftext";
         text["ic"] = "mdi:text";
         text["stat_t"] = base + "/scrolltext/state";
         text["cmd_t"] = base + "/scrolltext/set";
@@ -1055,17 +1058,17 @@ void Mqtt::sendDiscovery() {
     }
 
     // Notify entity: pushes a message to the marquee. It targets the JSON
-    // command topic with both the text and the Scrollingtext effect, so the
+    // command topic with both the text and the Lauftext effect, so the
     // clock switches to scrolling-text mode and shows the message immediately.
     {
         JsonObject notify = cmps.createNestedObject("message");
         notify["p"] = "notify";
         notify["uniq_id"] = unique_id + "_message";
-        notify["name"] = "Message";
+        notify["name"] = "Nachricht anzeigen";
         notify["ic"] = "mdi:message-text";
         notify["cmd_t"] = base + "/cmd";
         notify["cmd_tpl"] = "{\"scrolling_text\": \"{{ value }}\", \"effect\": "
-                            "\"Scrollingtext\"}";
+                            "\"Lauftext\"}";
     }
 
     // Number entity for animation/effect speed.
@@ -1073,7 +1076,7 @@ void Mqtt::sendDiscovery() {
         JsonObject number = cmps.createNestedObject("effect_speed");
         number["p"] = "number";
         number["uniq_id"] = unique_id + "_effect_speed";
-        number["name"] = "Effect Speed";
+        number["name"] = "Geschwindigkeit Lauftext/Effekte";
         number["ic"] = "mdi:speedometer";
         number["stat_t"] = base + "/effect_speed/state";
         number["cmd_t"] = base + "/effect_speed/set";
@@ -1087,7 +1090,7 @@ void Mqtt::sendDiscovery() {
         JsonObject autoBright = cmps.createNestedObject("auto_brightness");
         autoBright["p"] = "switch";
         autoBright["uniq_id"] = unique_id + "_auto_brightness";
-        autoBright["name"] = "Auto Brightness";
+        autoBright["name"] = "Helligkeit automatisch (Lichtsensor)";
         autoBright["ic"] = "mdi:brightness-auto";
         autoBright["dev_cla"] = "switch";
         autoBright["stat_t"] = base + "/auto_brightness/state";
@@ -1097,20 +1100,19 @@ void Mqtt::sendDiscovery() {
     }
 
     // Transition settings.
-    addSelect(cmps, unique_id, "transition_type", "Transition Type",
-              "mdi:transition", TRANSITION_TYPES,
-              LABELED_VALUE_COUNT(TRANSITION_TYPES));
-    addSelect(cmps, unique_id, "transition_colorize", "Transition Colorize",
+    addSelect(cmps, unique_id, "transition_type", "Übergang", "mdi:transition",
+              TRANSITION_TYPES, LABELED_VALUE_COUNT(TRANSITION_TYPES));
+    addSelect(cmps, unique_id, "transition_colorize", "Übergang: Einfärben",
               "mdi:palette", TRANSITION_COLORIZE,
               LABELED_VALUE_COUNT(TRANSITION_COLORIZE));
-    addSelect(cmps, unique_id, "transition_duration", "Transition Duration",
+    addSelect(cmps, unique_id, "transition_duration", "Übergang: Dauer",
               "mdi:timer-outline", TRANSITION_DURATION,
               LABELED_VALUE_COUNT(TRANSITION_DURATION));
     {
         JsonObject speed = cmps.createNestedObject("transition_speed");
         speed["p"] = "number";
         speed["uniq_id"] = unique_id + "_transition_speed";
-        speed["name"] = "Transition Speed";
+        speed["name"] = "Übergang: Geschwindigkeit";
         speed["ic"] = "mdi:speedometer";
         speed["ent_cat"] = "config";
         speed["stat_t"] = base + "/transition_speed/state";
@@ -1121,22 +1123,21 @@ void Mqtt::sendDiscovery() {
     }
 
     // Diagnostic sensors, all read from the shared diagnostics topic.
-    addDiagSensor(cmps, unique_id, "lux", "Illuminance", "illuminance", "lx",
-                  "mdi:white-balance-sunny", "measurement",
+    addDiagSensor(cmps, unique_id, "lux", "Umgebungshelligkeit", "illuminance",
+                  "lx", "mdi:white-balance-sunny", "measurement",
                   "{{ value_json.lux }}");
-    addDiagSensor(cmps, unique_id, "led_gain", "LED Gain", "power_factor", "%",
-                  "mdi:brightness-percent", "measurement",
+    addDiagSensor(cmps, unique_id, "led_gain", "LED-Helligkeit", "power_factor",
+                  "%", "mdi:brightness-percent", "measurement",
                   "{{ value_json.led_gain }}");
-    addDiagSensor(cmps, unique_id, "auto_brightness_source",
-                  "Auto Brightness Source", nullptr, nullptr,
-                  "mdi:lightbulb-auto", nullptr,
+    addDiagSensor(cmps, unique_id, "auto_brightness_source", "Lichtsensor",
+                  nullptr, nullptr, "mdi:lightbulb-auto", nullptr,
                   "{{ value_json.auto_brightness_source }}");
-    addDiagSensor(cmps, unique_id, "rssi", "WiFi Signal", "signal_strength",
+    addDiagSensor(cmps, unique_id, "rssi", "WLAN-Signal", "signal_strength",
                   "dBm", nullptr, "measurement", "{{ value_json.rssi }}");
-    addDiagSensor(cmps, unique_id, "ip", "IP Address", nullptr, nullptr,
+    addDiagSensor(cmps, unique_id, "ip", "IP-Adresse", nullptr, nullptr,
                   "mdi:ip-network", nullptr, "{{ value_json.ip }}");
-    addDiagSensor(cmps, unique_id, "uptime", "Uptime", "duration", "s", nullptr,
-                  "total_increasing", "{{ value_json.uptime }}");
+    addDiagSensor(cmps, unique_id, "uptime", "Laufzeit", "duration", "s",
+                  nullptr, "total_increasing", "{{ value_json.uptime }}");
 
     // Extras: sound, animations, events, BME280
     extras::mqttAddDiscovery(cmps, unique_id, base);

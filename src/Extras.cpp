@@ -1018,15 +1018,16 @@ void climateToJson(JsonObject o) {
         return;
     }
     if (!isnan(sensor.temperature)) {
+        // serialized(): "22.8" instead of "22.7999992" from the float
         o["temperature"] =
-            roundf((sensor.temperature + cfg.temperatureOffset) * 10) / 10;
+            serialized(String(sensor.temperature + cfg.temperatureOffset, 1));
     }
     if (sensor.hasHumidity() && !isnan(sensor.humidity)) {
-        o["humidity"] = roundf(sensor.humidity * 10) / 10;
+        o["humidity"] = serialized(String(sensor.humidity, 1));
     }
     const float p = relativePressure();
     if (!isnan(p)) {
-        o["pressure"] = roundf(p * 10) / 10;
+        o["pressure"] = serialized(String(p, 1));
     }
 }
 
@@ -1414,6 +1415,7 @@ void addClimateSensor(JsonObject cmps, const String &id, const String &base,
     c["dev_cla"] = deviceClass;
     c["unit_of_meas"] = unit;
     c["stat_cla"] = "measurement";
+    c["sug_dsp_prc"] = strcmp(key, "humidity") == 0 ? 0 : 1;
 }
 
 void publishClimate() {
