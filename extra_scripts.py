@@ -79,3 +79,16 @@ subprocess.check_call([
     env.subst("$PROJECT_DIR/data/animations"),
     env.subst("$PROJECT_DIR/include/Extras/AnimationData.gen.h"),
 ])
+
+#
+# version of the extras for the web page (git commit of this build)
+#
+try:
+    build = subprocess.check_output(
+        ["git", "rev-parse", "--short", "HEAD"],
+        cwd=env.subst("$PROJECT_DIR"),
+        stderr=subprocess.DEVNULL,
+    ).decode().strip()
+except Exception:
+    build = "dev"
+env.Append(CPPDEFINES=[("EXTRAS_BUILD", '\\"%s\\"' % build)])

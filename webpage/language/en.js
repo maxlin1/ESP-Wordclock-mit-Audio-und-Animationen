@@ -370,6 +370,43 @@ let TRANSLATION_EN_US = {
 		}
 	},
 	"extras": {
+		"color": {
+			"h2": "Automatic color change",
+			"help": "The clock changes the color of the letters by itself – either a new color at fixed intervals or a very slow, continuous walk through all colors.",
+			"mode": "Color change",
+			"off": "Off",
+			"minutes5": "Every 5 minutes",
+			"hourly": "Every hour",
+			"daily": "Every day",
+			"continuous": "Continuous (very slow)",
+			"fade": "Fade",
+			"fade-0": "instantly",
+			"fade-10": "10 seconds",
+			"fade-60": "1 minute",
+			"fade-300": "5 minutes",
+			"fade-900": "15 minutes",
+			"cycle": "Once through all colors in",
+			"cycle-1": "1 hour",
+			"cycle-6": "6 hours",
+			"cycle-12": "12 hours",
+			"cycle-24": "24 hours",
+			"cycle-168": "1 week"
+		},
+		"update": {
+			"h2": "Firmware update",
+			"installed": "Installed",
+			"file": "New firmware",
+			"progress": "Progress",
+			"start": "Start update",
+			"download": "Download latest firmware",
+			"choose": "Please select the file “wortuhr-esp32-update.bin”.",
+			"wrong-file": "This is the file for the first installation via USB. For updates please use “wortuhr-esp32-update.bin”.",
+			"uploading": "Uploading firmware … please keep this page open.",
+			"restarting": "Update successful. The clock is restarting …",
+			"done": "Done – the new firmware is running.",
+			"failed": "Update failed:",
+			"timeout": "The clock has not responded yet. Please reload the page in a minute."
+		},
 		"hour": {
 			"legend": "At the full hour",
 			"chime": "Hourly chime",

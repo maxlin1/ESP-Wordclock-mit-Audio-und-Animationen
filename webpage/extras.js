@@ -192,6 +192,10 @@
 		settings.txPin = Number(byId("sound-tx-pin").value);
 		settings.busyPin = Number(byId("sound-busy-pin").value);
 
+		settings.colorAuto = Number(byId("color-auto-mode").value);
+		settings.colorFade = Number(byId("color-auto-fade").value);
+		settings.colorCycle = Number(byId("color-auto-cycle").value);
+
 		settings.altitude = Number(byId("climate-altitude").value);
 		settings.temperatureOffset = Number(byId("climate-offset").value);
 		return settings;
@@ -242,6 +246,20 @@
 		byId("hour-chime-weekdays").classList.toggle("extras-collapsed", !chimeOn || !perWeekday);
 	}
 
+	function selectValue(select, value) {
+		const text = String(value);
+		if (![...select.options].some(option => option.value === text)) {
+			addOption(select, text, text, false);
+		}
+		select.value = text;
+	}
+
+	function updateColorVisibility() {
+		const mode = Number(byId("color-auto-mode").value);
+		document.querySelector(".color-auto-fade-row").classList.toggle("extras-collapsed", mode === 0 || mode === 4);
+		document.querySelector(".color-auto-cycle-row").classList.toggle("extras-collapsed", mode !== 4);
+	}
+
 	function renderSettings() {
 		const settings = extrasData.settings;
 
@@ -284,6 +302,12 @@
 		byId("sound-tx-pin").value = settings.txPin;
 		byId("sound-busy-pin").value = settings.busyPin;
 
+		// automatic color change (colors page)
+		byId("color-auto-mode").value = String(settings.colorAuto || 0);
+		selectValue(byId("color-auto-fade"), settings.colorFade == null ? 60 : settings.colorFade);
+		selectValue(byId("color-auto-cycle"), settings.colorCycle || 24);
+		updateColorVisibility();
+
 		// room climate
 		byId("climate-altitude").value = settings.altitude;
 		byId("climate-offset").value = settings.temperatureOffset;
@@ -296,6 +320,7 @@
 			player = status.playing ? tr("extras.sound.playing") : tr("extras.sound.ready");
 		}
 		byId("sound-player-state").value = player;
+		byId("update-version").value = status.firmware || "–";
 
 		const climate = status.climate || {};
 		const hasSensor = climate.sensor && climate.sensor !== "-";
@@ -512,6 +537,7 @@
 		document.querySelectorAll(".extras-setting").forEach(el => {
 			el.addEventListener("change", () => {
 				updateHourVisibility();
+				updateColorVisibility();
 				saveSettingsSoon();
 			});
 		});
@@ -575,6 +601,100 @@
 		});
 	}
 
+	/*
+	 * Firmware update (Settings > Firmware update)
+	 */
+
+	function setUpdateMessage(text, isError) {
+		const message = byId("update-message");
+		message.textContent = text;
+		message.classList.toggle("update-error", Boolean(isError));
+	}
+
+	function waitForRestart() {
+		const started = Date.now();
+		const poll = async() => {
+			try {
+				await apiGet("");
+				setUpdateMessage(tr("extras.update.done"), false);
+				setTimeout(() => location.reload(), 1500);
+			} catch (error) {
+				console.debug("extras: waiting for restart", error);
+				if (Date.now() - started > 90000) {
+					setUpdateMessage(tr("extras.update.timeout"), true);
+				} else {
+					setTimeout(poll, 3000);
+				}
+			}
+		};
+		setTimeout(poll, 8000);
+	}
+
+	function startUpdate() {
+		const file = byId("update-file").files[0];
+		if (!file) {
+			setUpdateMessage(tr("extras.update.choose"), true);
+			return;
+		}
+		const button = byId("update-button");
+		const progress = byId("update-progress");
+		button.disabled = true;
+		byId("update-progress-row").classList.remove("extras-collapsed");
+		progress.value = 0;
+		setUpdateMessage(tr("extras.update.uploading"), false);
+
+		const form = new FormData();
+		form.append("firmware", file, file.name);
+		const request = new XMLHttpRequest();
+		request.open("POST", apiUrl("/update"));
+		request.upload.addEventListener("progress", event => {
+			if (event.lengthComputable) {
+				progress.value = Math.round(event.loaded * 100 / event.total);
+			}
+		});
+		request.addEventListener("load", () => {
+			let result = {};
+			try {
+				result = JSON.parse(request.responseText);
+			} catch (error) {
+				console.debug("extras: update response", error);
+			}
+			if (request.status === 200 && result.ok) {
+				progress.value = 100;
+				setUpdateMessage(tr("extras.update.restarting"), false);
+				waitForRestart();
+			} else {
+				setUpdateMessage(`${tr("extras.update.failed")} ${result.error || request.status}`, true);
+				button.disabled = false;
+			}
+		});
+		request.addEventListener("error", () => {
+			// The clock may have restarted before the answer arrived.
+			if (progress.value >= 100) {
+				setUpdateMessage(tr("extras.update.restarting"), false);
+				waitForRestart();
+			} else {
+				setUpdateMessage(`${tr("extras.update.failed")} ${tr("extras.offline")}`, true);
+				button.disabled = false;
+			}
+		});
+		request.send(form);
+	}
+
+	function setupUpdate() {
+		byId("update-file").addEventListener("change", () => {
+			const file = byId("update-file").files[0];
+			const wrongFile = Boolean(file) && /komplett|factory/i.test(file.name);
+			byId("update-button").disabled = !file || wrongFile;
+			if (wrongFile) {
+				setUpdateMessage(tr("extras.update.wrong-file"), true);
+			} else {
+				setUpdateMessage("", false);
+			}
+		});
+		byId("update-button").addEventListener("click", startUpdate);
+	}
+
 	function renderAll() {
 		renderSettings();
 		renderStatus();
@@ -608,6 +728,7 @@
 		}
 		document.querySelectorAll(".extras-only").forEach(el => el.classList.remove("extras-only"));
 		setupEventHandlers();
+		setupUpdate();
 		setInterval(refreshStatus, STATUS_INTERVAL_MS);
 		// texts depend on the language
 		i18next.on("languageChanged", renderAll);

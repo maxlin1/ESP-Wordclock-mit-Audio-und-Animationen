@@ -75,6 +75,9 @@ esptool.py --chip esp32 write_flash 0x0 wortuhr-esp32-komplett.bin
    - **Ereignisse**: Geburtstage, Feiertage usw. mit Uhrzeit, Wiederholung,
      Text, Ton und Animationen; „events.json importieren“ übernimmt die
      Ereignisse der alten Uhr
+   - **Farben → Automatischer Farbwechsel**: neue Farbe alle 5 Minuten,
+     jede Stunde oder jeden Tag (sanft überblendet) oder fließend sehr
+     langsam durch alle Farben
    - **Einstellungen → Sound**: Lautstärke, Nachtruhe, Sprecher, Anschlüsse
      des MP3-Players
    - **Einstellungen → Raumklima**: Messwerte, Höhe über dem Meer (für den
@@ -83,8 +86,11 @@ esptool.py --chip esp32 write_flash 0x0 wortuhr-esp32-komplett.bin
 ## 4. Updates
 
 Neue Versionen erscheinen unter **Releases** als
-**`wortuhr-esp32-update.bin`**. Einspielen über WLAN:
-`http://<IP-der-Uhr>:81/update` → Datei auswählen → **Update**.
+**`wortuhr-esp32-update.bin`**. Einspielen über WLAN: auf der Webseite der Uhr
+unter **Einstellungen → Firmware-Update** die Datei auswählen und
+**„Update starten“** klicken. Die Seite zeigt den Fortschritt und lädt sich
+nach dem Neustart der Uhr selbst neu. (Notfalls geht es weiterhin über die
+einfache Seite `http://<IP-der-Uhr>:81/update`.)
 
 Neuerungen vom Original-Projekt holt man auf GitHub mit **„Sync fork“** in
 diesen Fork; danach wird die Firmware automatisch neu gebaut.
@@ -128,6 +134,7 @@ Weitere MQTT-Befehle (Topic jeweils `<Topic der Uhr>/extras/<Befehl>/set`):
 | `announce` | `time`, `date` oder `climate` |
 | `stop` | beliebig |
 | `volume` | `0`–`100` |
+| `color_auto` | `Aus`, `Alle 5 Minuten`, `Stündlich`, `Täglich`, `Fließend` |
 | `hour_animation` | `Aus`, `Uhrzeit-Animationen`, `Zufall` oder Name |
 | `sound`, `chime`, `quiet`, `events` | `ON` / `OFF` |
 

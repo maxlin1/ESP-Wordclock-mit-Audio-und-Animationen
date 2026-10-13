@@ -13,10 +13,15 @@
 
 #include <Preferences.h>
 #include <PubSubClient.h>
+#include <Update.h>
 #include <WebServer.h>
 #include <WiFi.h>
 #include <time.h>
 #include <vector>
+
+#ifndef EXTRAS_BUILD
+#define EXTRAS_BUILD "dev"
+#endif
 
 extern Led led;
 extern WebServer httpServer; // OTA web server on port 81 (WordClock.cpp)
@@ -106,6 +111,18 @@ struct Settings {
     uint8_t busyPin = EXTRAS_DFPLAYER_BUSY_PIN;
     int16_t altitude = 0; // m above sea level, for the relative pressure
     float temperatureOffset = 0.0f;
+    // automatic color change of the clock face
+    uint8_t colorAuto = 0;   // see COLOR_AUTO_*
+    uint16_t colorFade = 60; // seconds to fade to the next color
+    uint8_t colorCycle = 24; // hours for one round through all colors
+};
+
+enum ColorAuto : uint8_t {
+    COLOR_AUTO_OFF = 0,
+    COLOR_AUTO_5_MINUTES = 1,
+    COLOR_AUTO_HOURLY = 2,
+    COLOR_AUTO_DAILY = 3,
+    COLOR_AUTO_CONTINUOUS = 4,
 };
 
 struct Event {
@@ -626,10 +643,118 @@ const Event *dueEvent(const struct tm &tm) {
 }
 
 //------------------------------------------------------------------------------
+// Automatic color change of the clock face (like "Farbwechsel" of the old
+// clock): a new color every 5 minutes / hour / day, faded in slowly, or a
+// continuous, very slow walk through all colors.
+//------------------------------------------------------------------------------
+
+struct ColorFade {
+    bool active = false;
+    float from = 0;
+    float delta = 0;
+    uint32_t start = 0;
+    uint32_t duration = 0;
+    uint32_t lastStep = 0;
+};
+
+ColorFade colorFade;
+uint32_t lastContinuousStep = 0;
+
+bool colorAutoAllowed() {
+    return led.getState() && clockFaceVisible() && !player.isRunning();
+}
+
+void setForegroundHue(float hue) {
+    HsbColor color = G.color[Foreground];
+    color.H = hue - floorf(hue);
+    if (color.S < 0.3f) {
+        color.S = 1.0f; // white would not show any change
+    }
+    G.color[Foreground] = color;
+    parametersChanged = true;
+}
+
+void startColorChange() {
+    const float from = G.color[Foreground].H;
+    // the next color is at least 60 degrees away on the color wheel
+    const float to = from + 0.17f + random(0, 67) / 100.0f;
+    if (cfg.colorFade == 0) {
+        setForegroundHue(to);
+        return;
+    }
+    colorFade.active = true;
+    colorFade.from = from;
+    colorFade.delta = to - from;
+    colorFade.start = millis();
+    colorFade.duration = cfg.colorFade * 1000UL;
+    colorFade.lastStep = 0;
+}
+
+void colorChangeOnNewMinute(const struct tm &tm) {
+    if (!colorAutoAllowed()) {
+        return;
+    }
+    switch (cfg.colorAuto) {
+    case COLOR_AUTO_5_MINUTES:
+        if (tm.tm_min % 5 == 0) {
+            startColorChange();
+        }
+        break;
+    case COLOR_AUTO_HOURLY:
+        if (tm.tm_min == 0) {
+            startColorChange();
+        }
+        break;
+    case COLOR_AUTO_DAILY:
+        if (tm.tm_hour == 0 && tm.tm_min == 0) {
+            startColorChange();
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void loopColor() {
+    const uint32_t now = millis();
+
+    if (cfg.colorAuto == COLOR_AUTO_CONTINUOUS) {
+        colorFade.active = false;
+        if (now - lastContinuousStep >= 2000 && colorAutoAllowed() &&
+            timeIsValid()) {
+            lastContinuousStep = now;
+            const double cycle = cfg.colorCycle * 3600.0;
+            const float hue =
+                fmod(static_cast<double>(time(nullptr)), cycle) / cycle;
+            if (fabsf(hue - G.color[Foreground].H) > 0.001f) {
+                setForegroundHue(hue);
+            }
+        }
+        return;
+    }
+
+    if (!colorFade.active || now - colorFade.lastStep < 1000) {
+        return;
+    }
+    colorFade.lastStep = now;
+    float progress = static_cast<float>(now - colorFade.start) /
+                     static_cast<float>(colorFade.duration);
+    if (progress >= 1.0f || cfg.colorAuto == COLOR_AUTO_OFF) {
+        progress = 1.0f;
+        colorFade.active = false;
+    }
+    if (colorAutoAllowed()) {
+        setForegroundHue(colorFade.from + colorFade.delta * progress);
+    }
+}
+
+//------------------------------------------------------------------------------
 // Things that happen when the minute changes
 //------------------------------------------------------------------------------
 
 void onNewMinute(const struct tm &tm) {
+    colorChangeOnNewMinute(tm);
+
     if (tm.tm_min == 0 && cfg.chime && soundAllowedNow()) {
         playChime(tm);
     }
@@ -690,6 +815,9 @@ void settingsToJson(JsonObject o) {
     o["busyPin"] = cfg.busyPin;
     o["altitude"] = cfg.altitude;
     o["temperatureOffset"] = cfg.temperatureOffset;
+    o["colorAuto"] = cfg.colorAuto;
+    o["colorFade"] = cfg.colorFade;
+    o["colorCycle"] = cfg.colorCycle;
 }
 
 uint8_t pinOrNone(JsonVariantConst v, uint8_t fallback) {
@@ -737,6 +865,12 @@ void settingsFromJson(JsonObjectConst o) {
         constrain(o["altitude"] | static_cast<int>(cfg.altitude), -500, 9000);
     cfg.temperatureOffset = constrain(
         o["temperatureOffset"] | cfg.temperatureOffset, -20.0f, 20.0f);
+    cfg.colorAuto =
+        constrain(o["colorAuto"] | static_cast<int>(cfg.colorAuto), 0, 4);
+    cfg.colorFade =
+        constrain(o["colorFade"] | static_cast<int>(cfg.colorFade), 0, 3600);
+    cfg.colorCycle =
+        constrain(o["colorCycle"] | static_cast<int>(cfg.colorCycle), 1, 168);
 }
 
 void eventsToJson(JsonArray a) {
@@ -940,6 +1074,65 @@ void handleOptions() {
     httpServer.send(204);
 }
 
+//------------------------------------------------------------------------------
+// Firmware update from the clock's main page (Settings > Firmware update).
+// Unlike the built-in page on /update it answers with JSON and allows
+// cross-origin requests, so the page can show the progress.
+//------------------------------------------------------------------------------
+
+String updateError;
+
+void handleUpdateUpload() {
+    HTTPUpload &upload = httpServer.upload();
+    switch (upload.status) {
+    case UPLOAD_FILE_START:
+        updateError = "";
+#if WEB_PROTECTED
+        if (!httpServer.authenticate(WEB_USER, WEB_PASSWORD)) {
+            updateError = "not authorized";
+            break;
+        }
+#endif
+        Serial.printf("Firmware update: %s\n", upload.filename.c_str());
+        audio.stop();
+        stopShow();
+        if (!Update.begin(UPDATE_SIZE_UNKNOWN, U_FLASH)) {
+            updateError = Update.errorString();
+        }
+        break;
+    case UPLOAD_FILE_WRITE:
+        if (updateError.isEmpty() &&
+            Update.write(upload.buf, upload.currentSize) !=
+                upload.currentSize) {
+            updateError = Update.errorString();
+        }
+        break;
+    case UPLOAD_FILE_END:
+        if (updateError.isEmpty() && !Update.end(true)) {
+            updateError = Update.errorString();
+        }
+        break;
+    case UPLOAD_FILE_ABORTED:
+        Update.abort();
+        updateError = "upload aborted";
+        break;
+    default:
+        break;
+    }
+}
+
+void handleUpdateDone() {
+    if (!updateError.isEmpty()) {
+        Serial.printf("Firmware update failed: %s\n", updateError.c_str());
+        sendError(updateError.c_str());
+        return;
+    }
+    Serial.println("Firmware update done, restarting");
+    sendOk();
+    delay(500);
+    ESP.restart();
+}
+
 // The settings used to be on their own page; send old bookmarks to the clock.
 void handleOldPage() {
     httpServer.sendHeader("Location",
@@ -963,6 +1156,7 @@ void handleGetAll() {
     struct tm tm;
     status["quietNow"] = localTime(tm) && isQuietHour(tm.tm_hour);
     status["volumeNow"] = volume30();
+    status["firmware"] = String(VERSION) + " + Extras " + EXTRAS_BUILD;
 
     JsonArray sets = doc.createNestedArray("soundSets");
     for (const SoundSet &s : SOUND_SETS) {
@@ -1096,6 +1290,9 @@ void registerWebRoutes() {
     httpServer.on("/extras", HTTP_GET, handleOldPage);
     httpServer.on("/api/extras/settings", HTTP_OPTIONS, handleOptions);
     httpServer.on("/api/extras/events", HTTP_OPTIONS, handleOptions);
+    httpServer.on("/api/extras/update", HTTP_OPTIONS, handleOptions);
+    httpServer.on("/api/extras/update", HTTP_POST, handleUpdateDone,
+                  handleUpdateUpload);
     httpServer.on("/api/extras/event", HTTP_GET, handleEventPreview);
     httpServer.on("/api/extras", HTTP_GET, handleGetAll);
     httpServer.on("/api/extras/settings", HTTP_POST, handlePostSettings);
@@ -1138,6 +1335,11 @@ const char *todaysChimeName() {
     const uint8_t set = cfg.chimeSet[day % 7];
     return set < SOUND_SET_COUNT ? SOUND_SETS[set].name : SOUND_SETS[0].name;
 }
+
+const char *const COLOR_AUTO_LABELS[] = {"Aus", "Alle 5 Minuten", "Stündlich",
+                                         "Täglich", "Fließend"};
+constexpr uint8_t COLOR_AUTO_LABEL_COUNT =
+    sizeof(COLOR_AUTO_LABELS) / sizeof(COLOR_AUTO_LABELS[0]);
 
 constexpr const char *HOUR_ANIMATION_OFF = "Aus";
 constexpr const char *HOUR_ANIMATION_TIME = "Uhrzeit-Animationen";
@@ -1253,6 +1455,7 @@ void loop() {
     audio.loop();
     player.loop();
     loopShow();
+    loopColor();
 
     struct tm tm;
     if (localTime(tm)) {
@@ -1334,6 +1537,13 @@ bool mqttHandle(const String &fullTopic, const char *payload) {
                 break;
             }
         }
+    } else if (key == "color_auto") {
+        for (uint8_t i = 0; i < COLOR_AUTO_LABEL_COUNT; i++) {
+            if (strcmp(COLOR_AUTO_LABELS[i], payload) == 0) {
+                cfg.colorAuto = i;
+                changed = true;
+            }
+        }
     } else if (key == "voice") {
         cfg.voice = strcmp(payload, "Vicki") == 0 ? 0 : 1;
         changed = true;
@@ -1406,6 +1616,17 @@ void mqttAddDiscovery(JsonObject cmps, const String &id, const String &base) {
         JsonArray options = c.createNestedArray("options");
         for (const SoundSet &s : SOUND_SETS) {
             options.add(s.name);
+        }
+    }
+    {
+        JsonObject c = addComponent(cmps, id, "extras_color_auto", "select",
+                                    "Automatischer Farbwechsel", "mdi:palette");
+        c["stat_t"] = base + "/extras/state";
+        c["val_tpl"] = "{{ value_json.color_auto }}";
+        c["cmd_t"] = base + "/extras/color_auto/set";
+        JsonArray options = c.createNestedArray("options");
+        for (const char *label : COLOR_AUTO_LABELS) {
+            options.add(label);
         }
     }
     {
@@ -1485,6 +1706,8 @@ void mqttPublishState() {
     doc["volume"] = cfg.volume;
     doc["chime_sound"] = todaysChimeName();
     doc["voice"] = cfg.voice == 0 ? "Vicki" : "Hans";
+    doc["color_auto"] =
+        COLOR_AUTO_LABELS[cfg.colorAuto % COLOR_AUTO_LABEL_COUNT];
     doc["animation"] = player.isRunning() ? player.currentName() : "-";
     doc["track"] = audio.currentTrack();
     doc["dfplayer"] = audio.isStarted() ? "ON" : "OFF";
