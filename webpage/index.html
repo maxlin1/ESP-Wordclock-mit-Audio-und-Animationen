@@ -122,11 +122,11 @@
             <ul class="pure-menu-list">
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="main" data-i18next="colors.h1"></a></li>
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="functions" data-i18next="functions.h1"></a></li>
+                <li class="pure-menu-item extras-only" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="events" data-i18next="events.h1"></a></li>
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="frontoptions" data-i18next="view.h1"></a></li>
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="settings" data-i18next="settings.h1"></a></li>
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="smart-home" data-i18next="smart-home.h1"></a></li>
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="about" data-i18next="about.h1"></a></li>
-                <li class="pure-menu-item" role="none"><a href="/extras" class="pure-menu-link" role="menuitem">Sound &amp; Animationen</a></li>
 
                 <li class="pure-menu-heading" role="none"><label for="language" data-i18next="menu.language.label"></label></li>
                 <li class="pure-menu-item pure-form" role="none" id="language-select-container">
@@ -469,6 +469,71 @@
                             <input type="checkbox" id="transition-demo" >
                         </div>
                     </form>
+                    <form class="pure-form pure-form-aligned extras-only" id="full-hour-form">
+                        <fieldset>
+                            <legend data-i18next="extras.hour.legend"></legend>
+                            <div class="pure-control-group">
+                                <label for="hour-chime" data-i18next="extras.hour.chime"></label>
+                                <label class="switch">
+                                    <input type="checkbox" id="hour-chime" class="extras-setting">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="pure-control-group hour-chime-option">
+                                <label for="hour-chime-sound" data-i18next="extras.hour.sound"></label>
+                                <select id="hour-chime-sound" size="1"></select>
+                            </div>
+                            <div id="hour-chime-weekdays" class="hour-chime-weekdays"></div>
+                            <div class="pure-control-group hour-chime-option">
+                                <label for="hour-chime-single" data-i18next="extras.hour.single"></label>
+                                <label class="switch">
+                                    <input type="checkbox" id="hour-chime-single" class="extras-setting">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="pure-control-group hour-chime-option">
+                                <label for="hour-chime-24h" data-i18next="extras.hour.voice24h"></label>
+                                <label class="switch">
+                                    <input type="checkbox" id="hour-chime-24h" class="extras-setting">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="pure-control-group">
+                                <label for="hour-animation" data-i18next="extras.hour.animation"></label>
+                                <select id="hour-animation" class="extras-setting" size="1"></select>
+                            </div>
+                            <div class="pure-controls">
+                                <button type="button" id="hour-chime-test" class="pure-button" data-i18next="extras.hour.test"></button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+
+                <div class="box extras-only" id="extras-play-box">
+                    <h2 data-i18next="extras.play.h2"></h2>
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <label for="play-animation" data-i18next="extras.play.animation"></label>
+                            <select id="play-animation" size="1"></select>
+                            <button type="button" id="play-animation-button" class="pure-button" data-i18next="extras.play.start"></button>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="play-sound" data-i18next="extras.play.sound"></label>
+                            <select id="play-sound" size="1"></select>
+                            <button type="button" id="play-sound-button" class="pure-button" data-i18next="extras.play.start"></button>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="announce-time" data-i18next="extras.play.announce"></label>
+                            <span class="extras-buttons">
+                                <button type="button" id="announce-time" class="pure-button announce-button" value="time" data-i18next="extras.play.time"></button>
+                                <button type="button" class="pure-button announce-button" value="date" data-i18next="extras.play.date"></button>
+                                <button type="button" class="pure-button announce-button climate-only" value="climate" data-i18next="extras.play.climate"></button>
+                            </span>
+                        </div>
+                        <div class="pure-controls">
+                            <button type="button" id="play-stop-button" class="pure-button button-secondary" data-i18next="extras.play.stop"></button>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="box" id="functions-birthdays">
@@ -533,6 +598,60 @@
                     </form>
                 </div>
 
+            </section>
+
+            <section class="pure-u-24-24 section section-events extras-only">
+                <header class="header">
+                    <img src="./icons/calendar.svg" class="icon" alt="icon" aria-hidden="true">
+                    <h1 data-i18next="events.h1"></h1>
+                </header>
+
+                <div class="box">
+                    <h2 data-i18next="events.list.h2"></h2>
+                    <p data-i18next="events.list.help"></p>
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <label for="events-enabled" data-i18next="events.list.enabled"></label>
+                            <label class="switch">
+                                <input type="checkbox" id="events-enabled" class="extras-setting">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </form>
+                    <div id="events-list" class="events-list"></div>
+                    <div class="extras-buttons">
+                        <button type="button" id="events-add-button" class="pure-button button-secondary" data-i18next="events.list.add"></button>
+                        <button type="button" id="events-save-button" class="pure-button" data-i18next="events.list.save"></button>
+                        <label for="events-import" class="pure-button button-secondary" data-i18next="events.list.import"></label>
+                        <input type="file" id="events-import" class="hidden-input" accept=".json,application/json">
+                    </div>
+                </div>
+
+                <div class="box">
+                    <h2 data-i18next="events.message.h2"></h2>
+                    <p data-i18next="events.message.help"></p>
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <label for="message-text" data-i18next="events.fields.text"></label>
+                            <input id="message-text" type="text" maxlength="80">
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="message-sound" data-i18next="events.fields.sound"></label>
+                            <select id="message-sound" size="1"></select>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="message-pre" data-i18next="events.fields.pre"></label>
+                            <select id="message-pre" size="1"></select>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="message-post" data-i18next="events.fields.post"></label>
+                            <select id="message-post" size="1"></select>
+                        </div>
+                        <div class="pure-controls">
+                            <button type="button" id="message-button" class="pure-button" data-i18next="events.message.show"></button>
+                        </div>
+                    </form>
+                </div>
             </section>
 
             <section class="pure-u-24-24 section section-frontoptions">
@@ -742,6 +861,115 @@
                         </div>
                         <div class="pure-controls">
                             <button type="button" class="pure-button status-button" data-i18next="settings.status.connect"></button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="box extras-only" id="sound-box">
+                    <h2 data-i18next="extras.sound.h2"></h2>
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <label for="sound-player-state" data-i18next="extras.sound.player"></label>
+                            <input id="sound-player-state" type="text" readonly>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="sound-enabled" data-i18next="extras.sound.enabled"></label>
+                            <label class="switch">
+                                <input type="checkbox" id="sound-enabled" class="extras-setting">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="pure-control-group">
+                            <label class="slider-label" for="sound-volume" data-i18next="extras.sound.volume"></label> <span class="value" id="sound-volume-value">0</span>
+                            <input id="sound-volume" class="extras-setting" type="range" min="0" max="100" step="5">
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="sound-volume-by-time" data-i18next="extras.sound.by-time"></label>
+                            <label class="switch">
+                                <input type="checkbox" id="sound-volume-by-time" class="extras-setting">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="sound-weekend-later" data-i18next="extras.sound.weekend"></label>
+                            <label class="switch">
+                                <input type="checkbox" id="sound-weekend-later" class="extras-setting">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="sound-quiet" data-i18next="extras.sound.quiet"></label>
+                            <label class="switch">
+                                <input type="checkbox" id="sound-quiet" class="extras-setting">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="sound-quiet-from" data-i18next="extras.sound.quiet-time"></label>
+                            <select id="sound-quiet-from" class="extras-setting hour-select" size="1"></select>
+                            <select id="sound-quiet-to" class="extras-setting hour-select" size="1" aria-label="bis"></select>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="sound-voice" data-i18next="extras.sound.voice"></label>
+                            <select id="sound-voice" class="extras-setting" size="1">
+                                <option value="0">Vicki</option>
+                                <option value="1">Hans</option>
+                            </select>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="sound-startup" data-i18next="extras.sound.startup"></label>
+                            <label class="switch">
+                                <input type="checkbox" id="sound-startup" class="extras-setting">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <fieldset>
+                            <legend data-i18next="extras.sound.pins"></legend>
+                            <div class="pure-control-group">
+                                <label for="sound-rx-pin" data-i18next="extras.sound.rx-pin"></label>
+                                <input id="sound-rx-pin" class="extras-setting" type="number" min="0" max="255" step="1">
+                            </div>
+                            <div class="pure-control-group">
+                                <label for="sound-tx-pin" data-i18next="extras.sound.tx-pin"></label>
+                                <input id="sound-tx-pin" class="extras-setting" type="number" min="0" max="255" step="1">
+                            </div>
+                            <div class="pure-control-group">
+                                <label for="sound-busy-pin" data-i18next="extras.sound.busy-pin"></label>
+                                <input id="sound-busy-pin" class="extras-setting" type="number" min="0" max="255" step="1">
+                            </div>
+                            <div class="pure-controls">
+                                <button type="button" id="sound-reset-button" class="pure-button button-secondary" data-i18next="extras.sound.reset"></button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+
+                <div class="box extras-only" id="climate-box">
+                    <h2 data-i18next="extras.climate.h2"></h2>
+                    <form class="pure-form pure-form-aligned">
+                        <div class="pure-control-group">
+                            <label for="climate-sensor" data-i18next="extras.climate.sensor"></label>
+                            <input id="climate-sensor" type="text" readonly>
+                        </div>
+                        <div class="pure-control-group climate-only">
+                            <label for="climate-temperature" data-i18next="extras.climate.temperature"></label>
+                            <input id="climate-temperature" type="text" readonly>
+                        </div>
+                        <div class="pure-control-group climate-only">
+                            <label for="climate-humidity" data-i18next="extras.climate.humidity"></label>
+                            <input id="climate-humidity" type="text" readonly>
+                        </div>
+                        <div class="pure-control-group climate-only">
+                            <label for="climate-pressure" data-i18next="extras.climate.pressure"></label>
+                            <input id="climate-pressure" type="text" readonly>
+                        </div>
+                        <div class="pure-control-group climate-only">
+                            <label for="climate-altitude" data-i18next="extras.climate.altitude"></label>
+                            <input id="climate-altitude" class="extras-setting" type="number" min="-500" max="9000" step="1">
+                        </div>
+                        <div class="pure-control-group climate-only">
+                            <label for="climate-offset" data-i18next="extras.climate.offset"></label>
+                            <input id="climate-offset" class="extras-setting" type="number" min="-20" max="20" step="0.1">
                         </div>
                     </form>
                 </div>
@@ -1003,6 +1231,7 @@
 <script src="./i18nextBrowserLanguageDetector.min.js"></script>
 <script src="./iro.min.js"></script>
 <script src="./script.js"></script>
+<script src="./extras.js"></script>
 <script src="./language/en.js"></script>
 <script src="./language/de.js"></script>
 <script src="./language/nl.js"></script>

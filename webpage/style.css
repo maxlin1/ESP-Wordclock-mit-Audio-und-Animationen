@@ -961,3 +961,135 @@ input:checked + .slider::before {
         scroll-behavior: auto !important;
     }
 }
+
+/*
+ * Extras (sound, animations, events) of this fork
+ */
+
+.extras-only {
+    display: none !important;
+}
+
+.extras-collapsed {
+    display: none !important;
+}
+
+.extras-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin-top: 0.8em;
+}
+
+.pure-form-aligned .extras-buttons {
+    display: inline-flex;
+    margin-top: 0;
+}
+
+.pure-control-group > select + .pure-button {
+    margin-left: 0.5em;
+}
+
+.pure-button.button-secondary {
+    background: var(--app-surface-solid);
+    color: var(--app-blue);
+    border: 1px solid var(--app-border-strong);
+    box-shadow: var(--app-shadow-soft);
+}
+
+.pure-button.button-danger {
+    background: var(--app-surface-solid);
+    color: #b33a3a;
+    border: 1px solid rgb(179 58 58 / 30%);
+    box-shadow: none;
+}
+
+label.pure-button {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.hidden-input {
+    display: none;
+}
+
+.hour-select {
+    width: 6.5em;
+}
+
+.hour-chime-weekdays {
+    margin: 0.4em 0 0.6em;
+    padding: 0.4em 0;
+    border-top: 1px dashed var(--app-border);
+    border-bottom: 1px dashed var(--app-border);
+}
+
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    margin: 1em 0;
+}
+
+.events-empty {
+    color: var(--app-text-muted);
+}
+
+.event-card {
+    padding: 0.9em;
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius);
+    background: rgb(255 255 255 / 60%);
+}
+
+.event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8em, 1fr));
+    gap: 0.6em 0.8em;
+}
+
+.event-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    font-size: 0.9em;
+    color: var(--app-text-muted);
+}
+
+.event-field-wide {
+    grid-column: 1 / -1;
+}
+
+.event-field input,
+.event-field select {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 2.4em;
+    padding: 0.4em 0.5em;
+    font-size: 1rem;
+    color: var(--app-text);
+    border: 1px solid var(--app-border-strong);
+    border-radius: 4px;
+    background: var(--app-surface-solid);
+}
+
+.extras-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 1.5em;
+    z-index: 1000;
+    transform: translateX(-50%);
+    padding: 0.6em 1.1em;
+    border-radius: var(--app-radius);
+    background: var(--menu-bg-solid);
+    color: #fff;
+    box-shadow: var(--app-shadow);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.extras-toast.visible {
+    opacity: 1;
+}

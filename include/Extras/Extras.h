@@ -4,8 +4,8 @@
  * "Extras" of this fork: sound with a DFPlayer Mini (hourly chime, time
  * announcement, event sounds), the animations of Manfred Hofmann's
  * Wortuhr_mp3 project, events (birthdays, Christmas, New Year ...) and a
- * BME280/BMP280 sensor. Everything can be controlled on the web page
- * http://<clock-ip>:81/extras and via MQTT / Home Assistant.
+ * BME280/BMP280 sensor. Everything can be controlled on the clock's web page
+ * (JSON API on port 81, see Extras.cpp) and via MQTT / Home Assistant.
  *
  * On boards without extras (ESP8266) all functions are empty.
  */

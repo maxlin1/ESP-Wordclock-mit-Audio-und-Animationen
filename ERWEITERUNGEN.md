@@ -66,12 +66,19 @@ esptool.py --chip esp32 write_flash 0x0 wortuhr-esp32-komplett.bin
 3. Prüfen: **Layout** „🇩🇪 10 × 11 Uhr“, **LED-Typ** „WS2812 GRB“.
 4. **Smart Home → MQTT**: Broker (z. B. die IP von Home Assistant), Benutzer,
    Passwort eintragen, MQTT aktivieren, „Sende HA Discovery“ anklicken.
-5. Im Menü **„Sound & Animationen“** (oder direkt
-   `http://<IP-der-Uhr>:81/extras`) Lautstärke, Stundengong, Nachtruhe usw.
-   einstellen. Die Einstellungen werden sofort gespeichert.
-6. Unter **Ereignisse → events.json importieren** die `events.json` der alten
-   Uhr auswählen, dann sind Geburtstage & Co. wieder da.
-7. Unter **Hardware** die Höhe über dem Meer eintragen (für den Luftdruck).
+5. Die Erweiterungen sind in die normale Webseite der Uhr eingebaut, die
+   Einstellungen werden sofort gespeichert:
+   - **Funktionen → Übergang → „Zur vollen Stunde“**: Stundengong (Klang,
+     auch pro Wochentag), Animation zur vollen Stunde
+   - **Funktionen → Animationen & Ansagen**: Animationen und Töne abspielen,
+     Uhrzeit, Datum und Raumklima ansagen
+   - **Ereignisse**: Geburtstage, Feiertage usw. mit Uhrzeit, Wiederholung,
+     Text, Ton und Animationen; „events.json importieren“ übernimmt die
+     Ereignisse der alten Uhr
+   - **Einstellungen → Sound**: Lautstärke, Nachtruhe, Sprecher, Anschlüsse
+     des MP3-Players
+   - **Einstellungen → Raumklima**: Messwerte, Höhe über dem Meer (für den
+     Luftdruck), Temperatur-Korrektur
 
 ## 4. Updates
 
@@ -94,7 +101,7 @@ Nach dem Verbinden erscheint die Uhr als Gerät mit zusätzlichen Entitäten:
 | Gong-Klang | Auswahl | Klang für alle Wochentage |
 | Sprecher | Auswahl | Vicki / Hans |
 | Nachtruhe | Schalter | keine Töne in der eingestellten Zeit |
-| Uhrzeit-Animationen | Schalter | Animationen `Zhhmm` |
+| Animation zur vollen Stunde | Auswahl | Aus, Uhrzeit-Animationen (`Zhhmm`), Zufall oder eine bestimmte Animation |
 | Ereignisse | Schalter | Geburtstage usw. |
 | Animation abspielen | Auswahl | spielt die gewählte Animation |
 | Sound abspielen (Nr.) | Zahl | spielt die mp3 mit dieser Nummer |
@@ -121,7 +128,8 @@ Weitere MQTT-Befehle (Topic jeweils `<Topic der Uhr>/extras/<Befehl>/set`):
 | `announce` | `time`, `date` oder `climate` |
 | `stop` | beliebig |
 | `volume` | `0`–`100` |
-| `sound`, `chime`, `quiet`, `time_animations`, `events` | `ON` / `OFF` |
+| `hour_animation` | `Aus`, `Uhrzeit-Animationen`, `Zufall` oder Name |
+| `sound`, `chime`, `quiet`, `events` | `ON` / `OFF` |
 
 Für Skripte gibt es außerdem den Aufruf der alten Uhr:
 `http://<IP-der-Uhr>:81/setEvent?text=Hallo&audio=701&preani=HERZ&postani=HERZ`

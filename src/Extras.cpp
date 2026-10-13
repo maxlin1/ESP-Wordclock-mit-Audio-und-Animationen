@@ -9,7 +9,6 @@
 #include "Extras/AnimationPlayer.h"
 #include "Extras/Bme280.h"
 #include "Extras/DfPlayer.h"
-#include "Extras/ExtrasPage.h"
 #include "Led.h"
 
 #include <Preferences.h>
@@ -97,7 +96,9 @@ struct Settings {
     bool chime = false;
     bool singleGong = false;
     uint8_t chimeSet[7] = {8, 0, 1, 2, 3, 4, 5}; // Sunday ... Saturday
-    bool timeAnimations = true;
+    // Animation at the full hour: "" = off, "Z" = time animations "Zhhmm"
+    // (also at other minutes), "*" = random animation, otherwise a name.
+    String hourAnimation = "Z";
     bool events = true;
     bool startupSound = true;
     uint8_t rxPin = EXTRAS_DFPLAYER_RX_PIN;
@@ -113,9 +114,11 @@ struct Event {
     uint16_t year = 0; // 0 = every year; otherwise "YY" in the text = age
     String text;
     uint16_t sound = 0;
-    String pre;            // animation before the text
-    String post;           // animation after the text
-    uint8_t interval = 60; // minutes
+    String pre;       // animation before the text
+    String post;      // animation after the text
+    uint8_t hour = 8; // time of the first show on that day
+    uint8_t minute = 0;
+    uint8_t interval = 0; // repeat every n minutes, 0 = only once
 };
 
 constexpr uint8_t MAX_EVENTS = 20;
@@ -350,6 +353,8 @@ void announceClimate() {
     }
 }
 
+void playChime(const struct tm &tm);
+
 bool announce(const String &what) {
     if (!audio.isStarted()) {
         return false;
@@ -361,6 +366,12 @@ bool announce(const String &what) {
         announceDate();
     } else if (what == "climate") {
         announceClimate();
+    } else if (what == "chime") {
+        struct tm tm;
+        if (!localTime(tm)) {
+            return false;
+        }
+        playChime(tm);
     } else {
         return false;
     }
@@ -534,8 +545,12 @@ const Event *dueEvent(const struct tm &tm) {
         if (e.month != tm.tm_mon + 1 || e.day != tm.tm_mday) {
             continue;
         }
-        const uint8_t interval = e.interval == 0 ? 60 : e.interval;
-        if (minuteOfDay % interval == 0) {
+        const uint16_t start = e.hour * 60 + e.minute;
+        if (minuteOfDay < start) {
+            continue;
+        }
+        if (e.interval == 0 ? minuteOfDay == start
+                            : (minuteOfDay - start) % e.interval == 0) {
             return &e;
         }
     }
@@ -562,10 +577,22 @@ void onNewMinute(const struct tm &tm) {
         return;
     }
 
-    if (cfg.timeAnimations) {
+    if (cfg.hourAnimation == "Z") {
+        // Manfred's time animations, e.g. "Z0800" at 08:00
         char name[8];
         snprintf(name, sizeof(name), "Z%02d%02d", tm.tm_hour, tm.tm_min);
         playAnimation(name);
+    } else if (tm.tm_min == 0 && cfg.hourAnimation == "*") {
+        // random animation, but not the time animations "Zhhmm"
+        for (uint8_t tries = 0; tries < 20; tries++) {
+            const uint8_t i = random(0, AnimationPlayer::count());
+            if (AnimationPlayer::name(i)[0] != 'Z') {
+                startShow(i, "", -1, 0);
+                break;
+            }
+        }
+    } else if (tm.tm_min == 0 && cfg.hourAnimation.length() > 0) {
+        playAnimation(cfg.hourAnimation);
     }
 }
 
@@ -589,7 +616,7 @@ void settingsToJson(JsonObject o) {
     for (uint8_t s : cfg.chimeSet) {
         sets.add(s);
     }
-    o["timeAnimations"] = cfg.timeAnimations;
+    o["hourAnimation"] = cfg.hourAnimation;
     o["events"] = cfg.events;
     o["startupSound"] = cfg.startupSound;
     o["rxPin"] = cfg.rxPin;
@@ -628,7 +655,13 @@ void settingsFromJson(JsonObjectConst o) {
             cfg.chimeSet[i] = (s >= 0 && s < SOUND_SET_COUNT) ? s : 0;
         }
     }
-    cfg.timeAnimations = o["timeAnimations"] | cfg.timeAnimations;
+    if (o.containsKey("hourAnimation")) {
+        cfg.hourAnimation =
+            String(static_cast<const char *>(o["hourAnimation"] | ""))
+                .substring(0, 20);
+    } else if (o.containsKey("timeAnimations")) { // older settings
+        cfg.hourAnimation = (o["timeAnimations"] | false) ? "Z" : "";
+    }
     cfg.events = o["events"] | cfg.events;
     cfg.startupSound = o["startupSound"] | cfg.startupSound;
     cfg.rxPin = pinOrNone(o["rxPin"], cfg.rxPin);
@@ -650,6 +683,8 @@ void eventsToJson(JsonArray a) {
         o["sound"] = e.sound;
         o["pre"] = e.pre;
         o["post"] = e.post;
+        o["hour"] = e.hour;
+        o["minute"] = e.minute;
         o["interval"] = e.interval;
     }
 }
@@ -683,9 +718,16 @@ bool eventsFromJson(JsonVariantConst root) {
         e.sound = manfred ? (o["audionr"] | 0) : (o["sound"] | 0);
         e.pre = manfred ? (o["preani"] | "") : (o["pre"] | "");
         e.post = manfred ? (o["postani"] | "") : (o["post"] | "");
-        const int interval =
-            manfred ? (o["intervall"] | 60) : (o["interval"] | 60);
-        e.interval = constrain(interval, 1, 255);
+        if (manfred) {
+            // The old clock showed events all day long in its interval.
+            e.hour = (e.month == 1 && e.day == 1) ? 0 : 8;
+            e.minute = 0;
+            e.interval = constrain(o["intervall"] | 60, 1, 255);
+        } else {
+            e.hour = constrain(o["hour"] | 0, 0, 23);
+            e.minute = constrain(o["minute"] | 0, 0, 59);
+            e.interval = constrain(o["interval"] | 0, 0, 255);
+        }
         if (e.month < 1 || e.month > 12 || e.day < 1 || e.day > 31) {
             continue;
         }
@@ -702,6 +744,7 @@ void setDefaultEvents() {
         Event e;
         e.month = m;
         e.day = d;
+        e.hour = (m == 1 && d == 1) ? 0 : 8;
         e.text = text;
         e.sound = sound;
         e.pre = pre;
@@ -784,7 +827,8 @@ void climateToJson(JsonObject o) {
 }
 
 //------------------------------------------------------------------------------
-// Web interface (port 81)
+// Web API on port 81. The settings are shown on the clock's main page
+// (port 80), so the responses allow cross-origin requests.
 //------------------------------------------------------------------------------
 
 bool authorized() {
@@ -797,24 +841,40 @@ bool authorized() {
     return true;
 }
 
+void allowCrossOrigin() {
+    httpServer.sendHeader("Access-Control-Allow-Origin", "*");
+    httpServer.sendHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    httpServer.sendHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
 void sendJson(const JsonDocument &doc, int code = 200) {
     String out;
     serializeJson(doc, out);
+    allowCrossOrigin();
     httpServer.send(code, "application/json", out);
 }
 
-void sendOk() { httpServer.send(200, "application/json", "{\"ok\":true}"); }
+void sendOk() {
+    allowCrossOrigin();
+    httpServer.send(200, "application/json", "{\"ok\":true}");
+}
 
 void sendError(const char *message) {
     String out = String("{\"ok\":false,\"error\":\"") + message + "\"}";
+    allowCrossOrigin();
     httpServer.send(400, "application/json", out);
 }
 
-void handlePage() {
-    if (!authorized()) {
-        return;
-    }
-    httpServer.send_P(200, "text/html", EXTRAS_PAGE);
+void handleOptions() {
+    allowCrossOrigin();
+    httpServer.send(204);
+}
+
+// The settings used to be on their own page; send old bookmarks to the clock.
+void handleOldPage() {
+    httpServer.sendHeader("Location",
+                          "http://" + WiFi.localIP().toString() + "/", true);
+    httpServer.send(302, "text/plain", "");
 }
 
 void handleGetAll() {
@@ -946,8 +1006,27 @@ void handleSetEvent() {
     sendOk();
 }
 
+// Shows an event right now (button "Testen" on the web page).
+void handleEventPreview() {
+    if (!authorized()) {
+        return;
+    }
+    const int index = httpServer.arg("index").toInt();
+    struct tm tm;
+    if (index < 0 || index >= static_cast<int>(events.size()) ||
+        !localTime(tm)) {
+        sendError("unknown event");
+        return;
+    }
+    runEvent(events[index], tm);
+    sendOk();
+}
+
 void registerWebRoutes() {
-    httpServer.on("/extras", HTTP_GET, handlePage);
+    httpServer.on("/extras", HTTP_GET, handleOldPage);
+    httpServer.on("/api/extras/settings", HTTP_OPTIONS, handleOptions);
+    httpServer.on("/api/extras/events", HTTP_OPTIONS, handleOptions);
+    httpServer.on("/api/extras/event", HTTP_GET, handleEventPreview);
     httpServer.on("/api/extras", HTTP_GET, handleGetAll);
     httpServer.on("/api/extras/settings", HTTP_POST, handlePostSettings);
     httpServer.on("/api/extras/events", HTTP_POST, handlePostEvents);
@@ -988,6 +1067,35 @@ const char *todaysChimeName() {
     const uint8_t day = localTime(tm) ? tm.tm_wday : 0;
     const uint8_t set = cfg.chimeSet[day % 7];
     return set < SOUND_SET_COUNT ? SOUND_SETS[set].name : SOUND_SETS[0].name;
+}
+
+constexpr const char *HOUR_ANIMATION_OFF = "Aus";
+constexpr const char *HOUR_ANIMATION_TIME = "Uhrzeit-Animationen";
+constexpr const char *HOUR_ANIMATION_RANDOM = "Zufall";
+
+const char *hourAnimationLabel() {
+    if (cfg.hourAnimation.length() == 0) {
+        return HOUR_ANIMATION_OFF;
+    }
+    if (cfg.hourAnimation == "Z") {
+        return HOUR_ANIMATION_TIME;
+    }
+    if (cfg.hourAnimation == "*") {
+        return HOUR_ANIMATION_RANDOM;
+    }
+    const int16_t i = AnimationPlayer::find(cfg.hourAnimation.c_str());
+    return i >= 0 ? AnimationPlayer::name(i) : HOUR_ANIMATION_OFF;
+}
+
+String hourAnimationFromLabel(const char *label) {
+    if (strcmp(label, HOUR_ANIMATION_TIME) == 0) {
+        return "Z";
+    }
+    if (strcmp(label, HOUR_ANIMATION_RANDOM) == 0) {
+        return "*";
+    }
+    const int16_t i = AnimationPlayer::find(label);
+    return i >= 0 ? String(AnimationPlayer::name(i)) : String();
 }
 
 // The component id is passed as String: ArduinoJson copies String keys, while
@@ -1134,8 +1242,8 @@ bool mqttHandle(const String &fullTopic, const char *payload) {
     } else if (key == "chime" && parseOnOff(payload, value)) {
         cfg.chime = value;
         changed = true;
-    } else if (key == "time_animations" && parseOnOff(payload, value)) {
-        cfg.timeAnimations = value;
+    } else if (key == "hour_animation") {
+        cfg.hourAnimation = hourAnimationFromLabel(payload);
         changed = true;
     } else if (key == "events" && parseOnOff(payload, value)) {
         cfg.events = value;
@@ -1194,8 +1302,6 @@ bool mqttHandle(const String &fullTopic, const char *payload) {
 void mqttAddDiscovery(JsonObject cmps, const String &id, const String &base) {
     addSwitch(cmps, id, base, "sound", "Sound", "mdi:volume-high");
     addSwitch(cmps, id, base, "chime", "Stundengong", "mdi:bell-ring");
-    addSwitch(cmps, id, base, "time_animations", "Uhrzeit-Animationen",
-              "mdi:animation-play");
     addSwitch(cmps, id, base, "events", "Ereignisse", "mdi:calendar-star");
     addSwitch(cmps, id, base, "quiet", "Nachtruhe", "mdi:sleep");
 
@@ -1245,6 +1351,24 @@ void mqttAddDiscovery(JsonObject cmps, const String &id, const String &base) {
     }
     {
         JsonObject c =
+            addComponent(cmps, id, "extras_hour_animation", "select",
+                         "Animation zur vollen Stunde", "mdi:animation-play");
+        c["ent_cat"] = "config";
+        c["stat_t"] = base + "/extras/state";
+        c["val_tpl"] = "{{ value_json.hour_animation }}";
+        c["cmd_t"] = base + "/extras/hour_animation/set";
+        JsonArray options = c.createNestedArray("options");
+        options.add(HOUR_ANIMATION_OFF);
+        options.add(HOUR_ANIMATION_TIME);
+        options.add(HOUR_ANIMATION_RANDOM);
+        for (uint8_t i = 0; i < AnimationPlayer::count(); i++) {
+            if (AnimationPlayer::name(i)[0] != 'Z') {
+                options.add(AnimationPlayer::name(i));
+            }
+        }
+    }
+    {
+        JsonObject c =
             addComponent(cmps, id, "extras_animation", "select",
                          "Animation abspielen", "mdi:movie-open-play");
         c["stat_t"] = base + "/extras/state";
@@ -1282,10 +1406,10 @@ void mqttPublishState() {
     if (!mqttClient.connected()) {
         return;
     }
-    StaticJsonDocument<384> doc;
+    StaticJsonDocument<512> doc;
     doc["sound"] = onOff(cfg.sound);
     doc["chime"] = onOff(cfg.chime);
-    doc["time_animations"] = onOff(cfg.timeAnimations);
+    doc["hour_animation"] = hourAnimationLabel();
     doc["events"] = onOff(cfg.events);
     doc["quiet"] = onOff(cfg.quiet);
     doc["volume"] = cfg.volume;
@@ -1294,7 +1418,7 @@ void mqttPublishState() {
     doc["animation"] = player.isRunning() ? player.currentName() : "-";
     doc["track"] = audio.currentTrack();
     doc["dfplayer"] = audio.isStarted() ? "ON" : "OFF";
-    char buffer[384];
+    char buffer[512];
     serializeJson(doc, buffer);
     mqttClient.publish(topic("state").c_str(), buffer, true);
     publishClimate();

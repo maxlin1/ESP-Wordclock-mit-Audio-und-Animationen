@@ -369,6 +369,103 @@ let TRANSLATION_EN_US = {
 			"discovery": "Send HA Discovery"
 		}
 	},
+	"extras": {
+		"hour": {
+			"legend": "At the full hour",
+			"chime": "Hourly chime",
+			"sound": "Sound",
+			"per-weekday": "Different per weekday",
+			"single": "Single stroke only",
+			"voice24h": "Speakers use 24-hour format",
+			"animation": "Animation",
+			"off": "Off",
+			"time-animations": "Time animations (Z0800 …)",
+			"random": "Random",
+			"test": "Test chime"
+		},
+		"play": {
+			"h2": "Animations & announcements",
+			"animation": "Animation",
+			"sound": "Sound",
+			"start": "Play",
+			"announce": "Announcement",
+			"time": "Time",
+			"date": "Date",
+			"climate": "Room climate",
+			"stop": "Stop"
+		},
+		"sound": {
+			"h2": "Sound",
+			"player": "MP3 player",
+			"ready": "ready",
+			"playing": "playing",
+			"missing": "not found",
+			"enabled": "Sound on",
+			"volume": "Volume",
+			"by-time": "Quieter at night",
+			"weekend": "Weekend: loud 2 h later",
+			"quiet": "Quiet hours (no sound)",
+			"quiet-time": "Quiet hours from / to",
+			"voice": "Speaker",
+			"startup": "Sound at power-on",
+			"pins": "MP3 player connection (GPIO, 255 = not connected)",
+			"rx-pin": "MP3 player TX → ESP",
+			"tx-pin": "ESP → MP3 player RX",
+			"busy-pin": "BUSY",
+			"reset": "Restart MP3 player"
+		},
+		"climate": {
+			"h2": "Room climate",
+			"sensor": "Sensor",
+			"none": "not found",
+			"temperature": "Temperature",
+			"humidity": "Humidity",
+			"pressure": "Pressure",
+			"altitude": "Altitude (m)",
+			"offset": "Temperature correction (°C)"
+		},
+		"saved": "Saved",
+		"error": "Error",
+		"offline": "No connection"
+	},
+	"events": {
+		"h1": "Events",
+		"list": {
+			"h2": "Events",
+			"help": "On the given day the clock shows the animation and the scrolling text and plays the sound at the chosen time – repeated if you like. If a year is entered, “YY” in the text is replaced by the age.",
+			"enabled": "Show events",
+			"add": "+ Event",
+			"save": "Save",
+			"import": "Import events.json",
+			"empty": "No events yet."
+		},
+		"fields": {
+			"date": "Date",
+			"day": "Day",
+			"month": "Month",
+			"year": "Year of birth",
+			"year-placeholder": "optional",
+			"time": "Time",
+			"repeat": "Repeat",
+			"once": "once",
+			"every": "every",
+			"minutes": "min",
+			"text": "Text",
+			"sound": "Sound",
+			"pre": "Animation before",
+			"post": "Animation after",
+			"none": "– none –",
+			"test": "Test",
+			"delete": "Delete"
+		},
+		"message": {
+			"h2": "Show a message now",
+			"help": "Shows a scrolling text with sound and animations right away.",
+			"show": "Show"
+		},
+		"months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+		"weekdays": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+	},
 	"about": {
 		"h1": "About",
 		"text-general": "The software of this Word Clock is based on the Word Clock by <a href='https://web.archive.org/web/20180422160812/http://www.ulrichradig.de/home/index.php/projekte/wort-uhr-neu'>Ulrich Radig (as of 2019)</a> and is now being further developed <a href='https://github.com/ESPWortuhr/Wortuhr/graphs/contributors'>by the community</a> on <a href='https://github.com/ESPWortuhr/Wortuhr'>GitHub</a>.",
