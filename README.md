@@ -51,19 +51,34 @@ Die Erweiterungen sind in die bestehenden Seiten der Uhr eingebaut.
 
 | Funktion | WeMos D1 mini (alt) | ESP32 D1 mini (neu) | Anschluss |
 |---|---|---|---|
-| LED-Daten | D8 | GPIO 5 | DIN des LED-Streifens (optional über 330 Ω) |
-| ESP → DFPlayer | D5 | GPIO 18 | DFPlayer RX über 1 kΩ |
-| DFPlayer → ESP | D3 | GPIO 17 | DFPlayer TX über 1 kΩ |
-| DFPlayer BUSY | D0 | GPIO 26 | BUSY (LOW, solange ein Ton spielt) |
-| I²C SDA | D2 | GPIO 21 | SDA des BME280 |
+| LED-Daten | D8 | GPIO 5 | DIN des LED-Streifens |
+| ESP → DFPlayer | D5 | GPIO 18 | RX des DFPlayers (direkt) |
+| DFPlayer → ESP | D3 | GPIO 17 | TX des DFPlayers (direkt) |
+| DFPlayer BUSY | D0 | GPIO 26 | BUSY über 2,2 kΩ (LOW, solange ein Ton spielt) |
 | I²C SCL | D1 | GPIO 22 | SCL des BME280 |
+| I²C SDA | D2 | GPIO 21 | SDA des BME280 |
+| LDR (optional) | A0 | GPIO 36 | Spannungsteiler LDR / 4,7 kΩ |
 | Versorgung | 5V / GND | 5V / GND | Netzteil 5 V (≥ 4 A für 114 LEDs) |
 
-- **ESP32 D1 mini**: Nur die D1-mini-kompatible (innere) Stiftreihe bestücken, dann passt er in den Sockel des WeMos D1 mini. Auf die Ausrichtung achten: TXD/RXD dorthin, wo beim WeMos TX/RX waren.
+**Bauteile auf der Platine** (nach Manfreds Platinenplan `Platine_Plan_Wortuhr_mp3.pdf`):
+
+| Bauteil | Farbringe | sitzt zwischen | wofür |
+|---|---|---|---|
+| 2,2 kΩ | rot-rot-rot-gold | D0 und BUSY des DFPlayers | Schutzwiderstand in der BUSY-Leitung |
+| 3,9 Ω | orange-weiß-gold-gold | SPK1 und Lautsprecher | begrenzt den Strom zum Lautsprecher |
+| 4,7 kΩ | gelb-violett-rot-gold | A0 und GND | Spannungsteiler für den LDR (Helligkeitssensor) |
+| 2,2 kΩ + 4,7 kΩ | | D7 und Touch-Sensor TTP223 | nur bei Manfreds „Sensor-Modus“; diese Firmware nutzt den Touch-Sensor nicht |
+| Elko 1800 µF / 6,3 V | | +5 V und GND | puffert die Versorgung |
+| Diode | | Eingang +5 V | Verpolschutz |
+
+Die Datenleitungen zwischen ESP und DFPlayer (RX/TX) haben **keine** Widerstände.
+
+- **ESP32 D1 mini**: Nur die D1-mini-kompatible (innere) Stiftreihe wird gebraucht, dann passt er in den Sockel des WeMos D1 mini. Auf die Ausrichtung achten: 5V/GND und 3V3 müssen auf denselben Plätzen landen wie beim WeMos.
 - **DFPlayer Mini** an 5 V, Lautsprecher (3 W, 4–8 Ω) an SPK1/SPK2. Auf der microSD-Karte liegen die Sounds im Ordner `mp3` (`0001_….mp3` …), wie bei Wortuhr_mp3.
 - **BME280 / BMP280** an 3,3 V. Ein BMP280 liefert keine Luftfeuchte.
 - **LED-Kette**: 114 LEDs (110 Buchstaben + 4 Minuten-LEDs). Die Minuten-LEDs sind die ersten 4 LEDs der Kette, danach folgen die Buchstaben in Schlangenlinie von oben links (`MINUTE_LEDS_FIRST` in `include/ExtrasConfig.h`).
 - Alle Pins lassen sich später in der Weboberfläche ändern (Einstellungen → Hardware-Pins bzw. Sound).
+- Das Schaltbild wird mit `python3 tools/draw_wiring.py` erzeugt.
 
 ## Installation
 
