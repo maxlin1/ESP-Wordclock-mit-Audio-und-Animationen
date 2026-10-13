@@ -454,6 +454,7 @@ let TRANSLATION_EN_US = {
 			"sound": "Sound",
 			"pre": "Animation before",
 			"post": "Animation after",
+			"random": "Random",
 			"none": "– none –",
 			"test": "Test",
 			"delete": "Delete"

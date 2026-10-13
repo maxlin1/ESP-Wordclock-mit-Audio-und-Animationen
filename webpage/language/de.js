@@ -454,6 +454,7 @@ let TRANSLATION_DE_DE = {
 			"sound": "Ton",
 			"pre": "Animation vorher",
 			"post": "Animation nachher",
+			"random": "Zufällig",
 			"none": "– keine –",
 			"test": "Testen",
 			"delete": "Löschen"

@@ -211,10 +211,73 @@ uint8_t volume30(uint8_t volume100 = 0) {
 
 uint16_t voiceBase() { return cfg.voice == 0 ? BASE_VICKI : BASE_HANS; }
 
+//------------------------------------------------------------------------------
+// Random sound from a category: numbers from 3001 on stand for "a random
+// track of this category" (e.g. 3001 = a random birthday song).
+//------------------------------------------------------------------------------
+
+struct TrackRange {
+    uint16_t code;
+    uint16_t first;
+    uint16_t last;
+};
+
+constexpr uint16_t RANDOM_SOUND_BASE = 3000;
+
+const TrackRange RANDOM_SOUND_RANGES[] = {
+    {3001, 720, 726}, // Geburtstag
+    {3002, 710, 719}, // Weihnachten
+    {3003, 730, 733}, // Silvester
+    {3004, 761, 769}, // Natur
+    {3005, 811, 839}, // Tiere
+    {3006, 841, 869}, // Musik (no 870 in the sound package)
+    {3006, 871, 897}, // Musik
+};
+
+bool isRandomSound(uint16_t code) {
+    for (const TrackRange &r : RANDOM_SOUND_RANGES) {
+        if (r.code == code) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool isValidSound(int track) {
+    return (track > 0 && track < RANDOM_SOUND_BASE) || isRandomSound(track);
+}
+
+// Returns the track to play: a random track of the category for the codes
+// above, otherwise the number itself.
+uint16_t resolveTrack(uint16_t track) {
+    uint16_t count = 0;
+    for (const TrackRange &r : RANDOM_SOUND_RANGES) {
+        if (r.code == track) {
+            count += r.last - r.first + 1;
+        }
+    }
+    if (count == 0) {
+        return track;
+    }
+    uint16_t pick = random(0, count);
+    for (const TrackRange &r : RANDOM_SOUND_RANGES) {
+        if (r.code != track) {
+            continue;
+        }
+        const uint16_t size = r.last - r.first + 1;
+        if (pick < size) {
+            return r.first + pick;
+        }
+        pick -= size;
+    }
+    return track;
+}
+
 void playTrack(uint16_t track, bool interrupt = false, uint8_t volume100 = 0) {
     if (track == 0 || !audio.isStarted()) {
         return;
     }
+    track = resolveTrack(track);
     if (interrupt) {
         audio.playNow(track, volume30(volume100));
     } else {
@@ -946,7 +1009,7 @@ void handlePlay() {
         return;
     }
     const int track = httpServer.arg("track").toInt();
-    if (track <= 0 || track > 2999 || !audio.isStarted()) {
+    if (!isValidSound(track) || !audio.isStarted()) {
         sendError("invalid track or no DFPlayer");
         return;
     }
@@ -1274,7 +1337,7 @@ bool mqttHandle(const String &fullTopic, const char *payload) {
         stopShow();
     } else if (key == "play") {
         const int track = atoi(payload);
-        if (track > 0 && track <= 2999) {
+        if (isValidSound(track)) {
             playTrack(track, true);
         }
     } else if (key == "animation") {
@@ -1323,7 +1386,7 @@ void mqttAddDiscovery(JsonObject cmps, const String &id, const String &base) {
         c["stat_t"] = base + "/extras/state";
         c["val_tpl"] = "{{ value_json.track }}";
         c["min"] = 0;
-        c["max"] = 2999;
+        c["max"] = 3006; // 3001-3006: random sound of a category
         c["mode"] = "box";
     }
     {

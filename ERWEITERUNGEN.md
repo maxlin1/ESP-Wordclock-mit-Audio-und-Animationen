@@ -123,7 +123,7 @@ Weitere MQTT-Befehle (Topic jeweils `<Topic der Uhr>/extras/<Befehl>/set`):
 
 | Befehl | Payload |
 |---|---|
-| `play` | Nummer der mp3, z. B. `720` |
+| `play` | Nummer der mp3, z. B. `720`; zufällig aus einer Kategorie: `3001` Geburtstag, `3002` Weihnachten, `3003` Silvester, `3004` Natur, `3005` Tiere, `3006` Musik |
 | `animation` | Name, z. B. `FEUERWERK` |
 | `announce` | `time`, `date` oder `climate` |
 | `stop` | beliebig |
