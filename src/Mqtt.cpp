@@ -93,6 +93,14 @@ static void addDiagSensor(JsonObject components, const String &deviceId,
     c["ent_cat"] = "diagnostic";
     c["stat_t"] = String(G.mqtt.topic) + "/diagnostics";
     c["val_tpl"] = valueTemplate;
+    // Only useful with a light sensor (LDR / BH1750): hidden by default.
+    if (!strcmp(id, "lux") || !strcmp(id, "led_gain") ||
+        !strcmp(id, "auto_brightness_source"))
+        c["en"] = false;
+    if (!strcmp(id, "uptime")) {
+        c["suggested_unit_of_measurement"] = "h";
+        c["sug_dsp_prc"] = 1;
+    }
 }
 
 // Clear a retained per-entity discovery config left behind by firmware versions
@@ -1036,18 +1044,23 @@ void Mqtt::sendDiscovery() {
         text["max"] = sizeof(G.scrollingText) - 1;
     }
 
-    // Notify entity: pushes a message to the marquee. It targets the JSON
-    // command topic with both the text and the Lauftext effect, so the
-    // clock switches to scrolling-text mode and shows the message immediately.
+    // Notify entity: shows a message as scrolling text. With the extras it is
+    // shown once and the clock returns to the time afterwards; without them
+    // the clock switches to the scrolling-text mode.
     {
         JsonObject notify = cmps.createNestedObject("message");
         notify["p"] = "notify";
         notify["uniq_id"] = unique_id + "_message";
-        notify["name"] = "Lauftext sofort anzeigen";
+        notify["name"] = "Kurznachricht";
         notify["ic"] = "mdi:message-text";
+#if EXTRAS_ENABLED
+        notify["cmd_t"] = base + "/extras/event/set";
+        notify["cmd_tpl"] = "{{ {'text': value} | tojson }}";
+#else
         notify["cmd_t"] = base + "/cmd";
         notify["cmd_tpl"] = "{\"scrolling_text\": \"{{ value }}\", \"effect\": "
                             "\"Lauftext\"}";
+#endif
     }
 
     // Number entity for animation/effect speed.
