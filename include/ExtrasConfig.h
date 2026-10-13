@@ -19,8 +19,8 @@
  *   I2C SDA           D2              GPIO 21  (SDA_PIN_ESP32 in Config.h)
  *   I2C SCL           D1              GPIO 22  (SCL_PIN_ESP32 in Config.h)
  *
- * All extras pins can also be changed later on the web page
- * http://<clock-ip>:81/extras without recompiling.
+ * The DFPlayer pins can also be changed later on the clock's web page
+ * (Einstellungen -> Sound) without recompiling.
  */
 
 #include <Arduino.h> // defines ESP32 / CONFIG_IDF_TARGET_*

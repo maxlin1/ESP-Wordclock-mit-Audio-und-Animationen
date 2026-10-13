@@ -49,18 +49,6 @@ public:
                 //--                    "Sec-WebSocket-Version: 13\r\n"
                 "\r\n");
             sendHtmlCode(client, html_code, html_size);
-#ifdef ESP32
-        } else if (url.equals("/extras")) {
-            // The extras page lives on the web server on port 81.
-            String location =
-                "http://" + client->tcp->localIP().toString() + ":81/extras";
-            snprintf(buf, sizeof(buf),
-                     "HTTP/1.1 302 Found\r\n"
-                     "Location: %s\r\n"
-                     "Connection: close\r\n\r\n",
-                     location.c_str());
-            client->tcp->write(buf);
-#endif
         } else {
             snprintf(buf, sizeof(buf),
                      "HTTP/1.1 404 Not Found\r\n"

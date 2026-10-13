@@ -369,6 +369,103 @@ let TRANSLATION_DE_DE = {
 			"discovery": "Sende HA Discovery"
 		}
 	},
+	"extras": {
+		"hour": {
+			"legend": "Zur vollen Stunde",
+			"chime": "Stundengong",
+			"sound": "Klang",
+			"per-weekday": "Pro Wochentag verschieden",
+			"single": "Nur ein Schlag",
+			"voice24h": "Sprecher sagen 13–24 Uhr",
+			"animation": "Animation",
+			"off": "Aus",
+			"time-animations": "Uhrzeit-Animationen (Z0800 …)",
+			"random": "Zufällig",
+			"test": "Gong testen"
+		},
+		"play": {
+			"h2": "Animationen & Ansagen",
+			"animation": "Animation",
+			"sound": "Ton",
+			"start": "Abspielen",
+			"announce": "Ansage",
+			"time": "Uhrzeit",
+			"date": "Datum",
+			"climate": "Raumklima",
+			"stop": "Stopp"
+		},
+		"sound": {
+			"h2": "Sound",
+			"player": "MP3-Player",
+			"ready": "bereit",
+			"playing": "spielt",
+			"missing": "nicht gefunden",
+			"enabled": "Töne eingeschaltet",
+			"volume": "Lautstärke",
+			"by-time": "Nachts leiser",
+			"weekend": "Wochenende 2 Std. später laut",
+			"quiet": "Nachtruhe (keine Töne)",
+			"quiet-time": "Nachtruhe von / bis",
+			"voice": "Sprecher",
+			"startup": "Ton beim Einschalten",
+			"pins": "Anschluss des MP3-Players (GPIO, 255 = nicht verbunden)",
+			"rx-pin": "MP3-Player TX → ESP",
+			"tx-pin": "ESP → MP3-Player RX",
+			"busy-pin": "BUSY",
+			"reset": "MP3-Player neu starten"
+		},
+		"climate": {
+			"h2": "Raumklima",
+			"sensor": "Sensor",
+			"none": "nicht gefunden",
+			"temperature": "Temperatur",
+			"humidity": "Luftfeuchtigkeit",
+			"pressure": "Luftdruck",
+			"altitude": "Höhe über dem Meer (m)",
+			"offset": "Temperatur-Korrektur (°C)"
+		},
+		"saved": "Gespeichert",
+		"error": "Fehler",
+		"offline": "Keine Verbindung"
+	},
+	"events": {
+		"h1": "Ereignisse",
+		"list": {
+			"h2": "Ereignisse",
+			"help": "Am eingestellten Tag zeigt die Uhr zur gewählten Uhrzeit die Animation, den Lauftext und spielt den Ton ab – auf Wunsch wiederholt. Ist ein Jahr eingetragen, wird „YY“ im Text durch das Alter ersetzt.",
+			"enabled": "Ereignisse anzeigen",
+			"add": "+ Ereignis",
+			"save": "Speichern",
+			"import": "events.json importieren",
+			"empty": "Noch keine Ereignisse eingetragen."
+		},
+		"fields": {
+			"date": "Datum",
+			"day": "Tag",
+			"month": "Monat",
+			"year": "Geburtsjahr",
+			"year-placeholder": "optional",
+			"time": "Uhrzeit",
+			"repeat": "Wiederholen",
+			"once": "nur einmal",
+			"every": "alle",
+			"minutes": "Min.",
+			"text": "Text",
+			"sound": "Ton",
+			"pre": "Animation vorher",
+			"post": "Animation nachher",
+			"none": "– keine –",
+			"test": "Testen",
+			"delete": "Löschen"
+		},
+		"message": {
+			"h2": "Nachricht jetzt anzeigen",
+			"help": "Zeigt sofort einen Lauftext mit Ton und Animationen – praktisch zum Ausprobieren.",
+			"show": "Anzeigen"
+		},
+		"months": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+		"weekdays": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"]
+	},
 	"about": {
 		"h1": "Über",
 		"text-general": "Die Software dieser Wortuhr basiert auf der Wortuhr von <a href='https://web.archive.org/web/20180422160812/http://www.ulrichradig.de/home/index.php/projekte/wort-uhr-neu'>Ulrich Radig (Stand 2019)</a> und wird nun <a href='https://github.com/ESPWortuhr/Wortuhr/graphs/contributors'>von der Community</a> weiterentwickelt auf <a href='https://github.com/ESPWortuhr/Wortuhr'>GitHub</a>.",
