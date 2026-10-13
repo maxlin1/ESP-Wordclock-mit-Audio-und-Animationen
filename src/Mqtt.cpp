@@ -1022,27 +1022,6 @@ void Mqtt::sendDiscovery() {
             effectList.add(e.label);
     }
 
-    // Brightness as its own slider (0-100 %). It talks to the light's JSON
-    // command topic, so no extra handling is needed in the firmware.
-    {
-        JsonObject bri = cmps.createNestedObject("brightness");
-        bri["p"] = "number";
-        bri["uniq_id"] = unique_id + "_brightness";
-        bri["name"] = "Helligkeit";
-        bri["ic"] = "mdi:brightness-6";
-        bri["unit_of_meas"] = "%";
-        bri["min"] = 1;
-        bri["max"] = 100;
-        bri["step"] = 1;
-        bri["mode"] = "slider";
-        bri["stat_t"] = base + "/status";
-        bri["val_tpl"] =
-            "{{ ((value_json.brightness | int(0)) / 2.55) | round(0) | int }}";
-        bri["cmd_t"] = base + "/cmd";
-        bri["cmd_tpl"] = "{\"brightness\": {{ (value | float(0) * 2.55) | "
-                         "round(0) | int }}}";
-    }
-
     // Text entity for the scrolling text mode.
     {
         JsonObject text = cmps.createNestedObject("scrolltext");
