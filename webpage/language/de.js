@@ -450,10 +450,12 @@ let TRANSLATION_DE_DE = {
 			"once": "nur einmal",
 			"every": "alle",
 			"minutes": "Min.",
+			"until": "bis",
 			"text": "Text",
 			"sound": "Ton",
 			"pre": "Animation vorher",
 			"post": "Animation nachher",
+			"random": "Zufällig",
 			"none": "– keine –",
 			"test": "Testen",
 			"delete": "Löschen"

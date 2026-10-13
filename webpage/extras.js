@@ -12,12 +12,12 @@
 	// Named sounds of the Wortuhr_mp3 sound package (folder "mp3" on the SD card)
 	const SOUND_GROUPS = [
 		{ group: "Signale", sounds: [[700, "OK"], [701, "Magical"], [702, "Startup 1"], [703, "Startup 2"], [705, "Alarm"], [706, "Ticker"], [750, "Müllabfuhr"], [800, "Fail"], [801, "Neues Item"], [802, "Impact"], [803, "Slide"], [804, "Slide Impact"], [805, "Pong"], [806, "Snake"], [807, "Success"]] },
-		{ group: "Geburtstag", sounds: [[720, "Happy Birthday"], [721, "Geburtstag 2"], [722, "Geburtstag 3"], [723, "Geburtstag 4 (Marilyn)"], [724, "Geburtstag 5"], [725, "Geburtstag 6 (Zuckowski)"], [726, "Geburtstag 7 (Stevie Wonder)"]] },
-		{ group: "Weihnachten", sounds: [[710, "Merry Christmas"], [711, "Coca-Cola Christmas"], [712, "Jingle Bells"], [713, "We Wish You A Merry Christmas"], [714, "Kling, Glöckchen"], [715, "O Tannenbaum"], [716, "Ihr Kinderlein, kommet"], [717, "Fröhliche Weihnacht"], [718, "Alle Jahre wieder"], [719, "Stille Nacht"]] },
-		{ group: "Silvester", sounds: [[730, "ABBA – Happy New Year"], [731, "Feuerwerk (VW) 1"], [732, "Feuerwerk (VW) 2"], [733, "Feuerwerk"]] },
-		{ group: "Natur", sounds: [[761, "Vögel 1"], [762, "Vögel 2"], [763, "Vögel 3"], [764, "Urwald 1"], [765, "Urwald 2"], [766, "Urwald 3"], [767, "Meeresrauschen 1"], [768, "Meeresrauschen 2"], [769, "Meeresrauschen 3"]] },
-		{ group: "Tiere", sounds: [[811, "Krähe"], [812, "Schwan"], [813, "Bär"], [814, "Biene"], [815, "Frosch"], [816, "Kuh"], [817, "Vogel"], [818, "Hahn"], [819, "Hund"], [820, "Pferd"], [821, "Delfin"], [822, "Katze"], [823, "Elefant"], [824, "Schwein"], [825, "Kuckuck"], [826, "Schaf"], [827, "Möwe"], [828, "Wolf"], [829, "Eule"], [830, "Specht"], [831, "Affe"], [832, "Esel"], [833, "Klapperschlange"], [834, "Falke"], [835, "Wal"], [836, "Ente"], [837, "Löwe"], [838, "Taube"], [839, "Ratte"]] },
-		{ group: "Musik", sounds: [[841, "Beethoven 5te"], [842, "Cocker Leave Your"], [843, "Bocelli Say Goodbye"], [844, "Scorpions Winds Change"], [845, "Kaoma Lambada"], [846, "Haddaway What Is Love"], [847, "Jürgens – Griechischer Wein"], [848, "Aqua Barbie Girl"], [849, "Schilling Major Tom"], [850, "Hasselhoff Freedom"], [851, "Nena Luftballons"], [852, "Falco Amadeus"], [853, "Fanta Die Da"], [854, "Kiss I Was Made"], [855, "Coldplay Clocks"], [856, "Madonna Prayer"], [857, "Europe Final Countdown"], [858, "Angels Daylight"], [859, "Rosenberg Marleen"], [860, "Ramstein Engel"], [861, "Spice Girls Wannabe"], [862, "Purple Smoke Water"], [863, "Beatles Submarine"], [864, "Acdc Highway Hell"], [865, "Queen Rock You"], [866, "Mey – Über den Wolken"], [867, "Fischer Atemlos"], [868, "Lavigne Skater"], [869, "Dion Heart Will Go On"], [871, "ABBA – Mamma Mia"], [872, "ABBA – Dancing Queen"], [873, "ABBA – Knowing Me"], [874, "ABBA – Take A Chance"], [875, "ABBA – Lay Your Love"], [876, "ABBA – Super Trouper"], [877, "ABBA – Have A Dream"], [878, "ABBA – Winner"], [879, "ABBA – Money"], [880, "ABBA – Sos"], [881, "ABBA – Chiquitita"], [882, "ABBA – Fernando"], [883, "ABBA – Voulez Vous"], [884, "ABBA – Gimme"], [885, "ABBA – Mother"], [886, "ABBA – One Of Us"], [887, "ABBA – Name Game"], [888, "ABBA – Thank For Music"], [889, "ABBA – Waterloo"], [890, "ABBA – Honey"], [891, "ABBA – I Do"], [892, "ABBA – Hasta Manana"], [893, "ABBA – Head Over Heels"], [894, "ABBA – Ring Ring"], [895, "ABBA – Me And I"], [896, "ABBA – Our Last Summer"], [897, "ABBA – Kissed Teacher"]] }
+		{ group: "Geburtstag", random: 3001, sounds: [[720, "Happy Birthday"], [721, "Geburtstag 2"], [722, "Geburtstag 3"], [723, "Geburtstag 4 (Marilyn)"], [724, "Geburtstag 5"], [725, "Geburtstag 6 (Zuckowski)"], [726, "Geburtstag 7 (Stevie Wonder)"]] },
+		{ group: "Weihnachten", random: 3002, sounds: [[710, "Merry Christmas"], [711, "Coca-Cola Christmas"], [712, "Jingle Bells"], [713, "We Wish You A Merry Christmas"], [714, "Kling, Glöckchen"], [715, "O Tannenbaum"], [716, "Ihr Kinderlein, kommet"], [717, "Fröhliche Weihnacht"], [718, "Alle Jahre wieder"], [719, "Stille Nacht"]] },
+		{ group: "Silvester", random: 3003, sounds: [[730, "ABBA – Happy New Year"], [731, "Feuerwerk (VW) 1"], [732, "Feuerwerk (VW) 2"], [733, "Feuerwerk"]] },
+		{ group: "Natur", random: 3004, sounds: [[761, "Vögel 1"], [762, "Vögel 2"], [763, "Vögel 3"], [764, "Urwald 1"], [765, "Urwald 2"], [766, "Urwald 3"], [767, "Meeresrauschen 1"], [768, "Meeresrauschen 2"], [769, "Meeresrauschen 3"]] },
+		{ group: "Tiere", random: 3005, sounds: [[811, "Krähe"], [812, "Schwan"], [813, "Bär"], [814, "Biene"], [815, "Frosch"], [816, "Kuh"], [817, "Vogel"], [818, "Hahn"], [819, "Hund"], [820, "Pferd"], [821, "Delfin"], [822, "Katze"], [823, "Elefant"], [824, "Schwein"], [825, "Kuckuck"], [826, "Schaf"], [827, "Möwe"], [828, "Wolf"], [829, "Eule"], [830, "Specht"], [831, "Affe"], [832, "Esel"], [833, "Klapperschlange"], [834, "Falke"], [835, "Wal"], [836, "Ente"], [837, "Löwe"], [838, "Taube"], [839, "Ratte"]] },
+		{ group: "Musik", random: 3006, sounds: [[841, "Beethoven 5te"], [842, "Cocker Leave Your"], [843, "Bocelli Say Goodbye"], [844, "Scorpions Winds Change"], [845, "Kaoma Lambada"], [846, "Haddaway What Is Love"], [847, "Jürgens – Griechischer Wein"], [848, "Aqua Barbie Girl"], [849, "Schilling Major Tom"], [850, "Hasselhoff Freedom"], [851, "Nena Luftballons"], [852, "Falco Amadeus"], [853, "Fanta Die Da"], [854, "Kiss I Was Made"], [855, "Coldplay Clocks"], [856, "Madonna Prayer"], [857, "Europe Final Countdown"], [858, "Angels Daylight"], [859, "Rosenberg Marleen"], [860, "Ramstein Engel"], [861, "Spice Girls Wannabe"], [862, "Purple Smoke Water"], [863, "Beatles Submarine"], [864, "Acdc Highway Hell"], [865, "Queen Rock You"], [866, "Mey – Über den Wolken"], [867, "Fischer Atemlos"], [868, "Lavigne Skater"], [869, "Dion Heart Will Go On"], [871, "ABBA – Mamma Mia"], [872, "ABBA – Dancing Queen"], [873, "ABBA – Knowing Me"], [874, "ABBA – Take A Chance"], [875, "ABBA – Lay Your Love"], [876, "ABBA – Super Trouper"], [877, "ABBA – Have A Dream"], [878, "ABBA – Winner"], [879, "ABBA – Money"], [880, "ABBA – Sos"], [881, "ABBA – Chiquitita"], [882, "ABBA – Fernando"], [883, "ABBA – Voulez Vous"], [884, "ABBA – Gimme"], [885, "ABBA – Mother"], [886, "ABBA – One Of Us"], [887, "ABBA – Name Game"], [888, "ABBA – Thank For Music"], [889, "ABBA – Waterloo"], [890, "ABBA – Honey"], [891, "ABBA – I Do"], [892, "ABBA – Hasta Manana"], [893, "ABBA – Head Over Heels"], [894, "ABBA – Ring Ring"], [895, "ABBA – Me And I"], [896, "ABBA – Our Last Summer"], [897, "ABBA – Kissed Teacher"]] }
 	];
 
 	const REPEAT_OPTIONS = [0, 15, 30, 60, 120, 180, 240];
@@ -131,6 +131,13 @@
 		SOUND_GROUPS.forEach(group => {
 			const optgroup = document.createElement("optgroup");
 			optgroup.label = group.group;
+			if (group.random) {
+				// the clock picks a random sound of this group each time
+				addOption(optgroup, String(group.random), `🎲 ${tr("events.fields.random")} – ${group.group}`, group.random === selected);
+				if (group.random === selected) {
+					found = true;
+				}
+			}
 			group.sounds.forEach(sound => {
 				const option = addOption(optgroup, String(sound[0]), sound[1], sound[0] === selected);
 				if (sound[0] === selected) {
@@ -340,6 +347,11 @@
 		const time = inputElement("time", `${hh}:${mm}`, {});
 		time.dataset.key = "time";
 
+		const endHour = eventData.endHour == null ? 23 : eventData.endHour;
+		const endMinute = eventData.endMinute == null ? 59 : eventData.endMinute;
+		const endTime = inputElement("time", `${String(endHour).padStart(2, "0")}:${String(endMinute).padStart(2, "0")}`, {});
+		endTime.dataset.key = "end";
+
 		const repeat = document.createElement("select");
 		repeat.dataset.key = "interval";
 		const options = REPEAT_OPTIONS.indexOf(eventData.interval) >= 0 ? REPEAT_OPTIONS : REPEAT_OPTIONS.concat([eventData.interval]);
@@ -370,6 +382,12 @@
 		grid.appendChild(labelled(tr("events.fields.year"), year));
 		grid.appendChild(labelled(tr("events.fields.time"), time));
 		grid.appendChild(labelled(tr("events.fields.repeat"), repeat));
+		const endField = labelled(tr("events.fields.until"), endTime);
+		grid.appendChild(endField);
+		// an end time only makes sense for repeated events
+		const updateEnd = () => endField.classList.toggle("extras-collapsed", Number(repeat.value) === 0);
+		repeat.addEventListener("change", updateEnd);
+		updateEnd();
 		grid.appendChild(labelled(tr("events.fields.text"), text, true));
 		grid.appendChild(labelled(tr("events.fields.sound"), sound));
 		grid.appendChild(labelled(tr("events.fields.pre"), pre));
@@ -411,12 +429,15 @@
 			values[el.dataset.key] = el.value;
 		});
 		const timeParts = (values.time || "08:00").split(":");
+		const endParts = (values.end || "23:59").split(":");
 		return {
 			day: Number(values.day),
 			month: Number(values.month),
 			year: Number(values.year || 0),
 			hour: Number(timeParts[0]),
 			minute: Number(timeParts[1]),
+			endHour: Number(endParts[0]),
+			endMinute: Number(endParts[1]),
 			interval: Number(values.interval),
 			text: values.text,
 			sound: Number(values.sound),
@@ -527,6 +548,8 @@
 				year: 0,
 				hour: 8,
 				minute: 0,
+				endHour: 21,
+				endMinute: 0,
 				interval: 0,
 				text: "",
 				sound: 0,

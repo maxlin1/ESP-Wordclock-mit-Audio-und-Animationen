@@ -118,6 +118,8 @@ struct Event {
     String post;      // animation after the text
     uint8_t hour = 8; // time of the first show on that day
     uint8_t minute = 0;
+    uint8_t endHour = 23; // no repetitions after this time
+    uint8_t endMinute = 59;
     uint8_t interval = 0; // repeat every n minutes, 0 = only once
 };
 
@@ -181,8 +183,10 @@ bool isQuietHour(uint8_t hour) {
     return hour >= cfg.quietFrom || hour < cfg.quietTo;
 }
 
+// Automatic sounds (chime, events, startup) only play while the clock is
+// switched on (also via MQTT / Home Assistant) and outside the quiet hours.
 bool soundAllowedNow() {
-    if (!cfg.sound || !audio.isStarted()) {
+    if (!cfg.sound || !audio.isStarted() || !led.getState()) {
         return false;
     }
     struct tm tm;
@@ -211,10 +215,73 @@ uint8_t volume30(uint8_t volume100 = 0) {
 
 uint16_t voiceBase() { return cfg.voice == 0 ? BASE_VICKI : BASE_HANS; }
 
+//------------------------------------------------------------------------------
+// Random sound from a category: numbers from 3001 on stand for "a random
+// track of this category" (e.g. 3001 = a random birthday song).
+//------------------------------------------------------------------------------
+
+struct TrackRange {
+    uint16_t code;
+    uint16_t first;
+    uint16_t last;
+};
+
+constexpr uint16_t RANDOM_SOUND_BASE = 3000;
+
+const TrackRange RANDOM_SOUND_RANGES[] = {
+    {3001, 720, 726}, // Geburtstag
+    {3002, 710, 719}, // Weihnachten
+    {3003, 730, 733}, // Silvester
+    {3004, 761, 769}, // Natur
+    {3005, 811, 839}, // Tiere
+    {3006, 841, 869}, // Musik (no 870 in the sound package)
+    {3006, 871, 897}, // Musik
+};
+
+bool isRandomSound(uint16_t code) {
+    for (const TrackRange &r : RANDOM_SOUND_RANGES) {
+        if (r.code == code) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool isValidSound(int track) {
+    return (track > 0 && track < RANDOM_SOUND_BASE) || isRandomSound(track);
+}
+
+// Returns the track to play: a random track of the category for the codes
+// above, otherwise the number itself.
+uint16_t resolveTrack(uint16_t track) {
+    uint16_t count = 0;
+    for (const TrackRange &r : RANDOM_SOUND_RANGES) {
+        if (r.code == track) {
+            count += r.last - r.first + 1;
+        }
+    }
+    if (count == 0) {
+        return track;
+    }
+    uint16_t pick = random(0, count);
+    for (const TrackRange &r : RANDOM_SOUND_RANGES) {
+        if (r.code != track) {
+            continue;
+        }
+        const uint16_t size = r.last - r.first + 1;
+        if (pick < size) {
+            return r.first + pick;
+        }
+        pick -= size;
+    }
+    return track;
+}
+
 void playTrack(uint16_t track, bool interrupt = false, uint8_t volume100 = 0) {
     if (track == 0 || !audio.isStarted()) {
         return;
     }
+    track = resolveTrack(track);
     if (interrupt) {
         audio.playNow(track, volume30(volume100));
     } else {
@@ -546,7 +613,8 @@ const Event *dueEvent(const struct tm &tm) {
             continue;
         }
         const uint16_t start = e.hour * 60 + e.minute;
-        if (minuteOfDay < start) {
+        const uint16_t end = e.endHour * 60 + e.endMinute;
+        if (minuteOfDay < start || minuteOfDay > end) {
             continue;
         }
         if (e.interval == 0 ? minuteOfDay == start
@@ -562,9 +630,7 @@ const Event *dueEvent(const struct tm &tm) {
 //------------------------------------------------------------------------------
 
 void onNewMinute(const struct tm &tm) {
-    const bool quiet = isQuietHour(tm.tm_hour);
-
-    if (tm.tm_min == 0 && cfg.chime && cfg.sound && !quiet) {
+    if (tm.tm_min == 0 && cfg.chime && soundAllowedNow()) {
         playChime(tm);
     }
 
@@ -685,6 +751,8 @@ void eventsToJson(JsonArray a) {
         o["post"] = e.post;
         o["hour"] = e.hour;
         o["minute"] = e.minute;
+        o["endHour"] = e.endHour;
+        o["endMinute"] = e.endMinute;
         o["interval"] = e.interval;
     }
 }
@@ -726,6 +794,8 @@ bool eventsFromJson(JsonVariantConst root) {
         } else {
             e.hour = constrain(o["hour"] | 0, 0, 23);
             e.minute = constrain(o["minute"] | 0, 0, 59);
+            e.endHour = constrain(o["endHour"] | 23, 0, 23);
+            e.endMinute = constrain(o["endMinute"] | 59, 0, 59);
             e.interval = constrain(o["interval"] | 0, 0, 255);
         }
         if (e.month < 1 || e.month > 12 || e.day < 1 || e.day > 31) {
@@ -946,7 +1016,7 @@ void handlePlay() {
         return;
     }
     const int track = httpServer.arg("track").toInt();
-    if (track <= 0 || track > 2999 || !audio.isStarted()) {
+    if (!isValidSound(track) || !audio.isStarted()) {
         sendError("invalid track or no DFPlayer");
         return;
     }
@@ -1274,7 +1344,7 @@ bool mqttHandle(const String &fullTopic, const char *payload) {
         stopShow();
     } else if (key == "play") {
         const int track = atoi(payload);
-        if (track > 0 && track <= 2999) {
+        if (isValidSound(track)) {
             playTrack(track, true);
         }
     } else if (key == "animation") {
@@ -1323,7 +1393,7 @@ void mqttAddDiscovery(JsonObject cmps, const String &id, const String &base) {
         c["stat_t"] = base + "/extras/state";
         c["val_tpl"] = "{{ value_json.track }}";
         c["min"] = 0;
-        c["max"] = 2999;
+        c["max"] = 3006; // 3001-3006: random sound of a category
         c["mode"] = "box";
     }
     {
