@@ -1,0 +1,291 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1780" height="1330" viewBox="0 0 1780 1330">
+<title>Schaltbild: ESP32 D1 mini mit DFPlayer Mini, BME280 und LED-Streifen</title>
+<defs><pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#ececec" stroke-width="1"/></pattern><pattern id="G" width="100" height="100" patternUnits="userSpaceOnUse"><rect width="100" height="100" fill="url(#g)"/><path d="M100 0H0V100" fill="none" stroke="#dedede" stroke-width="1.2"/></pattern></defs>
+<rect width="1780" height="1330" fill="#fafafa"/><rect width="1780" height="1330" fill="url(#G)"/>
+<path d="M235 250 H408 L430 272 V400 H235 Z" fill="#fde8c3"/>
+<rect x="235" y="378" width="195" height="22" fill="#f8b84e"/>
+<path d="M408 250 V272 H430 Z" fill="#f8b84e"/>
+<text x="259" y="294" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="30" fill="#6d6d6d" text-anchor="start" font-weight="normal">ESP32</text>
+<text x="259" y="332" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="30" fill="#6d6d6d" text-anchor="start" font-weight="normal">D1 mini</text>
+<path d="M1320 190 H1598 L1620 212 V320 H1320 Z" fill="#fde8c3"/>
+<rect x="1320" y="298" width="300" height="22" fill="#f8b84e"/>
+<path d="M1598 190 V212 H1620 Z" fill="#f8b84e"/>
+<text x="1344" y="234" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="28" fill="#6d6d6d" text-anchor="start" font-weight="normal">DFPlayer Mini</text>
+<text x="1344" y="270" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="28" fill="#6d6d6d" text-anchor="start" font-weight="normal">(MP3-Modul)</text>
+<path d="M1550 470 H1700 L1722 492 V610 H1550 Z" fill="#fde8c3"/>
+<rect x="1550" y="588" width="172" height="22" fill="#f8b84e"/>
+<path d="M1700 470 V492 H1722 Z" fill="#f8b84e"/>
+<text x="1574" y="514" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="28" fill="#6d6d6d" text-anchor="start" font-weight="normal">BME280</text>
+<text x="1574" y="550" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="28" fill="#6d6d6d" text-anchor="start" font-weight="normal">(Sensor)</text>
+<path d="M360 1190 H1448 L1470 1212 V1282 H360 Z" fill="#fde8c3"/>
+<rect x="360" y="1260" width="1110" height="22" fill="#f8b84e"/>
+<path d="M1448 1190 V1212 H1470 Z" fill="#f8b84e"/>
+<text x="384" y="1234" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="28" fill="#6d6d6d" text-anchor="start" font-weight="normal">LED-Streifen WS2812B · 114 LEDs (4 Minuten-LEDs zuerst)</text>
+<path d="M1500 1100 H1733 L1755 1122 V1210 H1500 Z" fill="#fde8c3"/>
+<rect x="1500" y="1188" width="255" height="22" fill="#f8b84e"/>
+<path d="M1733 1100 V1122 H1755 Z" fill="#f8b84e"/>
+<text x="1524" y="1144" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="26" fill="#6d6d6d" text-anchor="start" font-weight="normal">Netzteil</text>
+<text x="1524" y="1178" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="26" fill="#6d6d6d" text-anchor="start" font-weight="normal">5 V / ≥ 4 A</text>
+<rect x="120" y="500" width="640" height="310" rx="34" fill="#2d2d2d" stroke="#1a1a1a" stroke-width="3"/>
+<circle cx="154" cy="534" r="17" fill="#fafafa"/>
+<circle cx="154" cy="776" r="17" fill="#fafafa"/>
+<circle cx="726" cy="534" r="17" fill="#fafafa"/>
+<circle cx="726" cy="776" r="17" fill="#fafafa"/>
+<rect x="98" y="618" width="62" height="74" rx="6" fill="#c8c8c8" stroke="#8a8a8a" stroke-width="3"/>
+<rect x="108" y="636" width="34" height="38" rx="3" fill="#9a9a9a"/>
+<rect x="132" y="560" width="26" height="26" rx="4" fill="#d9d9d9"/><circle cx="145" cy="573" r="8" fill="#444"/>
+<rect x="300" y="628" width="350" height="62" rx="4" fill="#cfd3d6" stroke="#8d9398" stroke-width="3"/>
+<text x="475" y="655" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" fill="#555" text-anchor="middle" font-weight="bold">ESP32-WROOM-32</text>
+<text x="475" y="678" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#666" text-anchor="middle" font-weight="normal">WiFi · Bluetooth</text>
+<path d="M665 640 h70 v10 h-60 v10 h60 v10 h-60 v10 h60 v10 h-70 z" fill="none" stroke="#c9a227" stroke-width="5"/>
+<circle cx="210" cy="535" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="210" cy="775" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="270" cy="535" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="270" cy="775" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="330" cy="535" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="330" cy="775" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="390" cy="535" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="390" cy="775" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="450" cy="535" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="450" cy="775" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="510" cy="535" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="510" cy="775" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="570" cy="535" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="570" cy="775" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="630" cy="535" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="630" cy="775" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="690" cy="535" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="690" cy="775" r="7" fill="#555" stroke="#777" stroke-width="2"/>
+<circle cx="210" cy="575" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="270" cy="575" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="330" cy="575" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="390" cy="575" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="450" cy="575" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="510" cy="575" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="570" cy="575" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="630" cy="575" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="210" cy="735" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="270" cy="735" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="330" cy="735" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="390" cy="735" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="450" cy="735" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="510" cy="735" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="570" cy="735" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="630" cy="735" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<text x="210" y="605" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">3V3</text>
+<text x="270" y="605" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">IO5</text>
+<text x="270" y="622" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#9fd49f" text-anchor="middle" font-weight="normal">(D8)</text>
+<text x="330" y="605" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">IO23</text>
+<text x="330" y="622" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#9fd49f" text-anchor="middle" font-weight="normal">(D7)</text>
+<text x="390" y="605" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">IO19</text>
+<text x="390" y="622" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#9fd49f" text-anchor="middle" font-weight="normal">(D6)</text>
+<text x="450" y="605" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">IO18</text>
+<text x="450" y="622" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#9fd49f" text-anchor="middle" font-weight="normal">(D5)</text>
+<text x="510" y="605" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">IO26</text>
+<text x="510" y="622" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#9fd49f" text-anchor="middle" font-weight="normal">(D0)</text>
+<text x="570" y="605" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">IO36</text>
+<text x="570" y="622" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#9fd49f" text-anchor="middle" font-weight="normal">(A0)</text>
+<text x="630" y="605" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">RST</text>
+<text x="210" y="699" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">5V</text>
+<text x="270" y="699" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">GND</text>
+<text x="330" y="699" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">IO16</text>
+<text x="330" y="716" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#9fd49f" text-anchor="middle" font-weight="normal">(D4)</text>
+<text x="390" y="699" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">IO17</text>
+<text x="390" y="716" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#9fd49f" text-anchor="middle" font-weight="normal">(D3)</text>
+<text x="450" y="699" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">IO21</text>
+<text x="450" y="716" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#9fd49f" text-anchor="middle" font-weight="normal">(D2)</text>
+<text x="510" y="699" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">IO22</text>
+<text x="510" y="716" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#9fd49f" text-anchor="middle" font-weight="normal">(D1)</text>
+<text x="570" y="699" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">RX</text>
+<text x="630" y="699" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">TX</text>
+<rect x="766" y="246" width="44" height="88" rx="5" fill="#c9ccd0" stroke="#8d9398" stroke-width="3"/>
+<text x="788" y="290" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#555" text-anchor="middle" font-weight="normal" transform="rotate(-90 788 290)">microSD</text>
+<rect x="800" y="200" width="390" height="180" rx="10" fill="#1f5c99" stroke="#143d66" stroke-width="3"/>
+<rect x="925" y="262" width="62" height="56" rx="4" fill="#222"/>
+<text x="1085" y="285" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" fill="#ffffff" text-anchor="middle" font-weight="bold">DFPlayer</text>
+<text x="1085" y="310" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" fill="#cfe3f7" text-anchor="middle" font-weight="normal">Mini</text>
+<circle cx="835" cy="222" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="879" cy="222" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="923" cy="222" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="967" cy="222" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="1011" cy="222" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="1055" cy="222" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="1099" cy="222" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="1143" cy="222" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="835" cy="358" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="879" cy="358" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="923" cy="358" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="967" cy="358" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="1011" cy="358" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="1055" cy="358" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="1099" cy="358" r="9" fill="#e06666" stroke="#b03a3a" stroke-width="2.5"/>
+<circle cx="1143" cy="358" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<text x="835" y="248" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">SPK2</text>
+<text x="879" y="248" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">GND</text>
+<text x="923" y="248" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">SPK1</text>
+<text x="967" y="248" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">DAC_L</text>
+<text x="1011" y="248" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">DAC_R</text>
+<text x="1055" y="248" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">TX</text>
+<text x="1099" y="248" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">RX</text>
+<text x="1143" y="248" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">VCC</text>
+<text x="835" y="341" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">IO1</text>
+<text x="879" y="341" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">GND</text>
+<text x="923" y="341" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">IO2</text>
+<text x="967" y="341" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">ADK1</text>
+<text x="1011" y="341" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">ADK2</text>
+<text x="1055" y="341" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">USB+</text>
+<text x="1099" y="341" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">USB−</text>
+<text x="1143" y="341" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="normal">BUSY</text>
+<rect x="1330" y="470" width="200" height="190" rx="10" fill="#6b2fa0" stroke="#4a1f70" stroke-width="3"/>
+<circle cx="1354" cy="494" r="12" fill="#fafafa"/><circle cx="1506" cy="494" r="12" fill="#fafafa"/>
+<rect x="1410" y="510" width="40" height="40" rx="3" fill="#c0c4c8" stroke="#8d9398" stroke-width="2"/>
+<circle cx="1442" cy="518" r="3" fill="#555"/>
+<text x="1430" y="580" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#ffffff" text-anchor="middle" font-weight="bold">BME280</text>
+<circle cx="1365" cy="642" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<text x="1365" y="622" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" font-weight="normal">VIN</text>
+<circle cx="1405" cy="642" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<text x="1405" y="622" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" font-weight="normal">GND</text>
+<circle cx="1445" cy="642" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<text x="1445" y="622" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" font-weight="normal">SCL</text>
+<circle cx="1485" cy="642" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<text x="1485" y="622" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" font-weight="normal">SDA</text>
+<rect x="590" y="150" width="34" height="96" rx="4" fill="#cfd3d6" stroke="#6c757d" stroke-width="3"/>
+<path d="M590 160 L545 120 V276 L590 236 Z" fill="#adb5bd" stroke="#6c757d" stroke-width="3"/>
+<circle cx="560" cy="198" r="10" fill="#868e96"/>
+<text x="585" y="305" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" fill="#495057" text-anchor="middle" font-weight="bold">Lautsprecher</text>
+<text x="585" y="325" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#6c757d" text-anchor="middle" font-weight="normal">3 W, 4–8 Ω</text>
+<rect x="360" y="1040" width="1110" height="110" fill="#25306b"/>
+<circle cx="392" cy="1062" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<text x="414" y="1067" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="start" font-weight="normal">GND</text>
+<circle cx="392" cy="1095" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<text x="414" y="1100" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="start" font-weight="normal">Din</text>
+<circle cx="392" cy="1128" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<text x="414" y="1133" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="start" font-weight="normal">+5V</text>
+<path d="M450 1086 l12 9 l-12 9 z" fill="#ffffff"/>
+<rect x="532" y="1068" width="56" height="56" rx="4" fill="#eeeeee" stroke="#999" stroke-width="2"/>
+<circle cx="560" cy="1096" r="17" fill="#ffffff" stroke="#bbb" stroke-width="2"/>
+<rect x="554" y="1088" width="12" height="16" fill="#555"/>
+<text x="512" y="1096" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" font-weight="normal" transform="rotate(-90 512 1096)">WS2812B</text>
+<rect x="832" y="1068" width="56" height="56" rx="4" fill="#eeeeee" stroke="#999" stroke-width="2"/>
+<circle cx="860" cy="1096" r="17" fill="#ffffff" stroke="#bbb" stroke-width="2"/>
+<rect x="854" y="1088" width="12" height="16" fill="#555"/>
+<text x="812" y="1096" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" font-weight="normal" transform="rotate(-90 812 1096)">WS2812B</text>
+<rect x="1132" y="1068" width="56" height="56" rx="4" fill="#eeeeee" stroke="#999" stroke-width="2"/>
+<circle cx="1160" cy="1096" r="17" fill="#ffffff" stroke="#bbb" stroke-width="2"/>
+<rect x="1154" y="1088" width="12" height="16" fill="#555"/>
+<text x="1112" y="1096" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" font-weight="normal" transform="rotate(-90 1112 1096)">WS2812B</text>
+<rect x="694" y="1054" width="32" height="16" rx="8" fill="#e0b080"/>
+<rect x="694" y="1087" width="32" height="16" rx="8" fill="#e0b080"/>
+<rect x="694" y="1120" width="32" height="16" rx="8" fill="#e0b080"/>
+<rect x="994" y="1054" width="32" height="16" rx="8" fill="#e0b080"/>
+<rect x="994" y="1087" width="32" height="16" rx="8" fill="#e0b080"/>
+<rect x="994" y="1120" width="32" height="16" rx="8" fill="#e0b080"/>
+<rect x="1294" y="1054" width="32" height="16" rx="8" fill="#e0b080"/>
+<rect x="1294" y="1087" width="32" height="16" rx="8" fill="#e0b080"/>
+<rect x="1294" y="1120" width="32" height="16" rx="8" fill="#e0b080"/>
+<path d="M1395 1026 l-26 138 M1415 1026 l-26 138" stroke="#222" stroke-width="5"/>
+<text x="1458" y="1140" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#cfd6ff" text-anchor="end" font-weight="normal">… 114 LEDs</text>
+<rect x="1560" y="1010" width="150" height="70" rx="8" fill="#2b2b2b" stroke="#000" stroke-width="3"/>
+<circle cx="1680" cy="1050" r="17" fill="#555" stroke="#888" stroke-width="3"/>
+<circle cx="1680" cy="1050" r="6" fill="#bbb"/>
+<text x="1605" y="1070" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" font-weight="bold">DC 5 V</text>
+<circle cx="1590" cy="1028" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<circle cx="1640" cy="1028" r="10" fill="#8ad08a" stroke="#3c8d3c" stroke-width="3"/>
+<text x="1590" y="1054" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" fill="#ffffff" text-anchor="middle" font-weight="bold">+</text>
+<text x="1640" y="1054" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" fill="#ffffff" text-anchor="middle" font-weight="bold">−</text>
+<path d="M150 905 L1762 905" fill="none" stroke="#000000" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M150 905 L1762 905" fill="none" stroke="#2b2b2b" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M40 945 L1740 945" fill="none" stroke="#7d0e12" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M40 945 L1740 945" fill="none" stroke="#c4161c" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M1640 1028 L1640 954 A9 9 0 0 1 1640 936 L1640 905" fill="none" stroke="#000000" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M1640 1028 L1640 954 A9 9 0 0 1 1640 936 L1640 905" fill="none" stroke="#2b2b2b" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="1640" cy="905" r="7.5" fill="#000000"/>
+<path d="M1590 1028 L1590 945" fill="none" stroke="#7d0e12" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M1590 1028 L1590 945" fill="none" stroke="#c4161c" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="1590" cy="945" r="7.5" fill="#7d0e12"/>
+<rect x="1579" y="955" width="22" height="42" rx="4" fill="#222"/>
+<rect x="1579" y="958" width="22" height="7" fill="#cfcfcf"/>
+<text x="1570" y="975" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#333" text-anchor="end" font-weight="bold">Diode</text>
+<text x="1570" y="993" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#555" text-anchor="end" font-weight="normal">Schottky</text>
+<rect x="1170" y="963" width="46" height="66" rx="8" fill="#1d3f8f" stroke="#0e2457" stroke-width="2"/>
+<rect x="1200" y="963" width="12" height="66" fill="#9fb3e0"/>
+<path d="M1180 963 L1180 945" fill="none" stroke="#7d0e12" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M1180 963 L1180 945" fill="none" stroke="#c4161c" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="1180" cy="945" r="7.5" fill="#7d0e12"/>
+<path d="M1206 963 L1206 954 A9 9 0 0 1 1206 936 L1206 905" fill="none" stroke="#000000" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M1206 963 L1206 954 A9 9 0 0 1 1206 936 L1206 905" fill="none" stroke="#2b2b2b" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="1206" cy="905" r="7.5" fill="#000000"/>
+<text x="1162" y="989" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" fill="#333" text-anchor="end" font-weight="bold">1800 µF</text>
+<text x="1162" y="1007" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#555" text-anchor="end" font-weight="normal">6,3 V</text>
+<path d="M270 735 L270 905" fill="none" stroke="#000000" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M270 735 L270 905" fill="none" stroke="#2b2b2b" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="270" cy="905" r="7.5" fill="#000000"/>
+<path d="M210 735 L210 896 A9 9 0 0 0 210 914 L210 945" fill="none" stroke="#7d0e12" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M210 735 L210 896 A9 9 0 0 0 210 914 L210 945" fill="none" stroke="#c4161c" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="210" cy="945" r="7.5" fill="#7d0e12"/>
+<path d="M392 1062 L330 1062 L330 954 A9 9 0 0 1 330 936 L330 905" fill="none" stroke="#000000" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M392 1062 L330 1062 L330 954 A9 9 0 0 1 330 936 L330 905" fill="none" stroke="#2b2b2b" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="330" cy="905" r="7.5" fill="#000000"/>
+<path d="M392 1128 L40 1128 L40 945" fill="none" stroke="#7d0e12" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M392 1128 L40 1128 L40 945" fill="none" stroke="#c4161c" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M210 575 L210 70 L1300 70 L1300 690 L1365 690 L1365 642" fill="none" stroke="#8f5207" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M210 575 L210 70 L1300 70 L1300 690 L1365 690 L1365 642" fill="none" stroke="#e8850c" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M270 575 L270 470 L219 470 A9 9 0 0 0 201 470 L65 470 L65 936 A9 9 0 0 0 65 954 L65 1095 L392 1095" fill="none" stroke="#1c6b29" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M270 575 L270 470 L219 470 A9 9 0 0 0 201 470 L65 470 L65 936 A9 9 0 0 0 65 954 L65 1095 L392 1095" fill="none" stroke="#2fb344" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M450 575 L450 108 L1099 108 L1099 222" fill="none" stroke="#0f4c82" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M450 575 L450 108 L1099 108 L1099 222" fill="none" stroke="#1c7ed6" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M390 735 L390 860 L1245 860 L1245 150 L1108 150 A9 9 0 0 0 1090 150 L1055 150 L1055 222" fill="none" stroke="#0b6e63" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M390 735 L390 860 L1245 860 L1245 150 L1108 150 A9 9 0 0 0 1090 150 L1055 150 L1055 222" fill="none" stroke="#14b8a6" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M510 575 L510 465 L1143 465 L1143 358" fill="none" stroke="#3f2a85" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M510 575 L510 465 L1143 465 L1143 358" fill="none" stroke="#7048e8" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="664" y="462" width="72" height="6" fill="#9aa0a6"/>
+<path d="M674 454 q-6 0 -6 6 v10 q0 6 6 6 h52 q6 0 6 -6 v-10 q0 -6 -6 -6 z" fill="#e7c48d" stroke="#a9884f" stroke-width="2"/>
+<rect x="680" y="454" width="5" height="22" fill="#d62828"/>
+<rect x="690" y="454" width="5" height="22" fill="#d62828"/>
+<rect x="700" y="454" width="5" height="22" fill="#d62828"/>
+<rect x="718" y="454" width="5" height="22" fill="#c9a227"/>
+<text x="700" y="447" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" fill="#333" text-anchor="middle" font-weight="bold">2,2 kΩ</text>
+<path d="M510 735 L510 800 L1236 800 A9 9 0 0 1 1254 800 L1445 800 L1445 642" fill="none" stroke="#5c3f10" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M510 735 L510 800 L1236 800 A9 9 0 0 1 1254 800 L1445 800 L1445 642" fill="none" stroke="#9c6b1c" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M450 735 L450 825 L1236 825 A9 9 0 0 1 1254 825 L1485 825 L1485 642" fill="none" stroke="#682579" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M450 735 L450 825 L1236 825 A9 9 0 0 1 1254 825 L1485 825 L1485 642" fill="none" stroke="#ae3ec9" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M1143 222 L1143 159 A9 9 0 0 1 1143 141 L1143 79 A9 9 0 0 1 1143 61 L1143 40 L1740 40 L1740 896 A9 9 0 0 0 1740 914 L1740 945" fill="none" stroke="#7d0e12" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M1143 222 L1143 159 A9 9 0 0 1 1143 141 L1143 79 A9 9 0 0 1 1143 61 L1143 40 L1740 40 L1740 896 A9 9 0 0 0 1740 914 L1740 945" fill="none" stroke="#c4161c" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M879 222 L879 117 A9 9 0 0 1 879 99 L879 79 A9 9 0 0 1 879 61 L879 22 L1762 22 L1762 905" fill="none" stroke="#000000" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M879 222 L879 117 A9 9 0 0 1 879 99 L879 79 A9 9 0 0 1 879 61 L879 22 L1762 22 L1762 905" fill="none" stroke="#2b2b2b" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M1405 642 L1405 710 L1280 710 L1280 791 A9 9 0 0 0 1280 809 L1280 816 A9 9 0 0 0 1280 834 L1280 905" fill="none" stroke="#000000" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M1405 642 L1405 710 L1280 710 L1280 791 A9 9 0 0 0 1280 809 L1280 816 A9 9 0 0 0 1280 834 L1280 905" fill="none" stroke="#2b2b2b" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="1280" cy="905" r="7.5" fill="#000000"/>
+<path d="M923 222 L923 175 L888 175 A9 9 0 0 0 870 175 L624 175" fill="none" stroke="#495057" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M923 222 L923 175 L888 175 A9 9 0 0 0 870 175 L624 175" fill="none" stroke="#868e96" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="709" y="172" width="72" height="6" fill="#9aa0a6"/>
+<path d="M719 164 q-6 0 -6 6 v10 q0 6 6 6 h52 q6 0 6 -6 v-10 q0 -6 -6 -6 z" fill="#e7c48d" stroke="#a9884f" stroke-width="2"/>
+<rect x="725" y="164" width="5" height="22" fill="#f08c00"/>
+<rect x="735" y="164" width="5" height="22" fill="#f8f8f8"/>
+<rect x="745" y="164" width="5" height="22" fill="#c9a227"/>
+<rect x="763" y="164" width="5" height="22" fill="#c9a227"/>
+<text x="745" y="157" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" fill="#333" text-anchor="middle" font-weight="bold">3,9 Ω</text>
+<path d="M835 222 L835 222 L835 222" fill="none" stroke="#495057" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M835 222 L835 222 L835 222" fill="none" stroke="#868e96" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M835 222 L835 235 L624 235" fill="none" stroke="#495057" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M835 222 L835 235 L624 235" fill="none" stroke="#868e96" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M30 1178 H318 L340 1200 V1318 H30 Z" fill="#fde8c3"/>
+<rect x="30" y="1296" width="310" height="22" fill="#f8b84e"/>
+<path d="M318 1178 V1200 H340 Z" fill="#f8b84e"/>
+<text x="52" y="1212" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" fill="#6d6d6d" text-anchor="start" font-weight="normal">LDR (optional)</text>
+<path d="M48 1258 H290" stroke="#9aa0a6" stroke-width="4"/>
+<rect x="88" y="1242" width="44" height="32" rx="16" fill="#c9302c" stroke="#7a1b18" stroke-width="2"/>
+<path d="M98 1250 h8 v16 h8 v-16 h8 v16" fill="none" stroke="#f3d2a0" stroke-width="3"/>
+<rect x="189" y="1255" width="72" height="6" fill="#9aa0a6"/>
+<path d="M199 1247 q-6 0 -6 6 v10 q0 6 6 6 h52 q6 0 6 -6 v-10 q0 -6 -6 -6 z" fill="#e7c48d" stroke="#a9884f" stroke-width="2"/>
+<rect x="205" y="1247" width="5" height="22" fill="#f5d000"/>
+<rect x="215" y="1247" width="5" height="22" fill="#7d3cb5"/>
+<rect x="225" y="1247" width="5" height="22" fill="#d62828"/>
+<rect x="243" y="1247" width="5" height="22" fill="#c9a227"/>
+<text x="225" y="1240" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" fill="#333" text-anchor="middle" font-weight="bold">4,7 kΩ</text>
+<circle cx="165" cy="1258" r="6" fill="#555"/><path d="M165 1258 V1272" stroke="#9aa0a6" stroke-width="4"/>
+<circle cx="48" cy="1258" r="5" fill="#555"/><circle cx="290" cy="1258" r="5" fill="#555"/>
+<text x="40" y="1286" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#333" text-anchor="start" font-weight="bold">3V3</text>
+<text x="165" y="1290" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#333" text-anchor="middle" font-weight="bold">IO36 (A0)</text>
+<text x="298" y="1286" font-family="'Droid Sans', 'Open Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#333" text-anchor="end" font-weight="bold">GND</text>
+</svg>

@@ -414,7 +414,9 @@
 		repeat.addEventListener("change", updateEnd);
 		updateEnd();
 		grid.appendChild(labelled(tr("events.fields.text"), text, true));
-		grid.appendChild(labelled(tr("events.fields.sound"), sound));
+		const soundField = labelled(tr("events.fields.sound"), sound);
+		soundField.classList.add("event-field-double");
+		grid.appendChild(soundField);
 		grid.appendChild(labelled(tr("events.fields.pre"), pre));
 		grid.appendChild(labelled(tr("events.fields.post"), post));
 		card.appendChild(grid);

@@ -1061,6 +1061,10 @@ label.pure-button {
     grid-column: 1 / -1;
 }
 
+.event-field-double {
+    grid-column: span 2;
+}
+
 .event-field input,
 .event-field select {
     width: 100%;
