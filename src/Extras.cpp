@@ -1018,15 +1018,16 @@ void climateToJson(JsonObject o) {
         return;
     }
     if (!isnan(sensor.temperature)) {
+        // serialized(): "22.8" instead of "22.7999992" from the float
         o["temperature"] =
-            roundf((sensor.temperature + cfg.temperatureOffset) * 10) / 10;
+            serialized(String(sensor.temperature + cfg.temperatureOffset, 1));
     }
     if (sensor.hasHumidity() && !isnan(sensor.humidity)) {
-        o["humidity"] = roundf(sensor.humidity * 10) / 10;
+        o["humidity"] = serialized(String(sensor.humidity, 1));
     }
     const float p = relativePressure();
     if (!isnan(p)) {
-        o["pressure"] = roundf(p * 10) / 10;
+        o["pressure"] = serialized(String(p, 1));
     }
 }
 
@@ -1414,6 +1415,69 @@ void addClimateSensor(JsonObject cmps, const String &id, const String &base,
     c["dev_cla"] = deviceClass;
     c["unit_of_meas"] = unit;
     c["stat_cla"] = "measurement";
+    c["sug_dsp_prc"] = strcmp(key, "humidity") == 0 ? 0 : 1;
+}
+
+//------------------------------------------------------------------------------
+// "Nachricht" in Home Assistant: text, sound and animation are chosen with
+// separate entities and shown with the button "Nachricht abspielen".
+//------------------------------------------------------------------------------
+
+struct MessageSound {
+    const char *label;
+    uint16_t track;
+};
+
+const MessageSound MESSAGE_SOUNDS[] = {{"Kein Ton", 0},
+                                       {"Signal: OK", 700},
+                                       {"Signal: Magical", 701},
+                                       {"Signal: Success", 807},
+                                       {"Signal: Neues Item", 801},
+                                       {"Signal: Pong", 805},
+                                       {"Signal: Alarm", 705},
+                                       {"Müllabfuhr", 750},
+                                       {"Happy Birthday", 720},
+                                       {"Jingle Bells", 712},
+                                       {"Feuerwerk", 733},
+                                       {"Zufall: Geburtstag", 3001},
+                                       {"Zufall: Weihnachten", 3002},
+                                       {"Zufall: Silvester", 3003},
+                                       {"Zufall: Natur", 3004},
+                                       {"Zufall: Tiere", 3005},
+                                       {"Zufall: Musik", 3006}};
+
+struct Message {
+    String text;
+    uint16_t sound = 0;
+    String animation = "-";
+};
+
+Message message;
+
+const char *messageSoundLabel() {
+    for (const MessageSound &m : MESSAGE_SOUNDS) {
+        if (m.track == message.sound) {
+            return m.label;
+        }
+    }
+    return MESSAGE_SOUNDS[0].label;
+}
+
+void loadMessage() {
+    message.text = prefs.getString("msgText", "");
+    message.sound = prefs.getUShort("msgSound", 0);
+    message.animation = prefs.getString("msgAni", "-");
+}
+
+void saveMessage() {
+    prefs.putString("msgText", message.text);
+    prefs.putUShort("msgSound", message.sound);
+    prefs.putString("msgAni", message.animation);
+}
+
+void playMessage() {
+    const int16_t ani = AnimationPlayer::find(message.animation.c_str());
+    startShow(ani, message.text, ani, message.sound);
 }
 
 void publishClimate() {
@@ -1436,6 +1500,7 @@ void publishClimate() {
 void setup() {
     prefs.begin("extras", false);
     loadSettings();
+    loadMessage();
 
     startAudio();
     sensor.begin();
@@ -1559,6 +1624,21 @@ bool mqttHandle(const String &fullTopic, const char *payload) {
         }
     } else if (key == "animation") {
         playAnimation(payload);
+    } else if (key == "msg_text") {
+        message.text = String(payload).substring(0, MAX_EVENT_TEXT);
+        saveMessage();
+    } else if (key == "msg_sound") {
+        for (const MessageSound &m : MESSAGE_SOUNDS) {
+            if (strcmp(m.label, payload) == 0) {
+                message.sound = m.track;
+                saveMessage();
+            }
+        }
+    } else if (key == "msg_animation") {
+        message.animation = payload;
+        saveMessage();
+    } else if (key == "msg_play") {
+        playMessage();
     } else if (key == "event") {
         // {"text": "...", "sound": 726, "pre": "HERZ", "post": "HERZ"}
         // (also accepts Manfred's names audio / preani / postani)
@@ -1672,6 +1752,43 @@ void mqttAddDiscovery(JsonObject cmps, const String &id, const String &base) {
         }
     }
 
+    // Message: text + sound + animation, started with a button
+    {
+        JsonObject c = addComponent(cmps, id, "extras_msg_text", "text",
+                                    "Nachricht: Text", "mdi:message-text");
+        c["stat_t"] = base + "/extras/state";
+        c["val_tpl"] = "{{ value_json.msg_text }}";
+        c["cmd_t"] = base + "/extras/msg_text/set";
+        c["max"] = MAX_EVENT_TEXT;
+    }
+    {
+        JsonObject c = addComponent(cmps, id, "extras_msg_sound", "select",
+                                    "Nachricht: Ton", "mdi:music-note");
+        c["stat_t"] = base + "/extras/state";
+        c["val_tpl"] = "{{ value_json.msg_sound }}";
+        c["cmd_t"] = base + "/extras/msg_sound/set";
+        JsonArray options = c.createNestedArray("options");
+        for (const MessageSound &m : MESSAGE_SOUNDS) {
+            options.add(m.label);
+        }
+    }
+    {
+        JsonObject c = addComponent(cmps, id, "extras_msg_animation", "select",
+                                    "Nachricht: Animation", "mdi:animation");
+        c["stat_t"] = base + "/extras/state";
+        c["val_tpl"] = "{{ value_json.msg_animation }}";
+        c["cmd_t"] = base + "/extras/msg_animation/set";
+        JsonArray options = c.createNestedArray("options");
+        options.add("-");
+        for (uint8_t i = 0; i < AnimationPlayer::count(); i++) {
+            if (AnimationPlayer::name(i)[0] != 'Z') {
+                options.add(AnimationPlayer::name(i));
+            }
+        }
+    }
+    addButton(cmps, id, base, "extras_msg_play", "msg_play", "PRESS",
+              "Nachricht abspielen", "mdi:message-arrow-right");
+
     addButton(cmps, id, base, "extras_announce_time", "announce", "time",
               "Uhrzeit ansagen", "mdi:clock-time-four-outline");
     addButton(cmps, id, base, "extras_announce_date", "announce", "date",
@@ -1697,7 +1814,7 @@ void mqttPublishState() {
     if (!mqttClient.connected()) {
         return;
     }
-    StaticJsonDocument<512> doc;
+    StaticJsonDocument<768> doc;
     doc["sound"] = onOff(cfg.sound);
     doc["chime"] = onOff(cfg.chime);
     doc["hour_animation"] = hourAnimationLabel();
@@ -1711,7 +1828,10 @@ void mqttPublishState() {
     doc["animation"] = player.isRunning() ? player.currentName() : "-";
     doc["track"] = audio.currentTrack();
     doc["dfplayer"] = audio.isStarted() ? "ON" : "OFF";
-    char buffer[512];
+    doc["msg_text"] = message.text;
+    doc["msg_sound"] = messageSoundLabel();
+    doc["msg_animation"] = message.animation;
+    char buffer[768];
     serializeJson(doc, buffer);
     mqttClient.publish(topic("state").c_str(), buffer, true);
     publishClimate();

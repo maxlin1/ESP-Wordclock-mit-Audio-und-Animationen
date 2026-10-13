@@ -101,6 +101,8 @@ Nach dem Verbinden erscheint die Uhr als Gerät mit zusätzlichen Entitäten:
 
 | Entität | Typ | Funktion |
 |---|---|---|
+| Wortuhr | Licht | an/aus, Helligkeit, Farbe, Modus (Wortuhr, Sekunden, Lauftext …) |
+| Helligkeit | Zahl | 1–100 % (wirkt nicht, solange „Helligkeit automatisch“ an ist) |
 | Sound | Schalter | alle Töne an/aus |
 | Lautstärke | Zahl | 0–100 % |
 | Stundengong | Schalter | Gong zur vollen Stunde |
@@ -109,6 +111,8 @@ Nach dem Verbinden erscheint die Uhr als Gerät mit zusätzlichen Entitäten:
 | Nachtruhe | Schalter | keine Töne in der eingestellten Zeit |
 | Animation zur vollen Stunde | Auswahl | Aus, Uhrzeit-Animationen (`Zhhmm`), Zufall oder eine bestimmte Animation |
 | Ereignisse | Schalter | Geburtstage usw. |
+| Nachricht: Text / Ton / Animation | Text / Auswahl | Nachricht vorbereiten (Ton auch „Zufall: Geburtstag“ usw.) |
+| Nachricht abspielen | Taste | Animation → Lauftext → Animation, dazu der Ton |
 | Animation abspielen | Auswahl | spielt die gewählte Animation |
 | Sound abspielen (Nr.) | Zahl | spielt die mp3 mit dieser Nummer |
 | Uhrzeit / Datum / Raumklima ansagen | Taste | Ansage |
