@@ -80,6 +80,13 @@ Die Datenleitungen zwischen ESP und DFPlayer (RX/TX) haben **keine** Widerständ
 - Alle Pins lassen sich später in der Weboberfläche ändern (Einstellungen → Hardware-Pins bzw. Sound).
 - Das Schaltbild wird mit `python3 tools/draw_wiring.py` erzeugt.
 
+## Layouts und Sounds
+
+- **[Übersicht aller Layouts](docs/LAYOUTS.md)** – die Buchstaben jeder Frontplatte, z. B. „10 × 11“ und „10 × 11 Uhr“ im Vergleich.
+- **[Übersicht der Sounds](docs/SOUNDS.md)** – welche Nummer welcher Ton ist (Gong, Effekte, Musik, Tiere, Ansagen).
+
+**Die mp3-Dateien sind nicht Teil dieses Repositorys.** Das Sound-Paket enthält unter anderem Ausschnitte bekannter Musikstücke und Aufnahmen, deren Rechte bei den Urhebern und Plattenfirmen liegen; sie dürfen hier nicht veröffentlicht werden. Wer eine Wortuhr_mp3 hat, verwendet einfach die vorhandene SD-Karte weiter. Ansonsten kann man eigene Dateien nach dem gleichen Schema benennen (`0720_name.mp3` im Ordner `mp3`) – zum Beispiel selbst aufgenommene oder frei lizenzierte Töne.
+
 ## Installation
 
 1. Unter **[Releases](https://github.com/maxlin1/ESP-Wordclock-mit-Audio-und-Animationen/releases/latest)** die Datei **`wortuhr-esp32-komplett.bin`** herunterladen.
