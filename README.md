@@ -31,8 +31,9 @@ Die Erweiterungen sind in die bestehenden Seiten der Uhr eingebaut, Änderungen 
 
 | Wo | Was |
 |---|---|
-| **Funktionen → Übergang** | wie die Buchstaben wechseln, wenn sich die Uhrzeit ändert (alle 5 Minuten): Überblenden, Matrix-Regen … („Keines“ = sofort). Gehört zum Original-Projekt. |
-| **Funktionen → Zur vollen Stunde** | Stundengong (Klang, auch pro Wochentag) und Animation zur vollen Stunde – beides einzeln ein/aus |
+| **Funktionen → Übergang** | wie die Buchstaben wechseln, wenn sich die Uhrzeit ändert (alle 5 Minuten): Überblenden, Matrix-Regen … („Keines“ = sofort); „Vorschau“ lässt die Uhr zum Ansehen schnell vorlaufen. Gehört zum Original-Projekt. |
+| **Funktionen → Zur vollen Stunde** | Stundengong (Klang, auch pro Wochentag) und Animation zur vollen Stunde – beides einzeln ein/aus und zum Testen |
+| **Anzeigeoptionen → Formulierung** | wann „ES IST“ mitleuchtet und wie z. B. 9:15 heißt (Original-Projekt) |
 | **Funktionen → Animationen & Ansagen** | Animationen und Töne abspielen, Uhrzeit, Datum und Raumklima ansagen |
 | **Ereignisse** | Geburtstage, Feiertage usw.; „events.json importieren“ übernimmt die Ereignisse der alten Uhr |
 | **Farben → Automatischer Farbwechsel** | neue Farbe in festen Abständen oder fließend |

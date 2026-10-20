@@ -107,7 +107,8 @@ let TRANSLATION_EN_US = {
 				"label": "Speed"
 			},
 			"demo": {
-				"label": "Preview"
+				"label": "Preview",
+				"help": "The clock jumps ahead 5 minutes every 2 seconds so you can watch the transition. Switch it off afterwards."
 			}
 		},
 		"settings": {
@@ -178,13 +179,14 @@ let TRANSLATION_EN_US = {
 			"quadRes": "Four LEDs per letter"
 		},
 		"language": {
-			"h2": "Language",
-			"hide-it-is": "„Display 'It is'“",
+			"h2": "Wording",
+			"help": "How the time is written in words: when “IT IS” lights up (always, only at the quarter, half or full hour, or never) and how e.g. 9:15 is said. This is not related to the chime and animation at the full hour (Functions).",
+			"hide-it-is": "Show “IT IS”",
 			"it-is-off": "Off",
-			"it-is-hourly": "Hourly",
-			"it-is-half-hourly": "Half-hourly",
-			"it-is-quarterly": "Quarterly",
-			"it-is-permanent": "Permanent",
+			"it-is-hourly": "Only at the full hour",
+			"it-is-half-hourly": "At the full and half hour",
+			"it-is-quarterly": "Every quarter hour",
+			"it-is-permanent": "Always",
 			"at-nine-fifteen": "On 9:15 It Is ...",
 			"quarter-past-nine": "Quarter Past Nine", // German: viertel nach neun
 			"quarter-nine": "Quarter Ten", // German: viertel zehn
@@ -416,7 +418,7 @@ let TRANSLATION_EN_US = {
 			"sound": "Sound",
 			"per-weekday": "Different per weekday",
 			"single": "Single stroke only",
-			"voice24h": "Speakers use 24-hour format",
+			"voice24h": "24-hour announcement",
 			"animation": "Animation",
 			"off": "Off",
 			"time-animations": "Matching the time (Z0800 at 8 o'clock …)",
@@ -426,7 +428,9 @@ let TRANSLATION_EN_US = {
 			"help-time": "The clock shows the animation that belongs to the hour (e.g. Z0800 at 8 o'clock). Such animations exist for: {hours} o'clock – at the other hours none is shown.",
 			"help-random": "A random animation every full hour (without the time animations).",
 			"help-fixed": "This animation is shown every full hour.",
-			"test": "Test chime"
+			"test": "Test chime",
+			"test-animation": "Test animation",
+			"testing": "Testing {name}"
 		},
 		"play": {
 			"h2": "Animations & announcements",
