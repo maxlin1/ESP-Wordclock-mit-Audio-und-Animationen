@@ -1078,6 +1078,34 @@ label.pure-button {
     background: var(--app-surface-solid);
 }
 
+/* Labels: break between words, not inside them ("spie-geln") */
+.pure-form-aligned .pure-control-group label {
+	hyphens: manual;
+	overflow-wrap: break-word;
+}
+
+.group-start {
+	margin-top: 1.2em;
+	padding-top: 1.2em;
+	border-top: 1px solid var(--app-border);
+}
+
+.inline-hint {
+	display: inline-block;
+	max-width: 26em;
+	margin-left: 0.6em;
+	font-size: 0.9em;
+	color: #666;
+	vertical-align: middle;
+}
+
+.box-help {
+	margin: 0 0 1em;
+	padding-bottom: 0.6em;
+	border-bottom: 1px solid var(--app-border);
+	color: #333;
+}
+
 .extras-hint {
 	margin: 0.2em 0 0.8em 12.2em;
 	font-size: 0.9em;

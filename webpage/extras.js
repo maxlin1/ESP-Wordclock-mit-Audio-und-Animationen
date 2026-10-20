@@ -258,8 +258,27 @@
 		byId("hour-animation-help").textContent = text;
 	}
 
+	// Animation that "Animation testen" plays for the current selection
+	function hourAnimationToTest() {
+		const value = byId("hour-animation").value;
+		const names = extrasData ? extrasData.animations : [];
+		if (value === "Z") {
+			// the time animation of the current hour, otherwise the next one
+			const timeAnimations = names.filter(name => /^Z\d\d00$/.test(name) && name !== "Z0000");
+			const hour = new Date().getHours();
+			const next = timeAnimations.find(name => Number(name.substr(1, 2)) >= hour);
+			return next || timeAnimations[0] || "";
+		}
+		if (value === "*") {
+			const pool = names.filter(name => !/^Z\d{4}$/.test(name));
+			return pool.length ? pool[Math.floor(Math.random() * pool.length)] : "";
+		}
+		return value;
+	}
+
 	function updateHourVisibility() {
 		updateHourAnimationHelp();
+		byId("hour-animation-test").disabled = byId("hour-animation").value === "";
 		const chimeOn = byId("hour-chime").checked;
 		document.querySelectorAll(".hour-chime-option").forEach(el => el.classList.toggle("extras-collapsed", !chimeOn));
 		const perWeekday = Number(byId("hour-chime-sound").value) < 0;
@@ -578,6 +597,13 @@
 		});
 
 		byId("hour-chime-test").addEventListener("click", () => apiCall("/announce?what=chime"));
+		byId("hour-animation-test").addEventListener("click", () => {
+			const name = hourAnimationToTest();
+			if (name) {
+				showToast(tr("extras.hour.testing").replace("{name}", animationLabel(name)));
+				apiCall(`/animation?name=${encodeURIComponent(name)}`);
+			}
+		});
 		byId("play-animation-button").addEventListener("click", () => {
 			apiCall(`/animation?name=${encodeURIComponent(byId("play-animation").value)}`);
 		});

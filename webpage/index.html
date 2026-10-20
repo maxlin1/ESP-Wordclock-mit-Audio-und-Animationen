@@ -506,6 +506,7 @@
                         <div class="pure-control-group">
                             <label for="transition-demo" data-i18next="functions.transition.demo.label"></label>
                             <input type="checkbox" id="transition-demo" >
+                            <span class="inline-hint" data-i18next="functions.transition.demo.help"></span>
                         </div>
                         </fieldset>
                     </form>
@@ -542,13 +543,16 @@
                                     <span class="slider round"></span>
                                 </label>
                             </div>
-                            <div class="pure-control-group">
+                            <div class="pure-controls hour-chime-option">
+                                <button type="button" id="hour-chime-test" class="pure-button" data-i18next="extras.hour.test"></button>
+                            </div>
+                            <div class="pure-control-group group-start">
                                 <label for="hour-animation" data-i18next="extras.hour.animation"></label>
                                 <select id="hour-animation" class="extras-setting" size="1"></select>
                             </div>
                             <p class="extras-hint" id="hour-animation-help"></p>
                             <div class="pure-controls">
-                                <button type="button" id="hour-chime-test" class="pure-button" data-i18next="extras.hour.test"></button>
+                                <button type="button" id="hour-animation-test" class="pure-button" data-i18next="extras.hour.test-animation"></button>
                             </div>
                         </fieldset>
                     </form>
@@ -773,6 +777,7 @@
                 <div class="box">
                     <h2 data-i18next="view.language.h2"></h2>
                     <form class="pure-form pure-form-aligned">
+                        <p class="box-help" data-i18next="view.language.help"></p>
                         <div class="pure-control-group">
                             <div class="pure-control-group">
                                 <label for="it-is-variant" data-i18next="view.language.hide-it-is"></label><select name="it-is-variant" id="it-is-variant" size="1">

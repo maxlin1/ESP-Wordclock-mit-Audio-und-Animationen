@@ -107,7 +107,8 @@ let TRANSLATION_DE_DE = {
 				"label": "Geschwindigkeit"
 			},
 			"demo": {
-				"label": "Vorschau"
+				"label": "Vorschau",
+				"help": "Die Uhr springt alle 2 Sekunden 5 Minuten weiter, damit man den Übergang ansehen kann. Danach wieder ausschalten."
 			}
 		},
 		"settings": {
@@ -178,13 +179,14 @@ let TRANSLATION_DE_DE = {
 			"quadRes": "Je vier LEDs pro Buchstabe"
 		},
 		"language": {
-			"h2": "Sprache",
-			"hide-it-is": "„'Es ist' Anzeige“",
+			"h2": "Formulierung",
+			"help": "Wie die Uhrzeit in Worten angezeigt wird: wann „ES IST“ mitleuchtet (immer, nur zur Viertel-, halben oder vollen Stunde oder nie) und wie z. B. 9:15 heißt. Mit Gong und Animation zur vollen Stunde (Funktionen) hat das nichts zu tun.",
+			"hide-it-is": "„ES IST“ anzeigen",
 			"it-is-off": "Aus",
-			"it-is-hourly": "Stündlich",
-			"it-is-half-hourly": "Halbstündlich",
-			"it-is-quarterly": "Viertelstündlich",
-			"it-is-permanent": "Permanent",
+			"it-is-hourly": "Nur zur vollen Stunde",
+			"it-is-half-hourly": "Zur vollen und halben Stunde",
+			"it-is-quarterly": "Zu jeder Viertelstunde",
+			"it-is-permanent": "Immer",
 			"at-nine-fifteen": "Um 9:15 ist es ...",
 			"quarter-past-nine": "viertel nach neun",
 			"quarter-nine": "viertel zehn",
@@ -416,7 +418,7 @@ let TRANSLATION_DE_DE = {
 			"sound": "Klang",
 			"per-weekday": "Pro Wochentag verschieden",
 			"single": "Nur ein Schlag",
-			"voice24h": "Sprecher sagen 13–24 Uhr",
+			"voice24h": "24-Stunden-Ansage",
 			"animation": "Animation",
 			"off": "Aus",
 			"time-animations": "Passend zur Uhrzeit (Z0800 um 8 Uhr …)",
@@ -426,7 +428,9 @@ let TRANSLATION_DE_DE = {
 			"help-time": "Die Uhr zeigt die Animation, die zur Stunde gehört (z. B. Z0800 um 8 Uhr). Solche Animationen gibt es für: {hours} Uhr – zu den anderen Stunden läuft keine.",
 			"help-random": "Jede volle Stunde eine zufällige Animation (ohne die Uhrzeit-Animationen).",
 			"help-fixed": "Jede volle Stunde läuft diese Animation.",
-			"test": "Gong testen"
+			"test": "Gong testen",
+			"test-animation": "Animation testen",
+			"testing": "Teste {name}"
 		},
 		"play": {
 			"h2": "Animationen & Ansagen",
