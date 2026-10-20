@@ -1,0 +1,514 @@
+/*
+ * Theme of this fork: light, calm and flat.
+ *
+ * Loaded after style.css of ESPWortuhr and only overrides it, so new
+ * versions of the upstream design can still be merged.
+ *
+ * - white page, light sidebar, dark text (also when the system is dark)
+ * - sections separated by a heading and a hairline instead of glass cards
+ * - one accent colour: the warm amber of an LED, for switches, the active
+ *   page and the selected mode
+ * - small radii, one height for fields and buttons, centred button labels
+ */
+
+:root {
+    --page: #fff;
+    --sidebar: #f5f6f8;
+    --ink: #1c2026;
+    --ink-soft: #3c444f;
+    --muted: #68717d;
+    --line: #e3e6ea;
+    --line-strong: #cfd4da;
+    --led: #f0a531;
+    --led-soft: #fff1da;
+    --led-ink: #8a5300;
+
+    /* upstream tokens */
+    --bg: var(--page);
+    --text: var(--ink);
+    --text-soft: var(--ink-soft);
+    --text-muted: var(--muted);
+    --glass: transparent;
+    --glass-strong: #fff;
+    --glass-border: var(--line);
+    --glass-hl: 0 0 0 0 transparent;
+    --glass-shadow: 0 0 0 0 transparent;
+    --glass-sheen: linear-gradient(transparent, transparent);
+    --glass-blur: none;
+    --glass-fallback: #fff;
+    --droplet: #fff;
+    --droplet-shadow: 0 1px 2px rgb(28 32 38 / 12%);
+    --popup-bg: #fff;
+    --field-bg: #fff;
+    --field-border: var(--line-strong);
+    --field-shadow: none;
+    --control: #d5d9df;
+    --hairline: var(--line);
+    --ring: rgb(28 32 38 / 18%);
+    --icon-filter: none;
+    --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2368717d' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    --light-a: transparent;
+    --light-b: transparent;
+    --accent: var(--led);
+    --accent-soft: var(--led-soft);
+    --accent-ink: var(--led-ink);
+    --on-accent: var(--ink);
+    --ok: #1f9d55;
+    --danger: #c93c3c;
+    --warning: #c98a12;
+    --radius: 8px;
+    --radius-card: 0;
+    --control-height: 40px;
+    --field-pad: 12px;
+
+    color-scheme: light;
+}
+
+html {
+    background: var(--page);
+}
+
+body::before {
+    display: none;
+}
+
+/*
+ * No glass anywhere
+ */
+
+.box,
+.menu,
+.conn,
+.logo,
+.lang-picker .language,
+.lang-flag {
+    backdrop-filter: none;
+    box-shadow: none;
+}
+
+@supports (-webkit-backdrop-filter: blur(1px)) {
+    .box,
+    .menu,
+    .conn,
+    .lang-picker .language,
+    .lang-flag {
+        -webkit-backdrop-filter: none; /* stylelint-disable-line property-no-vendor-prefix */
+    }
+}
+
+/*
+ * Sections instead of cards
+ */
+
+.section {
+    gap: 8px 56px;
+}
+
+.box {
+    padding: 22px 0 26px;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+}
+
+.box h2 {
+    margin: 0 0 18px;
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: 0;
+}
+
+.section-connection-lost .box,
+.section-reboot-recommended .box {
+    padding: 14px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    background: var(--led-soft);
+}
+
+@media (width < 48em) {
+    .box {
+        padding: 20px 0 22px;
+        border-radius: 0;
+    }
+}
+
+/*
+ * Navigation: light sidebar, active page marked by an amber bar
+ */
+
+.menu {
+    background: var(--sidebar);
+    border: 0;
+}
+
+.eyebrow {
+    font-size: 13px;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.logo {
+    border: 0;
+    border-radius: 8px;
+    background: var(--ink);
+}
+
+.logo .logo-off {
+    fill: #3a414b;
+}
+
+.nav-link {
+    border: 0;
+    border-radius: 8px;
+}
+
+.menu .nav-link:hover {
+    background: #eceef1;
+}
+
+.menu .nav-link.active {
+    border: 0;
+    background: #fff;
+    box-shadow: inset 3px 0 0 var(--led), 0 1px 2px rgb(28 32 38 / 8%);
+    font-weight: 600;
+}
+
+.nav-link.active svg {
+    color: var(--led-ink);
+}
+
+@media (width >= 48em) {
+    .menu {
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: var(--nav-width);
+        padding: 24px 14px;
+        border-right: 1px solid var(--line);
+        border-radius: 0;
+    }
+
+    .main {
+        margin-left: var(--nav-width);
+        padding: 32px 48px 48px;
+    }
+}
+
+@media (width < 48em) {
+    .menu {
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: calc(var(--tabbar-height) + env(safe-area-inset-bottom));
+        padding: 0 4px env(safe-area-inset-bottom);
+        border-top: 1px solid var(--line);
+        border-radius: 0;
+        background: #fff;
+    }
+
+    .menu > .nav-link {
+        border-radius: 8px;
+    }
+
+    .menu .nav-link.active,
+    .menu > .nav-link.active {
+        background: transparent;
+        box-shadow: none;
+        color: var(--ink);
+    }
+
+    .menu-more {
+        right: 8px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 12px 32px rgb(28 32 38 / 14%);
+    }
+
+    .menu-more .nav-link.active {
+        box-shadow: inset 3px 0 0 var(--led);
+    }
+}
+
+/*
+ * Page header
+ */
+
+.page-header h1 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.conn,
+.lang-flag,
+.lang-picker .language {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+}
+
+/*
+ * Form fields
+ */
+
+.pure-form input:not([type="range"], [type="checkbox"], [type="radio"], [type="file"]),
+.pure-form select,
+.pure-form textarea {
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background-color: #fff;
+    box-shadow: none;
+    color: var(--ink);
+}
+
+.pure-form input:focus,
+.pure-form select:focus,
+.pure-form textarea:focus {
+    border-color: var(--led);
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--led-soft);
+}
+
+.pure-form legend,
+.box-help,
+.extras-hint,
+.inline-hint {
+    color: var(--muted);
+}
+
+/*
+ * Buttons: one height, label always centred
+ */
+
+.pure-button,
+label.pure-button,
+a.pure-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: var(--control-height);
+    padding: 0 18px;
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--ink);
+    box-shadow: none;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    white-space: normal;
+}
+
+.pure-button:hover,
+.pure-button:focus {
+    background: #2d333c;
+    background-image: none;
+    filter: none;
+}
+
+.pure-button:active {
+    transform: none;
+    box-shadow: none;
+}
+
+.pure-button:focus-visible {
+    outline: 2px solid var(--led);
+    outline-offset: 2px;
+}
+
+.pure-button.button-secondary,
+.pure-button.button-ghost {
+    border-color: var(--line-strong);
+    background: #fff;
+    color: var(--ink);
+    font-weight: 500;
+}
+
+.pure-button.button-secondary:hover,
+.pure-button.button-ghost:hover {
+    background: var(--sidebar);
+}
+
+.pure-button.button-danger {
+    border-color: #ecc8c8;
+    background: #fff;
+    color: var(--danger);
+}
+
+.pure-button[disabled] {
+    border-color: var(--line);
+    background: var(--sidebar);
+    color: var(--muted);
+    opacity: 1;
+}
+
+/*
+ * Mode tiles and segmented controls
+ */
+
+.radio-select {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--ink-soft);
+}
+
+.radio-select:hover {
+    border-color: var(--line-strong);
+}
+
+.radio-select:has(input:checked) {
+    border-color: var(--led);
+    background: var(--led-soft);
+    box-shadow: inset 0 0 0 1px var(--led);
+    color: var(--ink);
+}
+
+.brightness,
+.speed,
+.fire,
+.functions-settings,
+.leds,
+.position,
+.segmented {
+    border: 0;
+    border-radius: 10px;
+    background: #eef0f3;
+    box-shadow: none;
+}
+
+.segmented .seg {
+    border: 0;
+    border-radius: 8px;
+    color: var(--muted);
+}
+
+.segmented .seg:has(input:checked) {
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(28 32 38 / 14%);
+    color: var(--ink);
+}
+
+/*
+ * Switch and slider: the amber "LED"
+ */
+
+.slider {
+    background: var(--control);
+    box-shadow: none;
+}
+
+.slider::before {
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(28 32 38 / 25%);
+}
+
+input:checked + .slider {
+    background: var(--led);
+    box-shadow: 0 0 10px rgb(240 165 49 / 45%);
+}
+
+input[type="range"] {
+    --track: linear-gradient(90deg, var(--led), var(--led));
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: var(--control);
+    box-shadow: none;
+}
+
+input[type="range"]::-moz-range-track {
+    height: 6px;
+    background: var(--control);
+    box-shadow: none;
+}
+
+input[type="range"]::-moz-range-progress {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--led);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+    margin-top: -7px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line-strong), 0 1px 3px rgb(28 32 38 / 25%);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line-strong), 0 1px 3px rgb(28 32 38 / 25%);
+}
+
+/*
+ * Extras of this fork
+ */
+
+.event-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+}
+
+.hour-chime-weekdays,
+.group-start {
+    border-color: var(--line);
+}
+
+.extras-toast {
+    border-radius: 8px;
+    background: var(--ink);
+    color: #fff;
+}
+
+/*
+ * Wide screens: sections flow in two columns without gaps between rows
+ */
+
+@media (width >= 64em) {
+    .section:not([hidden]) {
+        display: block;
+        column-count: 2;
+        column-gap: 56px;
+    }
+
+    .section > .box {
+        break-inside: avoid;
+    }
+}
+
+/* Destructive actions look different from normal ones */
+#initial-values-button {
+    border-color: #ecc8c8;
+    background: #fff;
+    color: var(--danger);
+}
+
+#initial-values-button:hover {
+    background: #fdf3f3;
+}
+
+/* File chooser like the other buttons */
+input[type="file"]::file-selector-button {
+    height: var(--control-height);
+    margin-right: 12px;
+    padding: 0 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+}
