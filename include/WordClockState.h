@@ -34,7 +34,6 @@
       "de-10-11-alt-frame")                                                    \
     X(Ger10x11bayerisch, 14, _de10x11bayerisch, "de-10-11-bayerisch")          \
     X(Ger10x11Clock, 15, _de10x11Clock, "de-10-11-clock")                      \
-    X(Ger10x11UhrRechts, 36, _de10x11UhrRechts, "de-10-11-uhr-rechts")         \
     X(Ger10x11Mrrioes, 16, _de10x11Mrrioes, "de-10-11-mrrioes")                \
     X(Ger10x11Nero, 17, _de10x11Nero, "de-10-11-nero")                         \
     X(Ger10x11NeroFrame, 18, _de10x11NeroFrame, "de-10-11-nero-frame")         \

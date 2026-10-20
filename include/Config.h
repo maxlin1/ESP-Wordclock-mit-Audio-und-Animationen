@@ -37,7 +37,7 @@
 //
 // Fork default: classic German layout (ES IST ... VOR FUNK NACH ...)
 // #define DEFAULT_LAYOUT Ger10x11Clock
-#define DEFAULT_LAYOUT Ger10x11UhrRechts
+#define DEFAULT_LAYOUT Ger10x11Nero
 // 10 rows, each 11 LED's per row + 4 LED's for minutes, with the layout
 // from the original manufacturer
 //

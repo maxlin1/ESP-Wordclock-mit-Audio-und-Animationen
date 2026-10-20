@@ -94,7 +94,7 @@ Die Datenleitungen zwischen ESP und DFPlayer (RX/TX) haben **keine** Widerständ
 
 ## Layouts und Sounds
 
-- **[Übersicht aller Layouts](docs/LAYOUTS.md)** – die Buchstaben jeder Frontplatte. Welches Layout passt, erkennt man an der letzten Zeile: **„🇩🇪 10 × 11 UHR rechts“** für Fronten mit „…F M U H R“, „🇩🇪 10 × 11“ für „…F U H R Y“, „🇩🇪 10 × 11 Uhr“ für „…N E U N K U H R“.
+- **[Übersicht aller Layouts](docs/LAYOUTS.md)** – die Buchstaben jeder Frontplatte und eine Anleitung **[„Welches Layout habe ich?“](docs/LAYOUTS.md#welches-layout-habe-ich)**. Es zählt nur, wo die Wörter stehen, nicht die Füllbuchstaben: Eine Front mit „…S E C H S F M U H R“ unten ist z. B. **„🇩🇪 10 × 11 Nero“** (UHR ganz rechts), mit „…F U H R Y“ das Standard-„🇩🇪 10 × 11“.
 - **[Übersicht der Sounds](docs/SOUNDS.md)** – welche Nummer welcher Ton ist (Gong, Effekte, Musik, Tiere, Ansagen).
 
 **Die mp3-Dateien sind nicht Teil dieses Repositorys.** Das Sound-Paket enthält unter anderem Ausschnitte bekannter Musikstücke und Aufnahmen, deren Rechte bei den Urhebern und Plattenfirmen liegen; sie dürfen hier nicht veröffentlicht werden. Wer eine Wortuhr_mp3 hat, verwendet einfach die vorhandene SD-Karte weiter. Ansonsten kann man eigene Dateien nach dem gleichen Schema benennen (`0720_name.mp3` im Ordner `mp3`) – zum Beispiel selbst aufgenommene oder frei lizenzierte Töne.
@@ -115,7 +115,7 @@ esptool.py --chip esp32 write_flash 0x0 wortuhr-esp32-komplett.bin
 
 1. Nach dem Start öffnet die Uhr ein WLAN **„Connect_to_Wordclock“**. Damit verbinden und das eigene WLAN eintragen.
 2. Die Webseite der Uhr öffnen (`http://<IP-der-Uhr>`).
-3. **Anzeigeoptionen → Front**: Layout prüfen – voreingestellt ist **„🇩🇪 10 × 11 UHR rechts“**. Steht „ES IST … UHR“ an der falschen Stelle, passt das Layout nicht zur Frontplatte ([Übersicht](docs/LAYOUTS.md)).
+3. **Anzeigeoptionen → Front**: Layout prüfen – voreingestellt ist **„🇩🇪 10 × 11 Nero“** ([Welches Layout habe ich?](docs/LAYOUTS.md#welches-layout-habe-ich)). Steht „ES IST … UHR“ an der falschen Stelle, passt das Layout nicht zur Frontplatte ([Übersicht](docs/LAYOUTS.md)).
 4. **Einstellungen**: LED-Typ **WS2812 GRB**.
 5. **Smart Home → MQTT**: Broker, Benutzer und Passwort eintragen, MQTT aktivieren, „Sende HA Discovery“ anklicken (siehe [Home Assistant](#home-assistant)).
 
