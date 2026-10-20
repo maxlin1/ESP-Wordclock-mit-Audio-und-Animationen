@@ -5,9 +5,9 @@
 
 Dieser Fork von [ESPWortuhr](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock) bringt die Funktionen der Wortuhr **Wortuhr_mp3 von Manfred Hofmann** auf einen **ESP32**: Töne und Ansagen über einen DFPlayer Mini, die 58 Animationen, Ereignisse wie Geburtstage und ein Raumklima-Sensor – alles direkt in der Weboberfläche der Uhr und per MQTT in Home Assistant.
 
-Die Hardware einer bestehenden Wortuhr_mp3 (WeMos D1 mini, DFPlayer, BME280) kann weiterverwendet werden: Statt des WeMos D1 mini steckt einfach ein **ESP32 D1 mini** im selben Sockel. Die SD-Karte mit den Sounds bleibt unverändert.
+Die Hardware einer bestehenden Wortuhr_mp3 (WeMos D1 mini, DFPlayer, BME280) kann weiterverwendet werden: Statt des WeMos D1 mini steckt einfach ein **ESP32 D1 mini** im selben Sockel. Die SD-Karte mit den Sounds bleibt unverändert. Die Erweiterungen gibt es nur für den ESP32; auf dem ESP8266 verhält sich die Firmware wie das Original-Projekt.
 
-> Ausführliche Anleitung: **[ERWEITERUNGEN.md](ERWEITERUNGEN.md)**
+**Inhalt:** [Neue Funktionen](#neue-funktionen) · [Weboberfläche](#weboberfläche) · [Hardware](#hardware-und-schaltbild) · [Layouts und Sounds](#layouts-und-sounds) · [Installation](#installation) · [Einrichten](#einrichten) · [Updates](#updates) · [Home Assistant](#home-assistant) · [Zurück zur alten Firmware](#zurück-zur-alten-firmware) · [Lizenz](#danke--lizenz)
 
 ## Neue Funktionen
 
@@ -16,7 +16,7 @@ Die Hardware einer bestehenden Wortuhr_mp3 (WeMos D1 mini, DFPlayer, BME280) kan
 | 🔔 **Stundengong** | 17 Klänge (Kirche, Westminster, Kuckuck, Vicki/Hans …), pro Wochentag wählbar, Einzelschlag oder Stundenzahl |
 | 🗣️ **Ansagen** | Uhrzeit, Datum und Raumklima mit den Sprechern Vicki oder Hans |
 | 🎞️ **Animationen** | alle 58 Animationen der alten Uhr (Herz, Feuerwerk, Kerze, Pacman …), fest in der Firmware |
-| ⏰ **Zur vollen Stunde** | Uhrzeit-Animationen (`Z0800` …), eine Zufallsanimation oder eine bestimmte Animation |
+| ⏰ **Zur vollen Stunde** | Animation passend zur Uhrzeit (`Z0800` um 8 Uhr …), eine zufällige oder eine bestimmte Animation |
 | 🎂 **Ereignisse** | Geburtstage, Feiertage usw. mit Uhrzeit, Ende, Wiederholung, Lauftext (Alter über „YY“), Ton und Animationen; Import der `events.json` der alten Uhr |
 | 🎲 **Zufallstöne** | ein zufälliger Titel aus Geburtstag, Weihnachten, Silvester, Natur, Tiere oder Musik |
 | 🌈 **Automatischer Farbwechsel** | neue Farbe alle 5 Minuten, stündlich oder täglich – sanft überblendet – oder fließend durch alle Farben |
@@ -27,13 +27,24 @@ Die Hardware einer bestehenden Wortuhr_mp3 (WeMos D1 mini, DFPlayer, BME280) kan
 
 ## Weboberfläche
 
-Die Erweiterungen sind in die bestehenden Seiten der Uhr eingebaut.
+Die Erweiterungen sind in die bestehenden Seiten der Uhr eingebaut, Änderungen werden sofort gespeichert.
+
+| Wo | Was |
+|---|---|
+| **Funktionen → Übergang** | wie die Buchstaben wechseln, wenn sich die Uhrzeit ändert (alle 5 Minuten): Überblenden, Matrix-Regen … („Keines“ = sofort). Gehört zum Original-Projekt. |
+| **Funktionen → Zur vollen Stunde** | Stundengong (Klang, auch pro Wochentag) und Animation zur vollen Stunde – beides einzeln ein/aus |
+| **Funktionen → Animationen & Ansagen** | Animationen und Töne abspielen, Uhrzeit, Datum und Raumklima ansagen |
+| **Ereignisse** | Geburtstage, Feiertage usw.; „events.json importieren“ übernimmt die Ereignisse der alten Uhr |
+| **Farben → Automatischer Farbwechsel** | neue Farbe in festen Abständen oder fließend |
+| **Einstellungen → Sound** | Lautstärke, Nachtruhe, Sprecher, Anschlüsse des MP3-Players |
+| **Einstellungen → Raumklima** | Messwerte, Höhe über dem Meer (für den Luftdruck), Temperatur-Korrektur |
+| **Einstellungen → Firmware-Update** | neue Firmware über WLAN einspielen |
 
 **Ereignisse** – eigener Menüpunkt mit Datum, Uhrzeit, Wiederholung, Text, Ton und Animationen:
 
 <img src="pics/extras/uebersicht.png" alt="Ereignisse in der Weboberfläche" width="800"/>
 
-| Funktionen → Übergang → Zur vollen Stunde | Funktionen → Animationen & Ansagen |
+| Funktionen → Zur vollen Stunde | Funktionen → Animationen & Ansagen |
 |---|---|
 | <img src="pics/extras/volle-stunde.png" alt="Stundengong und Animation zur vollen Stunde" width="420"/> | <img src="pics/extras/animationen-ansagen.png" alt="Animationen und Ansagen" width="420"/> |
 
@@ -82,7 +93,7 @@ Die Datenleitungen zwischen ESP und DFPlayer (RX/TX) haben **keine** Widerständ
 
 ## Layouts und Sounds
 
-- **[Übersicht aller Layouts](docs/LAYOUTS.md)** – die Buchstaben jeder Frontplatte, z. B. „10 × 11“ und „10 × 11 Uhr“ im Vergleich.
+- **[Übersicht aller Layouts](docs/LAYOUTS.md)** – die Buchstaben jeder Frontplatte. Welches Layout passt, erkennt man an der letzten Zeile: **„🇩🇪 10 × 11 UHR rechts“** für Fronten mit „…F M U H R“, „🇩🇪 10 × 11“ für „…F U H R Y“, „🇩🇪 10 × 11 Uhr“ für „…N E U N K U H R“.
 - **[Übersicht der Sounds](docs/SOUNDS.md)** – welche Nummer welcher Ton ist (Gong, Effekte, Musik, Tiere, Ansagen).
 
 **Die mp3-Dateien sind nicht Teil dieses Repositorys.** Das Sound-Paket enthält unter anderem Ausschnitte bekannter Musikstücke und Aufnahmen, deren Rechte bei den Urhebern und Plattenfirmen liegen; sie dürfen hier nicht veröffentlicht werden. Wer eine Wortuhr_mp3 hat, verwendet einfach die vorhandene SD-Karte weiter. Ansonsten kann man eigene Dateien nach dem gleichen Schema benennen (`0720_name.mp3` im Ordner `mp3`) – zum Beispiel selbst aufgenommene oder frei lizenzierte Töne.
@@ -90,25 +101,100 @@ Die Datenleitungen zwischen ESP und DFPlayer (RX/TX) haben **keine** Widerständ
 ## Installation
 
 1. Unter **[Releases](https://github.com/maxlin1/ESP-Wordclock-mit-Audio-und-Animationen/releases/latest)** die Datei **`wortuhr-esp32-komplett.bin`** herunterladen.
-2. In Chrome oder Edge **[web.esphome.io](https://web.esphome.io)** öffnen → **Connect** → **Install** → Datei auswählen.
+2. In Chrome oder Edge **[web.esphome.io](https://web.esphome.io)** öffnen → **Connect** → Port auswählen → **Install** → Datei auswählen.
    Klappt die Verbindung nicht, beim Einstecken **IO0** mit **GND** verbinden (Flash-Modus) bzw. den Treiber für den USB-Chip installieren (z. B. [CH9102/CH340](https://github.com/WCHSoftGroup/ch34xser_macos)).
-3. Mit dem WLAN **„Connect_to_Wordclock“** verbinden und das eigene WLAN eintragen.
-4. Auf der Webseite der Uhr Layout (**🇩🇪 10 × 11 Uhr**), LED-Typ (**WS2812 GRB**) und MQTT prüfen.
 
-**Updates** danach über WLAN: Einstellungen → **Firmware-Update** → `wortuhr-esp32-update.bin`.
+Alternativ mit esptool:
+
+```
+esptool.py --chip esp32 write_flash 0x0 wortuhr-esp32-komplett.bin
+```
+
+## Einrichten
+
+1. Nach dem Start öffnet die Uhr ein WLAN **„Connect_to_Wordclock“**. Damit verbinden und das eigene WLAN eintragen.
+2. Die Webseite der Uhr öffnen (`http://<IP-der-Uhr>`).
+3. **Anzeigeoptionen → Front**: Layout prüfen – voreingestellt ist **„🇩🇪 10 × 11 UHR rechts“**. Steht „ES IST … UHR“ an der falschen Stelle, passt das Layout nicht zur Frontplatte ([Übersicht](docs/LAYOUTS.md)).
+4. **Einstellungen**: LED-Typ **WS2812 GRB**.
+5. **Smart Home → MQTT**: Broker, Benutzer und Passwort eintragen, MQTT aktivieren, „Sende HA Discovery“ anklicken (siehe [Home Assistant](#home-assistant)).
+
+## Updates
+
+Neue Versionen erscheinen unter **[Releases](https://github.com/maxlin1/ESP-Wordclock-mit-Audio-und-Animationen/releases/latest)** als **`wortuhr-esp32-update.bin`**. Auf der Webseite der Uhr unter **Einstellungen → Firmware-Update** die Datei auswählen und **„Update starten“** klicken – die Seite zeigt den Fortschritt und lädt sich nach dem Neustart selbst neu. (Notfalls geht es über die einfache Seite `http://<IP-der-Uhr>:81/update`.)
+
+Nach einem Update mit neuen Home-Assistant-Funktionen einmal **Smart Home → MQTT → „Sende HA Discovery“** klicken.
+
+Neuerungen vom Original-Projekt holt man auf GitHub mit **„Sync fork“** in diesen Fork; danach wird die Firmware automatisch neu gebaut.
 
 ## Home Assistant
 
-Nach dem Einrichten von MQTT (Smart Home → MQTT, „Sende HA Discovery“) erscheint die Uhr als Gerät – als Licht (an/aus, Helligkeit, Farbe, Modus) und mit den Entitäten der Erweiterungen. Eine Nachricht mit Ton und Animationen:
+**Einrichten:** In Home Assistant die App **Mosquitto broker** installieren und starten, einen eigenen Benutzer anlegen (Einstellungen → Personen → Benutzer, z. B. `wortuhr`) und die Integration **MQTT** hinzufügen („Die offizielle Mosquitto Mqtt Broker-App verwenden“). Auf der Uhr unter **Smart Home → MQTT** die IP von Home Assistant, Port `1883`, Benutzer und Passwort eintragen, speichern und **„Sende HA Discovery“** klicken. Die Uhr erscheint dann unter Einstellungen → Geräte & Dienste → MQTT.
+
+| Entität | Typ | Funktion |
+|---|---|---|
+| *Name der Uhr* | Licht | an/aus, Helligkeit, Farbe, Modus (Wortuhr, Sekunden, Lauftext …) – auf den Namen tippen |
+| Sound | Schalter | alle Töne an/aus |
+| Lautstärke | Zahl | 0–100 % |
+| Stundengong | Schalter | Gong zur vollen Stunde |
+| Gong-Klang | Auswahl | Klang für alle Wochentage |
+| Sprecher | Auswahl | Vicki / Hans |
+| Nachtruhe | Schalter | in der eingestellten Zeit (Einstellungen → Sound) keine Töne |
+| Animation zur vollen Stunde | Auswahl | Aus, Passend zur Uhrzeit (`Zhhmm`), Zufällige Animation oder eine bestimmte |
+| Ereignisse | Schalter | Geburtstage usw. |
+| Automatischer Farbwechsel | Auswahl | Aus, alle 5 Minuten, stündlich, täglich, fließend |
+| Animation abspielen | Auswahl | spielt die gewählte Animation |
+| Sound abspielen (Nr.) | Zahl | spielt die mp3 mit dieser Nummer ([Übersicht](docs/SOUNDS.md)) |
+| Nachricht: Text / Ton / Animation | Text / Auswahl | Nachricht vorbereiten (Ton auch „Zufall: Geburtstag“ usw.) |
+| Nachricht abspielen | Taste | Animation → Lauftext → Animation, dazu der Ton |
+| Kurznachricht | Benachrichtigung | Text einmal als Lauftext, danach wieder die Uhrzeit |
+| Uhrzeit / Datum / Raumklima ansagen | Taste | Ansage |
+| Sound/Animation stoppen | Taste | stoppt alles |
+| Lauftext-Modus: Text | Text | Text für den Modus „Lauftext“ |
+| Übergang, Übergang: Dauer / Einfärben / Geschwindigkeit | Auswahl / Zahl | wie unter Funktionen → Übergang |
+| Temperatur, Luftfeuchtigkeit, Luftdruck | Sensoren | vom BME280 |
+
+Text an die Uhr schicken (z. B. in einer Automation):
+
+```yaml
+action: notify.send_message
+target:
+  entity_id: notify.wortuhr_kurznachricht   # Entitäts-ID der Uhr
+data:
+  message: "Die Waschmaschine ist fertig"
+```
+
+Nachricht mit Ton und Animationen direkt per MQTT:
 
 ```yaml
 action: mqtt.publish
 data:
-  topic: ESPWordclock/extras/event/set
+  topic: ESPWordclock/extras/event/set   # "ESPWordclock" = MQTT-Topic der Uhr
   payload: '{"text": "Essen ist fertig!", "sound": 701, "pre": "HERZ", "post": "HERZ"}'
 ```
 
-Alle Befehle stehen in [ERWEITERUNGEN.md](ERWEITERUNGEN.md#5-home-assistant).
+Weitere MQTT-Befehle (Topic jeweils `<Topic der Uhr>/extras/<Befehl>/set`):
+
+| Befehl | Payload |
+|---|---|
+| `play` | Nummer der mp3, z. B. `720`; zufällig aus einer Kategorie: `3001` Geburtstag, `3002` Weihnachten, `3003` Silvester, `3004` Natur, `3005` Tiere, `3006` Musik |
+| `animation` | Name, z. B. `FEUERWERK` |
+| `announce` | `time`, `date` oder `climate` |
+| `stop` | beliebig |
+| `volume` | `0`–`100` |
+| `color_auto` | `Aus`, `Alle 5 Minuten`, `Stündlich`, `Täglich`, `Fließend` |
+| `hour_animation` | `Aus`, `Passend zur Uhrzeit`, `Zufällige Animation` oder Name |
+| `sound`, `chime`, `quiet`, `events` | `ON` / `OFF` |
+
+Für Skripte gibt es außerdem den Aufruf der alten Uhr:
+`http://<IP-der-Uhr>:81/setEvent?text=Hallo&audio=701&preani=HERZ&postani=HERZ`
+
+## Zurück zur alten Firmware
+
+Ein vorher gesichertes Flash-Abbild der alten Uhr lässt sich jederzeit zurückspielen, z. B. auf den alten WeMos D1 mini:
+
+```
+esptool.py --port <PORT> write_flash 0x0 wortuhr_backup.bin
+```
 
 ## Danke & Lizenz
 

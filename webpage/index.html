@@ -463,6 +463,8 @@
                 <div class="box" id="transition-box">
                     <h2 data-i18next="functions.transition.h2"></h2>
                     <form class="pure-form pure-form-aligned">
+                        <fieldset>
+                        <legend data-i18next="functions.transition.help"></legend>
                         <div class="pure-control-group">
                             <label for="transition-types" data-i18next="functions.transition.type.label"></label>
                             <select id="transition-types" size="1">
@@ -505,10 +507,15 @@
                             <label for="transition-demo" data-i18next="functions.transition.demo.label"></label>
                             <input type="checkbox" id="transition-demo" >
                         </div>
+                        </fieldset>
                     </form>
-                    <form class="pure-form pure-form-aligned extras-only" id="full-hour-form">
+                </div>
+
+                <div class="box extras-only" id="full-hour-box">
+                    <h2 data-i18next="extras.hour.legend"></h2>
+                    <form class="pure-form pure-form-aligned" id="full-hour-form">
                         <fieldset>
-                            <legend data-i18next="extras.hour.legend"></legend>
+                            <legend data-i18next="extras.hour.help"></legend>
                             <div class="pure-control-group">
                                 <label for="hour-chime" data-i18next="extras.hour.chime"></label>
                                 <label class="switch">
@@ -539,6 +546,7 @@
                                 <label for="hour-animation" data-i18next="extras.hour.animation"></label>
                                 <select id="hour-animation" class="extras-setting" size="1"></select>
                             </div>
+                            <p class="extras-hint" id="hour-animation-help"></p>
                             <div class="pure-controls">
                                 <button type="button" id="hour-chime-test" class="pure-button" data-i18next="extras.hour.test"></button>
                             </div>

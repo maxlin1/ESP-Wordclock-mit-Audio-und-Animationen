@@ -58,10 +58,12 @@ def read_grid(path):
 
 # Short notes for the German layouts
 NOTES = {
-    "de-10-11-clock": "Das klassische Layout (wie QlockTwo und Manfreds "
-                      "Wortuhr_mp3): VOR und NACH in Zeile 4, Stunden der "
-                      "Reihe nach, **UHR unten rechts**. Voreingestellt in "
-                      "diesem Fork.",
+    "de-10-11-uhr-rechts": "Wie „10 × 11“, aber **UHR ganz rechts unten** "
+                           "(…F M U H R statt …F U H R Y). Voreingestellt "
+                           "in diesem Fork.",
+    "de-10-11-clock": "Das klassische QlockTwo-Layout: VOR und NACH getrennt "
+                      "in Zeile 4, Stunden der Reihe nach (EINS, ZWEI, DREI …), "
+                      "UHR unten rechts.",
     "de-10-11": "Standard-Layout von ESPWortuhr: NACH/VOR in Zeile 4, "
                 "Stunden durcheinander (ZWÖLF in Zeile 5), UHR in der "
                 "letzten Zeile in der Mitte.",
@@ -111,7 +113,7 @@ def make_layouts():
 
     def order(e):
         key = e[0]
-        if key == "de-10-11-clock":
+        if key == "de-10-11-uhr-rechts":
             return (0, "")
         return (1 if key.startswith("de-") else 2, key)
 
