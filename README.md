@@ -7,7 +7,7 @@ Dieser Fork von [ESPWortuhr](https://github.com/ESPWortuhr/Multilayout-ESP-Wordc
 
 Die Hardware einer bestehenden Wortuhr_mp3 (WeMos D1 mini, DFPlayer, BME280) kann weiterverwendet werden: Statt des WeMos D1 mini steckt einfach ein **ESP32 D1 mini** im selben Sockel. Die SD-Karte mit den Sounds bleibt unverändert. Die Erweiterungen gibt es nur für den ESP32; auf dem ESP8266 verhält sich die Firmware wie das Original-Projekt.
 
-**Inhalt:** [Neue Funktionen](#neue-funktionen) · [Weboberfläche](#weboberfläche) · [Hardware](#hardware-und-schaltbild) · [Layouts und Sounds](#layouts-und-sounds) · [Installation](#installation) · [Einrichten](#einrichten) · [Updates](#updates) · [Home Assistant](#home-assistant) · [Zurück zur alten Firmware](#zurück-zur-alten-firmware) · [Lizenz](#danke--lizenz)
+**Inhalt:** [Neue Funktionen](#neue-funktionen) · [Weboberfläche](#weboberfläche) · [Hardware](#hardware-und-schaltbild) · [Layouts und Sounds](#layouts-und-sounds) · [Uhr bauen](#uhr-bauen) · [Installation](#installation) · [Einrichten](#einrichten) · [Updates](#updates) · [Home Assistant](#home-assistant) · [Zurück zur alten Firmware](#zurück-zur-alten-firmware) · [Lizenz](#danke--lizenz)
 
 ## Neue Funktionen
 
@@ -98,6 +98,17 @@ Die Datenleitungen zwischen ESP und DFPlayer (RX/TX) haben **keine** Widerständ
 - **[Übersicht der Sounds](docs/SOUNDS.md)** – welche Nummer welcher Ton ist (Gong, Effekte, Musik, Tiere, Ansagen).
 
 **Die mp3-Dateien sind nicht Teil dieses Repositorys.** Das Sound-Paket enthält unter anderem Ausschnitte bekannter Musikstücke und Aufnahmen, deren Rechte bei den Urhebern und Plattenfirmen liegen; sie dürfen hier nicht veröffentlicht werden. Wer eine Wortuhr_mp3 hat, verwendet einfach die vorhandene SD-Karte weiter. Ansonsten kann man eigene Dateien nach dem gleichen Schema benennen (`0720_name.mp3` im Ordner `mp3`) – zum Beispiel selbst aufgenommene oder frei lizenzierte Töne.
+
+## Uhr bauen
+
+**[Bauanleitung](docs/BAUANLEITUNG.md)** – Aufbau in Schichten, Größe und LED-Abstand, Weg A (Fräse/Laser, z. B. Edelstahl 45 × 45 cm) und Weg B (3D-Drucker, z. B. Bambu Lab A1), Zusammenbau. Die Dateien für Front, Lichtgitter, Rückwand und den 3D-Druck (SVG, DXF, STL, 3MF) erzeugt `tools/make_front.py` aus jedem Layout:
+
+```sh
+python3 tools/make_front.py de-10-11-nero --size 450 --letter 22 --tool 1.5   # Fräse/Laser
+python3 tools/make_front.py de-08-08 --pitch 16.67 --font normal              # 3D-Druck
+```
+
+<img src="docs/bau/3d-explosion.png" alt="Teile einer gedruckten Wortuhr" width="600"/>
 
 ## Installation
 
