@@ -20,9 +20,8 @@ Beispiel: Eine Front mit der untersten Zeile `BSECHSFMUHR` hat SECHS links und U
 | [🇩🇪 10 × 11](#de-10-11) | `··NACHVOR··` | `·SECHS·UHR·` | 1 Stelle vor dem Rand |
 | [🇩🇪 10 × 11 Alternativ](#de-10-11-alt) | `NACHAPPYVOR` | `SECHS·UHR··` | 2 Stellen vor dem Rand |
 | [🇩🇪 10 × 11 Bayerisch](#de-10-11-bayerisch) | `··NOCHVOR··` | `·SECHSE····` | nicht unten |
-| [🇩🇪 10 × 11 Uhr](#de-10-11-clock) | `VORFUNKNACH` | `ZEHNEUN·UHR` | **ganz rechts** |
+| [🇩🇪 10 × 11 Uhr](#de-10-11-clock) | `VOR····NACH` | `ZEHNEUN·UHR` | **ganz rechts** |
 | [🇩🇪 10 × 11 mrrioes](#de-10-11-mrrioes) | `·NACH·HALB·` | `·ZWÖLF·UHR·` | 1 Stelle vor dem Rand |
-| [🇩🇪 10 × 11 Nero Rahmen](#de-10-11-nero-frame) | `··NACHVOR··` | `·SECHS··UHR` | **ganz rechts** |
 | [🇩🇪 10 × 11 Schwäbisch](#de-10-11-schwaebisch) | `NACH····VOR` | `SIEBNEVIERE` | nicht unten |
 
 Fronten mit anderer Größe (8 × 8, 11 × 11, 13 × 13 …) erkennt man schon an der Anzahl der Zeilen und Buchstaben.
@@ -39,7 +38,6 @@ Fronten mit anderer Größe (8 × 8, 11 × 11, 13 × 13 …) erkennt man schon a
 | [🇩🇪 10 × 11 Bayerisch](#de-10-11-bayerisch) | Bayerisch: „ETZ IST“, „HOIB“, „ZWOA“ … |
 | [🇩🇪 10 × 11 Uhr](#de-10-11-clock) | Das klassische QlockTwo-Layout: VOR und NACH getrennt in Zeile 4, Stunden der Reihe nach (EINS, ZWEI, DREI …), UHR unten rechts. |
 | [🇩🇪 10 × 11 mrrioes](#de-10-11-mrrioes) | VIERTEL und ZWANZIG in eigenen Zeilen, Stunden der Reihe nach, kein DREIVIERTEL. |
-| [🇩🇪 10 × 11 Nero Rahmen](#de-10-11-nero-frame) | Wie „Nero“, zusätzlich ein LED-Rahmen für Sekunden. |
 | [🇩🇪 10 × 11 Schwäbisch](#de-10-11-schwaebisch) | Schwäbisch: „ES ISCH“, „HALB“, „OIS“ … |
 | [🇩🇪 11 × 11](#de-11-11) | Standard 10 × 11 plus eine Zeile mit FUNK/UHR (Funkuhr-Anzeige). |
 | [🇩🇪 11 × 11 Schwäbisch](#de-11-11-schwaebisch) | Schwäbisch, 11 Zeilen. |
@@ -48,14 +46,12 @@ Fronten mit anderer Größe (8 × 8, 11 × 11, 13 × 13 …) erkennt man schon a
 | [🇩🇪 13 × 13](#de-13-13) | Minutengenaue Anzeige (z. B. „DREI UHR SIEBENUNDZWANZIG“). |
 | [🇩🇪 16 × 18](#de-16-18) | Große Front mit Minuten, Tageszeit (MORGENS, ABENDS …). |
 | [🇩🇪 16 × 8](#de-16-8) | Breite Front mit Minuten in Ziffern. |
-| [🇩🇪 10 × 11 Wetter](#de-22-11-weather) | 10 × 11 plus Wetterfeld (REGEN, WOLKEN, SCHNEE …). |
+| [🇩🇪 22 × 11 Wetter](#de-22-11-weather) | 10 × 11 plus Wetterfeld (REGEN, WOLKEN, SCHNEE …). |
 
 <a id="de-10-11-nero"></a>
 ### 🇩🇪 10 × 11 Nero
 
 Wie „10 × 11“, aber **UHR ganz rechts unten** (…L U H R). Passt auch zu Fronten mit anderen Füllbuchstaben, z. B. …F M U H R. Voreingestellt in diesem Fork.
-
-Gleiche Wortpositionen wie: 🇩🇪 10 × 11 Nero Rahmen
 
 <table><tr><th>Front</th><th>Nur die Wörter</th></tr><tr><td>
 
@@ -304,7 +300,7 @@ Z E H N E U N K U H R
 E S · I S T · F Ü N F
 Z E H N Z W A N Z I G
 D R E I V I E R T E L
-V O R F U N K N A C H
+V O R · · · · N A C H
 H A L B · E L F Ü N F
 E I N S · · · Z W E I
 D R E I · · · V I E R
@@ -355,47 +351,6 @@ N E U N Z E H N E L F
 </td></tr></table>
 
 <sub>`DE10x11.mrrioes.hpp`</sub>
-
-<a id="de-10-11-nero-frame"></a>
-### 🇩🇪 10 × 11 Nero Rahmen
-
-Wie „Nero“, zusätzlich ein LED-Rahmen für Sekunden.
-
-Gleiche Wortpositionen wie: 🇩🇪 10 × 11 Nero
-
-<table><tr><th>Front</th><th>Nur die Wörter</th></tr><tr><td>
-
-```
-E S J I S T L F Ü N F
-Z E H N Z W A N Z I G
-D R E I V I E R T E L
-T F N A C H V O R J M
-H A L B X Z W Ö L F T
-Z W E I N S I E B E N
-L D R E I C I F Ü N F
-E L F N E U N V I E R
-U A C H T Z E H N S I
-C S E C H S T L U H R
-```
-
-</td><td>
-
-```
-E S · I S T · F Ü N F
-Z E H N Z W A N Z I G
-D R E I V I E R T E L
-· · N A C H V O R · ·
-H A L B · Z W Ö L F ·
-Z W E I N S I E B E N
-· D R E I · · F Ü N F
-E L F N E U N V I E R
-· A C H T Z E H N · ·
-· S E C H S · · U H R
-```
-
-</td></tr></table>
-
-<sub>`DE10x11.nero.frame.hpp`</sub>
 
 <a id="de-10-11-schwaebisch"></a>
 ### 🇩🇪 10 × 11 Schwäbisch
@@ -470,7 +425,7 @@ Z W E I N S I E B E N
 E L F N E U N V I E R
 · A C H T Z E H N · ·
 · S E C H S · · · · ·
-· · · · F U N K U H R
+· · · · · · · · U H R
 ```
 
 </td></tr></table>
@@ -552,7 +507,7 @@ F Ü N F · · S E C H S
 S I E B E N · A C H T
 · N E U N · · Z E H N
 Z W Ö L F · · · E L F
-· · · · F U N K U H R
+· · · · · · · · U H R
 ```
 
 </td></tr></table>
@@ -732,7 +687,7 @@ S I E B E N Z W Ö L F · · U H R
 <sub>`DE16x8.hpp`</sub>
 
 <a id="de-22-11-weather"></a>
-### 🇩🇪 10 × 11 Wetter
+### 🇩🇪 22 × 11 Wetter
 
 10 × 11 plus Wetterfeld (REGEN, WOLKEN, SCHNEE …).
 
