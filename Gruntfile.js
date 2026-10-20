@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 		},
 
 		stylelint: {
-			all: ["<%= settings.srcDirectory %>/style.css"]
+			all: ["<%= settings.srcDirectory %>/style.css", "<%= settings.srcDirectory %>/theme.css"]
 		},
 
 		htmllint: {
