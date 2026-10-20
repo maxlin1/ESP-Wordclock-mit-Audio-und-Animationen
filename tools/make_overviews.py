@@ -56,11 +56,33 @@ def read_grid(path):
     return rows
 
 
+def word_cells(path, cols, seen=None):
+    """Cells (row, col from the left) that any word of the layout uses."""
+    text = open(path, encoding="utf-8").read()
+    cells = set()
+    for row, a, b in re.findall(r"setFrontMatrixWord\((\d+),\s*(\d+),\s*(\d+)\)", text):
+        for c in range(int(a), int(b) + 1):
+            cells.add((int(row), cols - 1 - c))
+    for row, c in re.findall(r"setFrontMatrixPixel\((\d+),\s*(\d+)\)", text):
+        cells.add((int(row), cols - 1 - int(c)))
+    if not cells:
+        # derived layout (e.g. "... Rahmen"): words of the base layout
+        m = re.search(r'#include "(DE[^"]+\.hpp)"', text)
+        if m:
+            return word_cells(os.path.join(os.path.dirname(path), m.group(1)), cols)
+    return cells
+
+
+def masked(grid, cells):
+    rows = []
+    for r, row in enumerate(grid):
+        letters = row.replace(" ", "")
+        rows.append("".join(ch if (r, c) in cells else "·" for c, ch in enumerate(letters)))
+    return rows
+
+
 # Short notes for the German layouts
 NOTES = {
-    "de-10-11-uhr-rechts": "Wie „10 × 11“, aber **UHR ganz rechts unten** "
-                           "(…F M U H R statt …F U H R Y). Voreingestellt "
-                           "in diesem Fork.",
     "de-10-11-clock": "Das klassische QlockTwo-Layout: VOR und NACH getrennt "
                       "in Zeile 4, Stunden der Reihe nach (EINS, ZWEI, DREI …), "
                       "UHR unten rechts.",
@@ -70,7 +92,9 @@ NOTES = {
     "de-10-11-alt": "Wie Standard, mit HAPPY BIRTHDAY in Zeile 4/5.",
     "de-10-11-alt-frame": "Wie „Alternativ“, zusätzlich ein LED-Rahmen für "
                           "Sekunden.",
-    "de-10-11-nero": "Variante mit anderen Füllbuchstaben, UHR ganz unten rechts.",
+    "de-10-11-nero": "Wie „10 × 11“, aber **UHR ganz rechts unten** (…L U H R). "
+                     "Passt auch zu Fronten mit anderen Füllbuchstaben, z. B. "
+                     "…F M U H R. Voreingestellt in diesem Fork.",
     "de-10-11-nero-frame": "Wie „Nero“, zusätzlich ein LED-Rahmen für Sekunden.",
     "de-10-11-mrrioes": "VIERTEL und ZWANZIG in eigenen Zeilen, Stunden der "
                         "Reihe nach, kein DREIVIERTEL.",
@@ -109,37 +133,82 @@ def make_layouts():
         if not grid:
             continue
         num, key, enum = info
-        entries.append((key, names.get(key, key), grid, fn))
+        cols = max(len(r.replace(" ", "")) for r in grid)
+        entries.append((key, names.get(key, key), grid, fn,
+                        masked(grid, word_cells(path, cols))))
 
     def order(e):
         key = e[0]
-        if key == "de-10-11-uhr-rechts":
+        if key == "de-10-11-nero":
             return (0, "")
         return (1 if key.startswith("de-") else 2, key)
 
     entries.sort(key=order)
 
     out = ["# Übersicht der Layouts (Frontplatten)", "",
-           "Auswahl auf der Webseite der Uhr unter **Einstellungen → Layout**. "
+           "Auswahl auf der Webseite der Uhr unter **Anzeigeoptionen → Front**. "
            "Die Buchstaben entsprechen der Frontplatte von vorne gesehen. "
            "Erzeugt mit `python3 tools/make_overviews.py` aus "
            "`include/WordClockTypes`.", "",
            "Die 4 Minuten-LEDs (Ecken) sind nicht eingezeichnet.", ""]
 
-    out += ["## Deutsch", ""]
     de = [e for e in entries if e[0].startswith("de-")]
     other = [e for e in entries if not e[0].startswith("de-")]
 
+    def letters(row):
+        return row.replace(" ", "")
+
+    # "Which layout do I have?" for the common 10 x 11 fronts
+    ten = [e for e in de if len(e[2]) == 10 and all(len(letters(r)) == 11 for r in e[2])]
+    out += ["## Welches Layout habe ich?", "",
+            "Entscheidend ist nur, **wo die Wörter stehen**. Die Buchstaben "
+            "dazwischen (Füllbuchstaben) sind bei jeder Frontplatte anders und "
+            "spielen keine Rolle. Deshalb zeigt die Tabelle nur die Wort-"
+            "Buchstaben, Füllbuchstaben sind `·`.", "",
+            "1. Vergleiche die **unterste Zeile** deiner Front mit der Tabelle – "
+            "vor allem, **wo UHR steht** (ganz rechts oder eine Stelle davor) und "
+            "wo die Stunden stehen.",
+            "2. Passen noch mehrere, vergleiche die **4. Zeile** (VOR/NACH).",
+            "3. Kontrolle: Mit dem richtigen Layout leuchten genau die Wörter. "
+            "Leuchtet z. B. „M U H“ statt „U H R“, ist es das falsche – dann das "
+            "Layout mit UHR an der anderen Stelle wählen.", "",
+            "Beispiel: Eine Front mit der untersten Zeile `BSECHSFMUHR` hat "
+            "SECHS links und UHR ganz rechts → Wortmuster `·SECHS··UHR` → "
+            "**10 × 11 Nero**.", "",
+            "| Layout | 4. Zeile | unterste Zeile | UHR steht |",
+            "|---|---|---|---|"]
+    for key, name, grid, fn, words in ten:
+        last = letters(grid[-1])
+        pos = last.find("UHR")
+        if pos < 0 or words[-1][pos:pos + 3] != "UHR":
+            where = "nicht unten"
+        elif pos + 3 == len(last):
+            where = "**ganz rechts**"
+        else:
+            where = f"{len(last) - pos - 3} Stelle vor dem Rand" if len(last) - pos - 3 == 1 \
+                else f"{len(last) - pos - 3} Stellen vor dem Rand"
+        out.append(f"| [{name}](#{key}) | `{words[3]}` | `{words[-1]}` | {where} |")
+    out += ["", "Fronten mit anderer Größe (8 × 8, 11 × 11, 13 × 13 …) erkennt "
+            "man schon an der Anzahl der Zeilen und Buchstaben.", ""]
+
+    out += ["## Deutsch", ""]
+
     out += ["| Layout | Besonderheit |", "|---|---|"]
-    for key, name, grid, fn in de:
+    for key, name, grid, fn, words in de:
         out.append(f"| [{name}](#{key}) | {NOTES.get(key, '')} |")
     out.append("")
 
-    def block(key, name, grid, fn):
+    def block(key, name, grid, fn, words):
         lines = [f'<a id="{key}"></a>', f"### {name}", ""]
         if key in NOTES:
             lines += [NOTES[key], ""]
-        lines += ["```"] + grid + ["```", f"<sub>`{fn}`</sub>", ""]
+        same = [n for k, n, g, f, w in entries if k != key and w == words]
+        if same:
+            lines += ["Gleiche Wortpositionen wie: " + ", ".join(same), ""]
+        lines += ["<table><tr><th>Front</th><th>Nur die Wörter</th></tr><tr><td>", "",
+                  "```"] + grid + ["```", "", "</td><td>", "", "```"]
+        lines += [" ".join(r) for r in words]
+        lines += ["```", "", "</td></tr></table>", "", f"<sub>`{fn}`</sub>", ""]
         return lines
 
     for e in de:
