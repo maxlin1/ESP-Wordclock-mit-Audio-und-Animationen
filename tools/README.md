@@ -1,5 +1,18 @@
 # Tools
 
+## Bau-Dateien (make_front.py)
+
+`make_front.py` erzeugt aus einem Layout die Dateien zum Bau einer Uhr: Front
+(SVG/DXF, Schablonenschrift für Fräse und Laser), Lichtgitter als Platte und
+als Steckgitter, Rückwand mit LED-Positionen und für den 3D-Drucker STL/3MF.
+Siehe [docs/BAUANLEITUNG.md](../docs/BAUANLEITUNG.md).
+
+```sh
+pip install fonttools shapely ezdxf manifold3d trimesh
+python3 tools/make_front.py --list
+python3 tools/make_front.py de-10-11-nero --size 450 --letter 22 --tool 1.5
+```
+
 ## ClockType simulator
 
 `clock_type_simulator.py` renders the front matrix definitions from
