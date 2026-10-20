@@ -1078,6 +1078,18 @@ label.pure-button {
     background: var(--app-surface-solid);
 }
 
+.extras-hint {
+	margin: 0.2em 0 0.8em 12.2em;
+	font-size: 0.9em;
+	color: #666;
+}
+
+@media (width <= 48em) {
+	.extras-hint {
+		margin-left: 0;
+	}
+}
+
 .extras-toast {
     position: fixed;
     left: 50%;

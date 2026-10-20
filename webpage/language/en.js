@@ -74,6 +74,7 @@ let TRANSLATION_EN_US = {
 		},
 		"transition": {
 			"h2": "Transition",
+			"help": "How the letters change when the displayed time changes (every 5 minutes), e.g. fade or matrix rain. “None” switches immediately. This is not related to the scrolling text or the animations at the full hour.",
 			"type": {
 				"label": "Type",
 				"none": "None",
@@ -106,7 +107,7 @@ let TRANSLATION_EN_US = {
 				"label": "Speed"
 			},
 			"demo": {
-				"label": "Demo"
+				"label": "Preview"
 			}
 		},
 		"settings": {
@@ -130,6 +131,7 @@ let TRANSLATION_EN_US = {
 			"de-10-11-alt": "🇩🇪 10 × 11 Alternative",
 			"de-10-11-alt-frame": "🇩🇪 10 × 11 Alternative Frame",
 			"de-10-11-clock": "🇩🇪 10 × 11 Clock",
+			"de-10-11-uhr-rechts": "🇩🇪 10 × 11 UHR right",
 			"de-10-11-nero": "🇩🇪 10 × 11 Nero",
 			"de-10-11-nero-frame": "🇩🇪 10 × 11 Nero Frame",
 			"de-10-11-mrrioes": "🇩🇪 10 × 11 mrrioes",
@@ -409,6 +411,7 @@ let TRANSLATION_EN_US = {
 		},
 		"hour": {
 			"legend": "At the full hour",
+			"help": "Every full hour the clock can play a chime and show an animation. Both can be switched on and off here.",
 			"chime": "Hourly chime",
 			"sound": "Sound",
 			"per-weekday": "Different per weekday",
@@ -416,8 +419,13 @@ let TRANSLATION_EN_US = {
 			"voice24h": "Speakers use 24-hour format",
 			"animation": "Animation",
 			"off": "Off",
-			"time-animations": "Time animations (Z0800 …)",
-			"random": "Random",
+			"time-animations": "Matching the time (Z0800 at 8 o'clock …)",
+			"time-animation": "Time animation",
+			"random": "Random animation",
+			"help-off": "No animation at the full hour.",
+			"help-time": "The clock shows the animation that belongs to the hour (e.g. Z0800 at 8 o'clock). Such animations exist for: {hours} o'clock – at the other hours none is shown.",
+			"help-random": "A random animation every full hour (without the time animations).",
+			"help-fixed": "This animation is shown every full hour.",
 			"test": "Test chime"
 		},
 		"play": {

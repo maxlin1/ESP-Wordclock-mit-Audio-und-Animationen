@@ -106,7 +106,7 @@
 	function animationLabel(name) {
 		const time = /^Z(\d\d)(\d\d)$/.exec(name);
 		if (time) {
-			return `${time[1]}:${time[2]} – ${tr("extras.hour.time-animations").split(" (")[0]}`;
+			return `${time[1]}:${time[2]} – ${tr("extras.hour.time-animation")}`;
 		}
 		const text = name.toLowerCase().replace(/_/g, " ").replace(/muell/g, "müll");
 		return text.charAt(0).toUpperCase() + text.slice(1);
@@ -239,7 +239,27 @@
 		});
 	}
 
+	function updateHourAnimationHelp() {
+		const value = byId("hour-animation").value;
+		let text;
+		if (value === "") {
+			text = tr("extras.hour.help-off");
+		} else if (value === "Z") {
+			const hours = (extrasData ? extrasData.animations : [])
+				.map(name => /^Z(\d\d)00$/.exec(name))
+				.filter(match => match)
+				.map(match => String(Number(match[1])));
+			text = tr("extras.hour.help-time").replace("{hours}", hours.length ? hours.join(", ") : "–");
+		} else if (value === "*") {
+			text = tr("extras.hour.help-random");
+		} else {
+			text = tr("extras.hour.help-fixed");
+		}
+		byId("hour-animation-help").textContent = text;
+	}
+
 	function updateHourVisibility() {
+		updateHourAnimationHelp();
 		const chimeOn = byId("hour-chime").checked;
 		document.querySelectorAll(".hour-chime-option").forEach(el => el.classList.toggle("extras-collapsed", !chimeOn));
 		const perWeekday = Number(byId("hour-chime-sound").value) < 0;

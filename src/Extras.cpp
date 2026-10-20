@@ -1343,8 +1343,8 @@ constexpr uint8_t COLOR_AUTO_LABEL_COUNT =
     sizeof(COLOR_AUTO_LABELS) / sizeof(COLOR_AUTO_LABELS[0]);
 
 constexpr const char *HOUR_ANIMATION_OFF = "Aus";
-constexpr const char *HOUR_ANIMATION_TIME = "Uhrzeit-Animationen";
-constexpr const char *HOUR_ANIMATION_RANDOM = "Zufall";
+constexpr const char *HOUR_ANIMATION_TIME = "Passend zur Uhrzeit";
+constexpr const char *HOUR_ANIMATION_RANDOM = "Zufällige Animation";
 
 const char *hourAnimationLabel() {
     if (cfg.hourAnimation.length() == 0) {
@@ -1361,10 +1361,13 @@ const char *hourAnimationLabel() {
 }
 
 String hourAnimationFromLabel(const char *label) {
-    if (strcmp(label, HOUR_ANIMATION_TIME) == 0) {
+    // (the old labels of earlier versions are still accepted)
+    if (strcmp(label, HOUR_ANIMATION_TIME) == 0 ||
+        strcmp(label, "Uhrzeit-Animationen") == 0) {
         return "Z";
     }
-    if (strcmp(label, HOUR_ANIMATION_RANDOM) == 0) {
+    if (strcmp(label, HOUR_ANIMATION_RANDOM) == 0 ||
+        strcmp(label, "Zufall") == 0) {
         return "*";
     }
     const int16_t i = AnimationPlayer::find(label);

@@ -74,6 +74,7 @@ let TRANSLATION_DE_DE = {
 		},
 		"transition": {
 			"h2": "Übergang",
+			"help": "Wie die Buchstaben wechseln, wenn sich die angezeigte Uhrzeit ändert (alle 5 Minuten), z. B. Überblenden oder Matrix-Regen. „Keines“ schaltet sofort um. Mit der Laufschrift oder Animationen zur vollen Stunde hat das nichts zu tun.",
 			"type": {
 				"label": "Art",
 				"none": "Keines",
@@ -106,7 +107,7 @@ let TRANSLATION_DE_DE = {
 				"label": "Geschwindigkeit"
 			},
 			"demo": {
-				"label": "Demo"
+				"label": "Vorschau"
 			}
 		},
 		"settings": {
@@ -130,6 +131,7 @@ let TRANSLATION_DE_DE = {
 			"de-10-11-alt": "🇩🇪 10 × 11 Alternativ",
 			"de-10-11-alt-frame": "🇩🇪 10 × 11 Alternativer Rahmen",
 			"de-10-11-clock": "🇩🇪 10 × 11 Uhr",
+			"de-10-11-uhr-rechts": "🇩🇪 10 × 11 UHR rechts",
 			"de-10-11-nero": "🇩🇪 10 × 11 Nero",
 			"de-10-11-nero-frame": "🇩🇪 10 × 11 Nero Rahmen",
 			"de-10-11-mrrioes": "🇩🇪 10 × 11 mrrioes",
@@ -409,6 +411,7 @@ let TRANSLATION_DE_DE = {
 		},
 		"hour": {
 			"legend": "Zur vollen Stunde",
+			"help": "Jede volle Stunde kann die Uhr einen Gong spielen und eine Animation zeigen. Beides lässt sich hier einzeln ein- und ausschalten.",
 			"chime": "Stundengong",
 			"sound": "Klang",
 			"per-weekday": "Pro Wochentag verschieden",
@@ -416,8 +419,13 @@ let TRANSLATION_DE_DE = {
 			"voice24h": "Sprecher sagen 13–24 Uhr",
 			"animation": "Animation",
 			"off": "Aus",
-			"time-animations": "Uhrzeit-Animationen (Z0800 …)",
-			"random": "Zufällig",
+			"time-animations": "Passend zur Uhrzeit (Z0800 um 8 Uhr …)",
+			"time-animation": "Uhrzeit-Animation",
+			"random": "Zufällige Animation",
+			"help-off": "Zur vollen Stunde läuft keine Animation.",
+			"help-time": "Die Uhr zeigt die Animation, die zur Stunde gehört (z. B. Z0800 um 8 Uhr). Solche Animationen gibt es für: {hours} Uhr – zu den anderen Stunden läuft keine.",
+			"help-random": "Jede volle Stunde eine zufällige Animation (ohne die Uhrzeit-Animationen).",
+			"help-fixed": "Jede volle Stunde läuft diese Animation.",
 			"test": "Gong testen"
 		},
 		"play": {

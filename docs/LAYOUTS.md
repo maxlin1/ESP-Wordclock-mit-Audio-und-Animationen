@@ -8,12 +8,13 @@ Die 4 Minuten-LEDs (Ecken) sind nicht eingezeichnet.
 
 | Layout | Besonderheit |
 |---|---|
-| [🇩🇪 10 × 11 Uhr](#de-10-11-clock) | Das klassische Layout (wie QlockTwo und Manfreds Wortuhr_mp3): VOR und NACH in Zeile 4, Stunden der Reihe nach, **UHR unten rechts**. Voreingestellt in diesem Fork. |
+| [🇩🇪 10 × 11 UHR rechts](#de-10-11-uhr-rechts) | Wie „10 × 11“, aber **UHR ganz rechts unten** (…F M U H R statt …F U H R Y). Voreingestellt in diesem Fork. |
 | [🇩🇪 8 × 8](#de-08-08) | Kleine Uhr 8 × 8. |
 | [🇩🇪 8 × 8 Viertelstunden](#de-08-08-viertel) | Kleine Uhr 8 × 8, nur Viertelstunden. |
 | [🇩🇪 10 × 11](#de-10-11) | Standard-Layout von ESPWortuhr: NACH/VOR in Zeile 4, Stunden durcheinander (ZWÖLF in Zeile 5), UHR in der letzten Zeile in der Mitte. |
 | [🇩🇪 10 × 11 Alternativ](#de-10-11-alt) | Wie Standard, mit HAPPY BIRTHDAY in Zeile 4/5. |
 | [🇩🇪 10 × 11 Bayerisch](#de-10-11-bayerisch) | Bayerisch: „ETZ IST“, „HOIB“, „ZWOA“ … |
+| [🇩🇪 10 × 11 Uhr](#de-10-11-clock) | Das klassische QlockTwo-Layout: VOR und NACH getrennt in Zeile 4, Stunden der Reihe nach (EINS, ZWEI, DREI …), UHR unten rechts. |
 | [🇩🇪 10 × 11 mrrioes](#de-10-11-mrrioes) | VIERTEL und ZWANZIG in eigenen Zeilen, Stunden der Reihe nach, kein DREIVIERTEL. |
 | [🇩🇪 10 × 11 Nero](#de-10-11-nero) | Variante mit anderen Füllbuchstaben, UHR ganz unten rechts. |
 | [🇩🇪 10 × 11 Nero Rahmen](#de-10-11-nero-frame) | Wie „Nero“, zusätzlich ein LED-Rahmen für Sekunden. |
@@ -27,24 +28,24 @@ Die 4 Minuten-LEDs (Ecken) sind nicht eingezeichnet.
 | [🇩🇪 16 × 8](#de-16-8) | Breite Front mit Minuten in Ziffern. |
 | [🇩🇪 10 × 11 Wetter](#de-22-11-weather) | 10 × 11 plus Wetterfeld (REGEN, WOLKEN, SCHNEE …). |
 
-<a id="de-10-11-clock"></a>
-### 🇩🇪 10 × 11 Uhr
+<a id="de-10-11-uhr-rechts"></a>
+### 🇩🇪 10 × 11 UHR rechts
 
-Das klassische Layout (wie QlockTwo und Manfreds Wortuhr_mp3): VOR und NACH in Zeile 4, Stunden der Reihe nach, **UHR unten rechts**. Voreingestellt in diesem Fork.
+Wie „10 × 11“, aber **UHR ganz rechts unten** (…F M U H R statt …F U H R Y). Voreingestellt in diesem Fork.
 
 ```
-E S K I S T A F Ü N F
+E S K I S T L F Ü N F
 Z E H N Z W A N Z I G
 D R E I V I E R T E L
-V O R F U N K N A C H
-H A L B A E L F Ü N F
-E I N S X A M Z W E I
-D R E I A U J V I E R
-S E C H S N L A C H T
-S I E B E N Z W Ö L F
-Z E H N E U N K U H R
+T G N A C H V O R J M
+H A L B X Z W Ö L F P
+Z W E I N S I E B E N
+K D R E I R H F Ü N F
+E L F N E U N V I E R
+W A C H T Z E H N R S
+B S E C H S F M U H R
 ```
-<sub>`DE10x11.2clock.hpp`</sub>
+<sub>`DE10x11.uhrrechts.hpp`</sub>
 
 <a id="de-08-08"></a>
 ### 🇩🇪 8 × 8
@@ -136,6 +137,25 @@ Z W O I F E Z E H N E
 Y S E C H S E F U H R
 ```
 <sub>`DE10x11.bayerisch.hpp`</sub>
+
+<a id="de-10-11-clock"></a>
+### 🇩🇪 10 × 11 Uhr
+
+Das klassische QlockTwo-Layout: VOR und NACH getrennt in Zeile 4, Stunden der Reihe nach (EINS, ZWEI, DREI …), UHR unten rechts.
+
+```
+E S K I S T A F Ü N F
+Z E H N Z W A N Z I G
+D R E I V I E R T E L
+V O R F U N K N A C H
+H A L B A E L F Ü N F
+E I N S X A M Z W E I
+D R E I A U J V I E R
+S E C H S N L A C H T
+S I E B E N Z W Ö L F
+Z E H N E U N K U H R
+```
+<sub>`DE10x11.2clock.hpp`</sub>
 
 <a id="de-10-11-mrrioes"></a>
 ### 🇩🇪 10 × 11 mrrioes

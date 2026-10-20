@@ -107,6 +107,7 @@ let TRANSLATION_HU = {
 			"de-10-11-alt": "🇩🇪 10 × 11 Alternatív",
 			"de-10-11-alt-frame": "🇩🇪 10 × 11 Alternatív keretek",
 			"de-10-11-clock": "🇩🇪 10 × 11 óra",
+			"de-10-11-uhr-rechts": "🇩🇪 10 × 11 UHR right",
 			"de-10-11-nero": "🇩🇪 10 × 11 Nero",
 			"de-10-11-nero-frame": "🇩🇪 10 × 11 Nero keretek",
 			"de-10-11-mrrioes": "🇩🇪 10 × 11 mrrioes",
