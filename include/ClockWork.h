@@ -8,6 +8,8 @@ private:
     uint16_t countMillisSpeed = 0;
     uint32_t previousMillis = 0;
     uint32_t lux = 0;
+    uint16_t scrollingTextOffset = 0;
+    char scrollingTextLast[PAYLOAD_LENGTH] = "";
     HardwareButtonController hardwareButtonController;
 
 private:
@@ -44,7 +46,7 @@ private:
     bool getStaticScrollingTextInfo(const char *buf, StaticScrollingText &info);
     void displayStaticScrollingText(const char *buf,
                                     const StaticScrollingText &info);
-    void scrollingText(const char *buf);
+    void scrollingText(const char *buf, bool repeat = true);
     void displaySymbols(BitmapSymbol bitmapSymbolnum);
     void countdownToMidnight();
 
