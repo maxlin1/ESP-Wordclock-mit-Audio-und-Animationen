@@ -802,6 +802,11 @@ void Mqtt::callback(char *receivedTopic, byte *payload, unsigned int length) {
         processScrollingText(doc);
         stateChanged |= processColor(doc);
         stateChanged |= processBrightness(doc);
+        if (stateChanged) {
+            // Save colour, brightness, mode and on/off like a change on the
+            // web page: once at the next full minute (spares the flash).
+            colorChangedByWebsite = true;
+        }
         if (stateChanged && mqttInstance) {
             mqttInstance->sendState();
         }
