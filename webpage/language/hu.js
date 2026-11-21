@@ -63,6 +63,29 @@ let TRANSLATION_HU = {
 			"fire": "Tűz",
 			"symbol": "Szimbólum"
 		},
+		"birthdays": {
+			"h1": "Születésnapok",
+			"help": "Születésnapokon 5 percenként tűzijáték-animáció jelenik meg.\n" +
+				"A kompatibilis óratípusok az animáció alatt az idő helyett a „Happy Birthday” szavakat mutatják. Dátumformátum MM-DD\n",
+			"dates": {
+				"save": "Mentés",
+				"date0": {
+					"label": "1. dátum:"
+				},
+				"date1": {
+					"label": "2. dátum:"
+				},
+				"date2": {
+					"label": "3. dátum:"
+				},
+				"date3": {
+					"label": "4. dátum:"
+				},
+				"date4": {
+					"label": "5. dátum:"
+				}
+			}
+		},
 		"transition": {
 			"h2": "Átmenet",
 			"type": {
@@ -97,9 +120,7 @@ let TRANSLATION_HU = {
 			"save": "Mentés",
 			"speed": "Sebesség",
 			"fire-cooling": "Hűlés ",
-			"fire-sparking": "Szikrázás ",
-			"leds": "LED-ek száma",
-			"position": "Pozíció"
+			"fire-sparking": "Szikrázás "
 		}
 	},
 
@@ -134,6 +155,9 @@ let TRANSLATION_HU = {
 			"es-08-08-cuarto": "🇪🇸 8 × 8 Negyed órák",
 			"it-10-11": "🇮🇹 10 × 11",
 			"hu-10-10": "🇭🇺 10 x 10",
+			"ch-10-11": "🇨🇭 10 x 11",
+			"ro-10-11": "🇷🇴 10 x 11",
+			"fr-10-11": "🇫🇷 10 x 11",
 			"se-10-11": "🇸🇪 10 × 11",
 			"ru-10-11": "🇷🇺 10 × 11",
 			"bn-9-8": "🇧🇩 9 × 8",
@@ -143,6 +167,9 @@ let TRANSLATION_HU = {
 			"invert-min-dir": "Percszámláló-irány megfordítása",
 			"mirror-vertically": "Szövegóra függőleges tükrözése",
 			"mirror-horizontally": "Szövegóra vízszintes tükrözése",
+			"extra-led-per-row": "Extra LED hozzáadása soronként",
+			"flip-horz-vert": "Elrendezés vízszintes és függőleges tükrözése",
+			"meander-rows": "Sorok meander alakban elrendezve",
 			"buildtype": "Felépítés",
 			"normal": "Minden LED egy betűnek felel meg",
 			"doubleResM1": "Minden második LED egy betűnek felel meg",
@@ -152,7 +179,7 @@ let TRANSLATION_HU = {
 		},
 		"language": {
 			"h2": "Nyelv",
-			"hide-it-is": "„Mutasd meg a 'Ez a'“",
+			"hide-it-is": "Mutasd meg az „Ez a” szöveget",
 			"it-is-off": "Off",
 			"it-is-hourly": "Óránként",
 			"it-is-half-hourly": "Félóránként",
@@ -206,7 +233,9 @@ let TRANSLATION_HU = {
 		"status": {
 			"h2": "Állapot",
 			"label": "Kapcsolódás állapota",
-			"connect": "Kapcsolódás"
+			"connect": "Kapcsolódás",
+			"disconnect": "Kapcsolat bontása",
+			"connecting": "Csatlakozás ..."
 		},
 		"led-type": {
 			"h2": "LED-típus",
@@ -341,7 +370,17 @@ let TRANSLATION_HU = {
 			"client-id": "Ügyfélazonosító",
 			"topic": "Téma",
 			"save": "Beállítás mentése",
-			"discovery": "HA Discovery küldése"
+			"discovery": "HA Discovery küldése",
+			"status": "Állapot",
+			"status-not-configured": "Nincs beállítva",
+			"status-connected": "Csatlakozva",
+			"status-disconnected": "Nincs csatlakozva",
+			"status-server-not-found": "A szerver nem található",
+			"status-unreachable": "A szerver nem elérhető",
+			"status-bad-credentials": "Elutasítva: hibás belépési adatok",
+			"status-unauthorized": "Elutasítva: nincs jogosultság",
+			"status-bad-client-id": "Elutasítva: érvénytelen kliensazonosító",
+			"status-refused": "A szerver elutasította"
 		}
 	},
 
@@ -350,7 +389,6 @@ let TRANSLATION_HU = {
 		"text-general": "Ennek a Szövegórának a szoftverje <a href='https://web.archive.org/web/20180422160812/http://www.ulrichradig.de/home/index.php/projekte/wort-uhr-neu'>Ulrich Radig (Állapot 2019)</a> szoftverje alapján készült, amelyet a közösség <a href='https://github.com/ESPWortuhr/Wortuhr/graphs/contributors'>GitHub-on</a> fejleszt tovább.",
 		"text-update": "A szoftver frissítése lehetséges, ehhez kérjük <a href='update' onmouseover='javascript:event.target.port=81'>váltson az Update-oldalra</a>.",
 		"text-license": "Ez a projekt Open-Source-licensz alatt van a <span lang='en'>3-Clause BSD License</span> alapján.",
-		"software": "Könyvtárak és szoftver",
 		"debug": "Debug-Kiadás"
 	},
 	"footer": {

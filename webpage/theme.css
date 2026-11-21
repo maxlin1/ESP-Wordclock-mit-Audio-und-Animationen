@@ -110,6 +110,7 @@ body::before {
     border-top: 1px solid var(--line);
     border-radius: 0;
     background: transparent;
+    hyphens: auto;
 }
 
 .box h2 {
@@ -235,6 +236,28 @@ body::before {
 /*
  * Page header
  */
+
+/* Wide screens: title and hint on the left, language and status on the right */
+@media (width >= 48em) {
+    .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .page-heading {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
+    }
+
+    .page-header h1 {
+        white-space: normal;
+        overflow-wrap: break-word;
+    }
+}
 
 .page-header h1 {
     font-weight: 700;
