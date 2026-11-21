@@ -188,23 +188,16 @@ function debugMessage(debugMessage, someObject) {
 }
 
 function applyColorizeMode() {
-	const mode = Number(colorize);
-	const showForeground = mode !== 2;
-	const showSecondary = mode === 1;
-
-	const foreground = document.querySelector("label[for='colorwheel-foreground']");
-	if (foreground) foreground.style.display = showForeground ? "" : "none";
+	const showSecondary = Number(colorize) === 1;
 
 	const secondary = document.querySelector("label[for='colorwheel-gradient']");
 	if (secondary) secondary.style.display = showSecondary ? "" : "none";
 
-	const foregroundLabel = document.querySelector("label[for='colorwheel-foreground'] span[data-i18next]");
-	if (foregroundLabel) {
-		foregroundLabel.innerHTML = i18next.t(showSecondary ? "functions.color.primary" : "functions.color.foreground");
-	}
+	setI18nText(document.querySelector("label[for='colorwheel-foreground'] span[data-i18next]"),
+		showSecondary ? "functions.color.primary" : "functions.color.foreground");
 
 	// The wheel must not keep editing a swatch that just disappeared.
-	if ((colorPosition === 0 && !showForeground) || (colorPosition === 3 && !showSecondary)) {
+	if (colorPosition === 3 && !showSecondary) {
 		colorPosition = 1;
 		const background = document.getElementById("colorwheel-background");
 		if (background) background.checked = true;
@@ -241,12 +234,27 @@ function supportsMinuteDirection(supportedMinuteVariants) {
 	return (supportedMinuteVariants & (led4x | led7x)) !== 0;
 }
 
+function translate(key) {
+	return (window.i18next && i18next.isInitialized) ? i18next.t(key) : key;
+}
+
 function setI18nText(element, key) {
 	if (!element) return;
 	element.dataset.i18next = key;
 	if (window.i18next && i18next.isInitialized) {
 		element.innerHTML = i18next.t(key);
 	}
+}
+
+const MQTT_STATUSES = ["not-configured", "connected", "disconnected", "server-not-found",
+	"unreachable", "bad-credentials", "unauthorized", "bad-client-id", "refused"];
+
+function setMqttStatus(status) {
+	const el = document.getElementById("mqtt-status");
+	if (!el) return;
+	const known = MQTT_STATUSES.includes(status) ? status : "not-configured";
+	el.dataset.status = known;
+	setI18nText(document.getElementById("mqtt-status-text"), "smart-home.mqtt.status-" + known);
 }
 
 function setConnectionState(online) {
@@ -266,11 +274,11 @@ function initWebsocket() {
 		if (statusEl) {
 			statusEl.classList.add("online");
 			statusEl.classList.remove("offline");
-			statusEl.setAttribute("value", "Online");
+			statusEl.value = translate("status.online");
 		}
 
 		document.querySelectorAll(".status-button").forEach(btn => {
-			btn.textContent = "Disconnect";
+			setI18nText(btn, "settings.status.disconnect");
 			btn.value = "1";
 		});
 
@@ -282,6 +290,7 @@ function initWebsocket() {
 		sendCmd(CMD.REQ_COLOR_VALUES);
 		sendCmd(CMD.REQ_TRANSITION);
 		sendCmd(CMD.REQ_CONFIG_VALUES);
+		sendCmd(CMD.REQ_AUTO_BRIGHT);
 	};
 
 	websocket.onclose = function(event) {
@@ -292,11 +301,11 @@ function initWebsocket() {
 		if (statusEl) {
 			statusEl.classList.remove("online");
 			statusEl.classList.add("offline");
-			statusEl.setAttribute("value", "Offline");
+			statusEl.value = translate("status.offline");
 		}
 
 		document.querySelectorAll(".status-button").forEach(btn => {
-			btn.textContent = "Verbinden";
+			setI18nText(btn, "settings.status.connect");
 			btn.value = "0";
 		});
 
@@ -323,8 +332,18 @@ function initWebsocket() {
 				document.getElementById("mqtt-pass").value = data.MQTT_Pass;
 				document.getElementById("mqtt-clientid").value = data.MQTT_ClientId;
 				document.getElementById("mqtt-topic").value = data.MQTT_Topic;
+				setMqttStatus(data.MQTT_Status);
 				break;
 			}
+			case "mqtt-status":
+				setMqttStatus(data.status);
+				break;
+			case "scrolltext":
+				document.getElementById("scrollingtext").value = data.scrolling_text;
+				break;
+			case "autobright":
+				applyAutoBrightEnabled(data.value);
+				break;
 			case "birthdays":
 				hasSpecialWordHappyBirthday = data.hasSpecialWordHappyBirthday;
 				for (let i = 0; i < 5; i++) {
@@ -405,17 +424,7 @@ function initWebsocket() {
 				enableSpecific("specific-colortype-4", data.colortype === 5);
 				enableSpecific("specific-minute-direction", supportsMinuteDirection(data.supportedMinuteVariants));
 
-				autoBrightEnabled = data.autoBrightEnabled;
-				const autoBrightSelect = document.getElementById("auto-bright-enabled");
-				if (autoBrightEnabled === 1) {
-					if (autoBrightSelect) autoBrightSelect.value = 1;
-					autoBrightUpdater();
-				} else {
-					if (autoBrightSelect) autoBrightSelect.value = 0;
-					autoBrightStop();
-				}
-				enableSpecific("specific-layout-brightness-man", autoBrightEnabled !== 1);
-				enableSpecific("specific-layout-brightness-auto", autoBrightEnabled === 1);
+				applyAutoBrightEnabled(data.autoBrightEnabled);
 				document.getElementById("auto-bright-min").value = autoBrightMin;
 				document.getElementById("auto-bright-max").value = autoBrightMax;
 				document.getElementById("auto-bright-peak").value = autoBrightPeak;
@@ -442,6 +451,9 @@ function initWebsocket() {
 				hsb[1] = [data.hsb10, data.hsb11, data.hsb12];
 				if (data.hsb20 !== undefined && data.hsb21 !== undefined && data.hsb22 !== undefined) {
 					hsb[2] = [data.hsb20, data.hsb21, data.hsb22];
+				}
+				if (data.hsb30 !== undefined && data.hsb31 !== undefined && data.hsb32 !== undefined) {
+					hsb[3] = [data.hsb30, data.hsb31, data.hsb32];
 				}
 				effectBri = data.effectBri;
 				effectSpeed = data.effectSpeed;
@@ -475,7 +487,7 @@ function initWebsocket() {
 				document.getElementById("auto-bright-sensor").value = data.autoBrightSensor;
 				document.getElementById("auto-bright-source").value = data.autoBrightSource || "";
 				document.getElementById("auto-bright-gain").value = data.autoBrightGain;
-				if (data.autoBrightMin && data.autoBrightMax && data.autoBrightPeak) {
+				if (data.autoBrightMin !== undefined && data.autoBrightMax !== undefined && data.autoBrightPeak !== undefined) {
 					autoBrightMin = data.autoBrightMin;
 					autoBrightMax = data.autoBrightMax;
 					autoBrightPeak = data.autoBrightPeak;
@@ -642,6 +654,10 @@ function setSliders() {
 	if (sparkingValue) sparkingValue.textContent = fireSparking;
 }
 
+function sendSpeedData(persist) {
+	sendCmd(CMD.SPEED, nstr(effectSpeed) + nstr(persist ? 1 : 0));
+}
+
 function sendFireData(persist) {
 	sendCmd(CMD.SET_FIRE, nstr(fireCooling) + nstr(fireSparking) + nstr(persist ? 1 : 0));
 }
@@ -708,6 +724,19 @@ function updateAutoBrightValues() {
 	});
 }
 
+function applyAutoBrightEnabled(enabled) {
+	autoBrightEnabled = Number(enabled);
+	const autoBrightSelect = document.getElementById("auto-bright-enabled");
+	if (autoBrightSelect) autoBrightSelect.value = autoBrightEnabled;
+	enableSpecific("specific-layout-brightness-man", autoBrightEnabled !== 1);
+	enableSpecific("specific-layout-brightness-auto", autoBrightEnabled === 1);
+	if (autoBrightEnabled === 1) {
+		autoBrightUpdater();
+	} else {
+		autoBrightStop();
+	}
+}
+
 function autoBrightUpdater() {
 	if (autoBrightInterval !== null || (autoBrightEnabled !== 1 && autoBrightEnabled !== "1")) {
 		return;
@@ -715,7 +744,7 @@ function autoBrightUpdater() {
 	autoBrightInterval = setInterval(function() {
 		const autoBrightEl = document.getElementById("auto-bright-enabled");
 		if (autoBrightEl && autoBrightEl.value === "1") {
-			sendCmd(CMD.REQ_AUTO_BRIGHT, 1);
+			sendCmd(CMD.REQ_AUTO_BRIGHT);
 		}
 	}, 1000);
 	debugMessage(`Start timer autoBrightInterval with ID ${autoBrightInterval}`);
@@ -798,14 +827,14 @@ function sendCmd(command, addData = "") {
 	}
 }
 
-function sendBrightnessData() {
+function sendBrightnessData(persist) {
 	let payload = "";
 	[6, 8, 12, 16, 18, 20, 22, 24].forEach(h => {
 		let val = document.getElementById(`brightness-${h}`).value;
 		window[`h${h}`] = val;
 		payload += nstr(val);
 	});
-	sendCmd(CMD.SET_BRIGHTNESS, payload + nstr(effectBri));
+	sendCmd(CMD.SET_BRIGHTNESS, payload + nstr(effectBri) + nstr(persist ? 1 : 0));
 	debugMessage(`Brightness${debugMessageReconfigured}`);
 }
 
@@ -828,9 +857,46 @@ function hideRebootRecommendedBanner() {
 	if (rebootRecommendedEl) rebootRecommendedEl.style.display = "none";
 }
 
+const MASONRY_ROW_HEIGHT = 2;
+
+function layoutMasonry(section) {
+	const boxes = Array.from(section.children);
+	const columns = getComputedStyle(section).gridTemplateColumns.split(" ").length;
+	const masonry = !section.hidden && columns > 1;
+	section.classList.toggle("masonry", masonry);
+	if (!masonry) {
+		boxes.forEach(box => { box.style.gridRowEnd = ""; });
+		return;
+	}
+	const gap = parseFloat(getComputedStyle(section).columnGap) || 0;
+	boxes.forEach(box => {
+		const height = box.getBoundingClientRect().height;
+		box.style.gridRowEnd = height ? `span ${Math.ceil((height + gap) / MASONRY_ROW_HEIGHT)}` : "";
+	});
+}
+
+function initMasonry() {
+	const pending = new Set();
+	const observer = new ResizeObserver(entries => {
+		entries.forEach(entry => {
+			const section = entry.target.closest(".section");
+			if (section) pending.add(section);
+		});
+		requestAnimationFrame(() => {
+			pending.forEach(layoutMasonry);
+			pending.clear();
+		});
+	});
+	document.querySelectorAll(".section").forEach(section => {
+		observer.observe(section);
+		Array.from(section.children).forEach(box => observer.observe(box));
+	});
+}
+
 // Replaced $.ready with DOMContentLoaded
 document.addEventListener("DOMContentLoaded", function() {
 
+	initMasonry();
 	initConfigValues();
 	setSliders();
 	setElementsForFunctionsMenu();
@@ -917,7 +983,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		btn.addEventListener("click", function() {
 			let value = this.value;
 			const statusEl = document.getElementById("status");
-			if (statusEl) statusEl.textContent = "Verbinden ...";
+			if (statusEl) statusEl.value = translate("settings.status.connecting");
 
 			if (value === "1") {
 				value = 0;
@@ -930,19 +996,6 @@ document.addEventListener("DOMContentLoaded", function() {
 			}
 		});
 	});
-
-	const clockBtn = document.getElementById("_clock");
-	if (clockBtn) {
-		clockBtn.addEventListener("click", function() {
-			let date = new Date();
-			let timeZoneOffset = date.getTimezoneOffset();
-			timeZoneOffset = timeZoneOffset / 60 * -1;
-			let time = date.getTime() / 1000;
-
-			sendCmd(CMD.SET_TIME, getPaddedString(nstr(timeZoneOffset) + time, 21));
-			debugMessage("Clock data: ");
-		});
-	}
 
 	const menu = document.getElementById("menu");
 	const menuLinks = document.querySelectorAll(".nav-link[data-navigation]");
@@ -1044,11 +1097,11 @@ document.addEventListener("DOMContentLoaded", function() {
 			let id = event.target.id;
 			if (id === "slider-brightness") {
 				effectBri = event.target.value;
-				sendBrightnessData();
+				sendBrightnessData(false);
 			}
 			if (id === "slider-speed") {
 				effectSpeed = event.target.value;
-				sendCmd(CMD.SPEED, nstr(effectSpeed));
+				sendSpeedData(false);
 			}
 			if (id === "slider-fire-cooling" || id === "slider-fire-sparking") {
 				fireCooling = document.getElementById("slider-fire-cooling").value;
@@ -1062,6 +1115,15 @@ document.addEventListener("DOMContentLoaded", function() {
 			}, 20);
 		});
 	});
+
+	const speedSlider = document.getElementById("slider-speed");
+	if (speedSlider) {
+		speedSlider.addEventListener("change", function() {
+			effectSpeed = speedSlider.value;
+			setSliders();
+			sendSpeedData(true);
+		});
+	}
 
 	["slider-fire-cooling", "slider-fire-sparking"].forEach(id => {
 		const slider = document.getElementById(id);
@@ -1084,8 +1146,8 @@ document.addEventListener("DOMContentLoaded", function() {
 		});
 	});
 
-	document.querySelectorAll("[id*='transition']").forEach(el => {
-		el.addEventListener("change", function(event) {
+	["transition-types", "transition-duration", "transition-demo"].forEach(id => {
+		document.getElementById(id).addEventListener("change", function() {
 			transitionType = document.getElementById("transition-types").value;
 			transitionDuration = document.getElementById("transition-duration").value;
 			transitionDemo = document.getElementById("transition-demo").checked;
@@ -1167,7 +1229,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 
 	document.querySelectorAll("[id*='brightness']").forEach(el => {
-		el.addEventListener("change", () => sendBrightnessData(CMD.SET_BRIGHTNESS));
+		el.addEventListener("change", () => sendBrightnessData(true));
 	});
 
 	const weatherBtn = document.getElementById("weather-button");

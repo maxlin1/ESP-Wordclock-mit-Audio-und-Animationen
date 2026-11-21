@@ -66,6 +66,24 @@ static constexpr unsigned int MQTT_MAX_PAYLOAD_LENGTH = 512;
 
 static constexpr int32_t MQTT_CONNECT_TIMEOUT_MS = 2000;
 
+static const char *mqttFailure = "disconnected";
+
+static const char *failureForState(int state) {
+    switch (state) {
+    case MQTT_CONNECT_BAD_CREDENTIALS:
+        return "bad-credentials";
+    case MQTT_CONNECT_UNAUTHORIZED:
+        return "unauthorized";
+    case MQTT_CONNECT_BAD_CLIENT_ID:
+        return "bad-client-id";
+    case MQTT_CONNECT_BAD_PROTOCOL:
+    case MQTT_CONNECT_UNAVAILABLE:
+        return "refused";
+    default:
+        return "unreachable";
+    }
+}
+
 static bool connectToBroker() {
     if (client.connected()) {
         return true;
@@ -80,6 +98,7 @@ static bool connectToBroker() {
 #endif
     if (resolved != 1) {
         Serial.println("MQTT: DNS lookup for broker failed");
+        mqttFailure = "server-not-found";
         return false;
     }
 
@@ -92,6 +111,7 @@ static bool connectToBroker() {
 #endif
     if (!ok) {
         Serial.println("MQTT: Connection to broker failed");
+        mqttFailure = "unreachable";
     }
     return ok;
 }
@@ -100,9 +120,9 @@ static bool connectToBroker() {
 // to re-announce discovery and state.
 #define HOMEASSISTANT_STATUS_TOPIC HOMEASSISTANT_DISCOVERY_TOPIC "/status"
 
-// Stream a (potentially large) retained JSON document to the broker without a
-// full-payload buffer. PubSubClient only needs room for the header and topic,
-// so the device-based discovery bundle can exceed the configured buffer size.
+// Stream a retained JSON document to the broker without a full-payload buffer.
+// PubSubClient only needs room for the header and topic, so discovery configs
+// can exceed the configured buffer size.
 static bool publishJsonStream(const String &topic, const JsonDocument &doc) {
     if (doc.overflowed()) {
         Serial.print("MQTT: Discovery document overflowed for topic ");
@@ -119,48 +139,92 @@ static bool publishJsonStream(const String &topic, const JsonDocument &doc) {
     return mqttClient.endPublish();
 }
 
-// Add a diagnostic sensor component to a device-based discovery bundle. Keys
-// are the Home Assistant short forms (p=platform, dev_cla=device_class, etc.).
-// A null argument omits its key. The component id doubles as the unique_id
-// suffix so it stays stable.
-static void addDiagSensor(JsonObject components, const String &deviceId,
-                          const char *id, const char *name,
-                          const char *deviceClass, const char *unit,
-                          const char *icon, const char *stateClass,
-                          const char *valueTemplate) {
-    JsonObject c = components.createNestedObject(id);
-    c["p"] = "sensor";
-    c["uniq_id"] = deviceId + "_" + id;
-    c["name"] = name;
+static String discoveryTopic(const char *platform, const String &node) {
+    return String(HOMEASSISTANT_DISCOVERY_TOPIC) + "/" + platform + "/" + node +
+           "/config";
+}
+
+static String macDiscoveryNode() {
+    String node = WiFi.macAddress();
+    node.replace(":", "");
+    return node;
+}
+
+static void beginDiscovery(JsonDocument &doc, const String &deviceId) {
+    doc.clear();
+    doc["avty_t"] = topic("availability");
+    doc["pl_avail"] = "online";
+    doc["pl_not_avail"] = "offline";
+
+    JsonObject device = doc.createNestedObject("dev");
+    device.createNestedArray("ids").add(deviceId);
+    JsonArray macConnection =
+        device.createNestedArray("cns").createNestedArray();
+    macConnection.add("mac");
+    macConnection.add(deviceId);
+    device["name"] = String(G.mqtt.clientId);
+    device["sw"] = VERSION;
+    device["mdl"] = "Word Clock";
+    device["mf"] = "ESPWortuhr";
+    device["cu"] = "http://" + WiFi.localIP().toString();
+
+    JsonObject origin = doc.createNestedObject("o");
+    origin["name"] = "ESPWortuhr";
+    origin["sw"] = VERSION;
+    origin["url"] = "https://github.com/ESPWortuhr/Wortuhr";
+}
+
+// Publish a diagnostic sensor entity config. Keys are the Home Assistant short
+// forms (dev_cla=device_class, etc.). A null argument omits its key. The id
+// doubles as the unique_id and discovery node suffix so both stay stable.
+static void publishDiagSensor(JsonDocument &doc, const String &deviceId,
+                              const String &node, const char *id,
+                              const char *name, const char *deviceClass,
+                              const char *unit, const char *icon,
+                              const char *stateClass,
+                              const char *valueTemplate) {
+    beginDiscovery(doc, deviceId);
+    doc["uniq_id"] = deviceId + "_" + id;
+    doc["name"] = name;
     if (deviceClass)
-        c["dev_cla"] = deviceClass;
+        doc["dev_cla"] = deviceClass;
     if (unit)
-        c["unit_of_meas"] = unit;
+        doc["unit_of_meas"] = unit;
     if (icon)
-        c["ic"] = icon;
+        doc["ic"] = icon;
     if (stateClass)
-        c["stat_cla"] = stateClass;
-    c["ent_cat"] = "diagnostic";
-    c["stat_t"] = topic("diagnostics");
-    c["val_tpl"] = valueTemplate;
+        doc["stat_cla"] = stateClass;
+    doc["ent_cat"] = "diagnostic";
+    doc["stat_t"] = topic("diagnostics");
+    doc["val_tpl"] = valueTemplate;
     // Only useful with a light sensor (LDR / BH1750): hidden by default.
     if (!strcmp(id, "lux") || !strcmp(id, "led_gain") ||
         !strcmp(id, "auto_brightness_source"))
-        c["en"] = false;
+        doc["en"] = false;
     if (!strcmp(id, "uptime")) {
-        c["suggested_unit_of_measurement"] = "h";
-        c["sug_dsp_prc"] = 1;
+        doc["suggested_unit_of_measurement"] = "h";
+        doc["sug_dsp_prc"] = 1;
     }
+    publishJsonStream(discoveryTopic("sensor", node + "_" + id), doc);
 }
 
-// Clear a retained per-entity discovery config left behind by firmware versions
-// that published one topic per entity, so migrating to the device-based bundle
-// does not leave duplicate entities in Home Assistant.
-static void clearLegacyDiscovery(const String &platform, const String &node) {
-    mqttClient.publish((String(HOMEASSISTANT_DISCOVERY_TOPIC) + "/" + platform +
-                        "/" + node + "/config")
-                           .c_str(),
-                       "", true);
+// Clear a retained discovery config that this firmware no longer publishes, so
+// it does not leave stale or duplicate entities in Home Assistant.
+static void clearDiscovery(const char *platform, const String &node) {
+    mqttClient.publish(discoveryTopic(platform, node).c_str(), "", true);
+}
+
+static constexpr uint32_t DISCOVERY_MIGRATION_DELAY_MS = 1000;
+static bool discoveryMigrated = false;
+static bool discoveryMigrationPending = false;
+static uint32_t discoveryMigrationStartedAt = 0;
+
+static void clearRetiredDiscovery() {
+    String node = macDiscoveryNode();
+    clearDiscovery("device", node);
+    clearDiscovery("light", String(G.mqtt.topic) + "/light");
+    clearDiscovery("sensor", node + "_adc_value");
+    clearDiscovery("sensor", node + "_adc_raw");
 }
 
 // Home Assistant "select" entities exchange human-readable labels, while the
@@ -235,23 +299,24 @@ static bool valueForLabel(const LabeledValue *table, size_t count,
     return false;
 }
 
-// Add a "select" component (options list with label<->value mapping) to a
-// device-based discovery bundle, as a config entity.
-static void addSelect(JsonObject components, const String &deviceId,
-                      const char *id, const char *name, const char *icon,
-                      const LabeledValue *table, size_t count) {
-    JsonObject c = components.createNestedObject(id);
-    c["p"] = "select";
-    c["uniq_id"] = deviceId + "_" + id;
-    c["name"] = name;
+// Publish a "select" entity config (options list with label<->value mapping)
+// as a config entity.
+static void publishSelect(JsonDocument &doc, const String &deviceId,
+                          const String &node, const char *id, const char *name,
+                          const char *icon, const LabeledValue *table,
+                          size_t count) {
+    beginDiscovery(doc, deviceId);
+    doc["uniq_id"] = deviceId + "_" + id;
+    doc["name"] = name;
     if (icon)
-        c["ic"] = icon;
-    c["ent_cat"] = "config";
-    c["stat_t"] = topic(id) + "/state";
-    c["cmd_t"] = topic(id) + "/set";
-    JsonArray options = c.createNestedArray("options");
+        doc["ic"] = icon;
+    doc["ent_cat"] = "config";
+    doc["stat_t"] = topic(id) + "/state";
+    doc["cmd_t"] = topic(id) + "/set";
+    JsonArray options = doc.createNestedArray("options");
     for (size_t i = 0; i < count; i++)
         options.add(table[i].label);
+    publishJsonStream(discoveryTopic("select", node + "_" + id), doc);
 }
 
 // Register the instance used by PubSubClient's static callback hook.
@@ -294,6 +359,9 @@ bool Mqtt::processState(const JsonDocument &doc) {
             led.setState(false);
             stateChanged = true;
         }
+        if (stateChanged) {
+            webStateChanged = true;
+        }
         return stateChanged;
     }
     return false;
@@ -332,6 +400,7 @@ bool Mqtt::processEffect(const JsonDocument &doc) {
         if (effectChanged) {
             G.progInit = true;
             parametersChanged = true;
+            webStateChanged = true;
         }
         return effectChanged;
     }
@@ -406,14 +475,7 @@ bool Mqtt::processColor(const JsonDocument &doc) {
         // Keep current brightness
         G.color[Foreground] = HsbColor(h, s, G.color[Foreground].B);
         parametersChanged = true;
-
-        // Send update to web interface
-        StaticJsonDocument<200> webDoc;
-        webDoc["command"] = "color";
-        webDoc["h"] = round(h * 360); // Convert to 0-360 degrees
-        webDoc["s"] = round(s * 100); // Convert to 0-100%
-        webDoc["v"] = round(G.color[Foreground].B * 100); // Convert to 0-100%
-        broadcastToWeb(webDoc);
+        webStateChanged = true;
         return true;
     }
     return false;
@@ -457,6 +519,7 @@ bool Mqtt::processBrightness(const JsonDocument &doc) {
         Serial.println(brightness);
 
         parametersChanged = true;
+        webStateChanged = true;
         return true;
     }
     return false;
@@ -539,8 +602,10 @@ void Mqtt::init() {
         if (!connected) {
             Serial.print("MQTT: Broker refused connection, state ");
             Serial.println(mqttClient.state());
+            mqttFailure = failureForState(mqttClient.state());
             return;
         }
+        mqttFailure = "disconnected";
     }
 
     // Send online status immediately after connection
@@ -632,6 +697,26 @@ false if the MQTT client is not connected to the broker.
 
 bool Mqtt::isConnected() { return mqttClient.connected(); }
 
+const char *Mqtt::status() {
+    if (!G.mqtt.state || G.mqtt.serverAdress[0] == '\0') {
+        return "not-configured";
+    }
+    if (isConnected()) {
+        return "connected";
+    }
+    return mqttFailure;
+}
+
+void Mqtt::notifyStatus() {
+    static const char *lastStatus = nullptr;
+    const char *current = status();
+    if (current == lastStatus) {
+        return;
+    }
+    lastStatus = current;
+    broadcastToWeb("mqtt-status", "status", current);
+}
+
 //------------------------------------------------------------------------------
 
 /* Description:
@@ -658,11 +743,22 @@ void Mqtt::loop() {
     }
     mqttClient.loop();
 
+    if (discoveryMigrationPending && isConnected() &&
+        millis() - discoveryMigrationStartedAt >=
+            DISCOVERY_MIGRATION_DELAY_MS) {
+        discoveryMigrationPending = false;
+        publishDiscoveryConfigs();
+        clearRetiredDiscovery();
+        discoveryMigrated = true;
+    }
+
     // Regular status update
     if (millis() - lastStateUpdate >= STATE_UPDATE_INTERVAL) {
         sendState();
         lastStateUpdate = millis();
     }
+
+    notifyStatus();
 }
 
 //------------------------------------------------------------------------------
@@ -694,6 +790,7 @@ static void applyTransitionSelect(const char *id, const char *msg,
         field = value;
         G.progInit = true;
         eeprom::write();
+        webStateChanged = true;
     } else {
         Serial.print("MQTT: Unknown option for ");
         Serial.print(id);
@@ -831,7 +928,7 @@ void Mqtt::callback(char *receivedTopic, byte *payload, unsigned int length) {
             mqttClient.publish(topic("effect_speed/state").c_str(),
                                String(G.effectSpeed).c_str(), true);
 
-            broadcastToWeb("speed", "value", G.effectSpeed);
+            webStateChanged = true;
         }
     }
 }
@@ -968,178 +1065,157 @@ None
 */
 
 void Mqtt::sendDiscovery() {
+    if (discoveryMigrated) {
+        publishDiscoveryConfigs();
+        return;
+    }
+    mqttClient.publish(discoveryTopic("device", macDiscoveryNode()).c_str(),
+                       "{\"migrate_discovery\":true}");
+    discoveryMigrationPending = true;
+    discoveryMigrationStartedAt = millis();
+}
+
+void Mqtt::publishDiscoveryConfigs() {
     // The MAC is the stable device identifier and the base for every entity's
     // unique_id, so renaming the MQTT base topic never orphans the device. The
     // colon-free variant is used in the discovery topic path.
     String unique_id = WiFi.macAddress();
-    String discoveryNode = unique_id;
-    discoveryNode.replace(":", "");
+    String discoveryNode = macDiscoveryNode();
 
-    // Clear retained per-entity configs published by older firmware so the move
-    // to a single device-based bundle leaves no duplicate entities behind.
-    mqttClient.publish((String(HOMEASSISTANT_DISCOVERY_TOPIC) + "/light/" +
-                        String(G.mqtt.topic) + "/light/config")
-                           .c_str(),
-                       "", true);
-    clearLegacyDiscovery("light", discoveryNode);
-    clearLegacyDiscovery("text", discoveryNode + "_scrolltext");
-    clearLegacyDiscovery("number", discoveryNode + "_effect_speed");
-    clearLegacyDiscovery("sensor", discoveryNode + "_lux");
-    clearLegacyDiscovery("sensor", discoveryNode + "_led_gain");
-    clearLegacyDiscovery("sensor", discoveryNode + "_adc_value");
-    clearLegacyDiscovery("sensor", discoveryNode + "_adc_raw");
-    clearLegacyDiscovery("switch", discoveryNode + "_auto_brightness");
-
-    // Single device-based discovery bundle (Home Assistant 2024.11+). Built on
-    // the heap and streamed to the broker so the payload needs no large stack
-    // buffer. Availability, the device block, and the origin block are declared
-    // once at the root and inherited by every component. Full topics are used
-    // rather than the "~" shorthand: "~" is not one of Home Assistant's shared
-    // root options, so it is not expanded for components in a device bundle.
     String base = String(G.mqtt.topic);
 #if EXTRAS_ENABLED
-    DynamicJsonDocument doc(16384); // extras add sound/animation entities
-#else
-    DynamicJsonDocument doc(8192);
+    // The extras entities are collected in a second document first.
+    DynamicJsonDocument extrasDoc(12288);
 #endif
-
-    doc["avty_t"] = base + "/availability";
-    doc["pl_avail"] = "online";
-    doc["pl_not_avail"] = "offline";
-
-    JsonObject device = doc.createNestedObject("dev");
-    device.createNestedArray("ids").add(unique_id);
-    JsonArray macConnection =
-        device.createNestedArray("cns").createNestedArray();
-    macConnection.add("mac");
-    macConnection.add(unique_id);
-    device["name"] = String(G.mqtt.clientId);
-    device["sw"] = VERSION;
-    device["mdl"] = "Word Clock";
-    device["mf"] = "ESPWortuhr";
-    device["cu"] = "http://" + WiFi.localIP().toString();
-
-    JsonObject origin = doc.createNestedObject("o");
-    origin["name"] = "ESPWortuhr";
-    origin["sw"] = VERSION;
-    origin["url"] = "https://github.com/ESPWortuhr/Wortuhr";
-
-    JsonObject cmps = doc.createNestedObject("cmps");
+    DynamicJsonDocument doc(3072);
 
     // Light: the device's primary entity. name=null makes it inherit the device
     // name instead of repeating it (Home Assistant has_entity_name convention).
-    {
-        JsonObject light = cmps.createNestedObject("light");
-        light["p"] = "light";
-        light["uniq_id"] = unique_id;
-        light["name"] = (const char *)nullptr;
-        light["schema"] = "json";
-        light["stat_t"] = base + "/status";
-        light["cmd_t"] = base + "/cmd";
-        light["brightness"] = true;
-        light["bri_scl"] = 255;
-        light.createNestedArray("sup_clrm").add("hs");
-        light["optimistic"] = false;
-        light["effect"] = true;
-        JsonArray effectList = light.createNestedArray("fx_list");
-        for (const EffectName &e : EFFECTS)
-            effectList.add(e.label);
-    }
+    beginDiscovery(doc, unique_id);
+    doc["uniq_id"] = unique_id;
+    doc["name"] = (const char *)nullptr;
+    doc["schema"] = "json";
+    doc["stat_t"] = base + "/status";
+    doc["cmd_t"] = base + "/cmd";
+    doc["brightness"] = true;
+    doc["bri_scl"] = 255;
+    doc.createNestedArray("sup_clrm").add("hs");
+    doc["optimistic"] = false;
+    doc["effect"] = true;
+    JsonArray effectList = doc.createNestedArray("fx_list");
+    for (const EffectName &e : EFFECTS)
+        effectList.add(e.label);
+    publishJsonStream(discoveryTopic("light", discoveryNode), doc);
 
     // Text entity for the scrolling text mode.
-    {
-        JsonObject text = cmps.createNestedObject("scrolltext");
-        text["p"] = "text";
-        text["uniq_id"] = unique_id + "_scrolltext";
-        text["name"] = "Lauftext-Modus: Text";
-        text["ic"] = "mdi:text";
-        text["stat_t"] = base + "/scrolltext/state";
-        text["cmd_t"] = base + "/scrolltext/set";
-        text["val_tpl"] = "{{ value_json.scrolling_text }}";
-        text["cmd_tpl"] = "{ \"scrolling_text\": \"{{ value }}\" }";
-        text["max"] = sizeof(G.scrollingText) - 1;
-    }
+    beginDiscovery(doc, unique_id);
+    doc["uniq_id"] = unique_id + "_scrolltext";
+    doc["name"] = "Lauftext-Modus: Text";
+    doc["ic"] = "mdi:text";
+    doc["stat_t"] = base + "/scrolltext/state";
+    doc["cmd_t"] = base + "/scrolltext/set";
+    doc["val_tpl"] = "{{ value_json.scrolling_text }}";
+    doc["cmd_tpl"] = "{ \"scrolling_text\": {{ value | to_json }} }";
+    doc["max"] = sizeof(G.scrollingText) - 1;
+    publishJsonStream(discoveryTopic("text", discoveryNode + "_scrolltext"),
+                      doc);
 
     // Notify entity: shows a message as scrolling text. With the extras it is
     // shown once and the clock returns to the time afterwards; without them
     // the clock switches to the scrolling-text mode.
-    {
-        JsonObject notify = cmps.createNestedObject("message");
-        notify["p"] = "notify";
-        notify["uniq_id"] = unique_id + "_message";
-        notify["name"] = "Kurznachricht";
-        notify["ic"] = "mdi:message-text";
+    beginDiscovery(doc, unique_id);
+    doc["uniq_id"] = unique_id + "_message";
+    doc["name"] = "Kurznachricht";
+    doc["ic"] = "mdi:message-text";
 #if EXTRAS_ENABLED
-        notify["cmd_t"] = base + "/extras/event/set";
-        notify["cmd_tpl"] = "{{ {'text': value} | tojson }}";
+    doc["cmd_t"] = base + "/extras/event/set";
+    doc["cmd_tpl"] = "{{ {'text': value} | tojson }}";
 #else
-        notify["cmd_t"] = base + "/cmd";
-        notify["cmd_tpl"] = "{\"scrolling_text\": \"{{ value }}\", \"effect\": "
-                            "\"Lauftext\"}";
+    doc["cmd_t"] = base + "/cmd";
+    doc["cmd_tpl"] = "{\"scrolling_text\": {{ value | to_json }}, \"effect\": "
+                     "\"Lauftext\"}";
 #endif
-    }
+    publishJsonStream(discoveryTopic("notify", discoveryNode + "_message"),
+                      doc);
 
     // Number entity for animation/effect speed.
-    {
-        JsonObject number = cmps.createNestedObject("effect_speed");
-        number["p"] = "number";
-        number["uniq_id"] = unique_id + "_effect_speed";
-        number["name"] = "Geschwindigkeit Lauftext/Effekte";
-        number["ic"] = "mdi:speedometer";
-        number["stat_t"] = base + "/effect_speed/state";
-        number["cmd_t"] = base + "/effect_speed/set";
-        number["min"] = 1;
-        number["max"] = 10;
-        number["step"] = 1;
-    }
+    beginDiscovery(doc, unique_id);
+    doc["uniq_id"] = unique_id + "_effect_speed";
+    doc["name"] = "Geschwindigkeit Lauftext/Effekte";
+    doc["ic"] = "mdi:speedometer";
+    doc["stat_t"] = base + "/effect_speed/state";
+    doc["cmd_t"] = base + "/effect_speed/set";
+    doc["min"] = 1;
+    doc["max"] = 10;
+    doc["step"] = 1;
+    publishJsonStream(discoveryTopic("number", discoveryNode + "_effect_speed"),
+                      doc);
 
     // Switch entity for ambient-light based brightness control.
-    {
-        JsonObject autoBright = cmps.createNestedObject("auto_brightness");
-        autoBright["p"] = "switch";
-        autoBright["uniq_id"] = unique_id + "_auto_brightness";
-        autoBright["name"] = "Helligkeit automatisch (Lichtsensor)";
-        autoBright["ic"] = "mdi:brightness-auto";
-        autoBright["dev_cla"] = "switch";
-        autoBright["stat_t"] = base + "/auto_brightness/state";
-        autoBright["cmd_t"] = base + "/auto_brightness/set";
-        autoBright["pl_on"] = "ON";
-        autoBright["pl_off"] = "OFF";
-    }
+    beginDiscovery(doc, unique_id);
+    doc["uniq_id"] = unique_id + "_auto_brightness";
+    doc["name"] = "Helligkeit automatisch (Lichtsensor)";
+    doc["ic"] = "mdi:brightness-auto";
+    doc["dev_cla"] = "switch";
+    doc["stat_t"] = base + "/auto_brightness/state";
+    doc["cmd_t"] = base + "/auto_brightness/set";
+    doc["pl_on"] = "ON";
+    doc["pl_off"] = "OFF";
+    publishJsonStream(
+        discoveryTopic("switch", discoveryNode + "_auto_brightness"), doc);
 
     // Transition settings.
-    addSelect(cmps, unique_id, "transition_type", "Übergang", "mdi:transition",
-              TRANSITION_TYPES, LABELED_VALUE_COUNT(TRANSITION_TYPES));
-    addSelect(cmps, unique_id, "transition_colorize", "Farbmodus",
-              "mdi:palette", TRANSITION_COLORIZE,
-              LABELED_VALUE_COUNT(TRANSITION_COLORIZE));
-    addSelect(cmps, unique_id, "transition_duration", "Übergang: Dauer",
-              "mdi:timer-outline", TRANSITION_DURATION,
-              LABELED_VALUE_COUNT(TRANSITION_DURATION));
+    publishSelect(doc, unique_id, discoveryNode, "transition_type", "Übergang",
+                  "mdi:transition", TRANSITION_TYPES,
+                  LABELED_VALUE_COUNT(TRANSITION_TYPES));
+    publishSelect(doc, unique_id, discoveryNode, "transition_colorize",
+                  "Farbmodus", "mdi:palette", TRANSITION_COLORIZE,
+                  LABELED_VALUE_COUNT(TRANSITION_COLORIZE));
+    publishSelect(doc, unique_id, discoveryNode, "transition_duration",
+                  "Übergang: Dauer", "mdi:timer-outline", TRANSITION_DURATION,
+                  LABELED_VALUE_COUNT(TRANSITION_DURATION));
 
     // Diagnostic sensors, all read from the shared diagnostics topic.
-    addDiagSensor(cmps, unique_id, "lux", "Umgebungshelligkeit", "illuminance",
-                  "lx", "mdi:white-balance-sunny", "measurement",
-                  "{{ value_json.lux }}");
-    addDiagSensor(cmps, unique_id, "led_gain", "LED-Helligkeit", "power_factor",
-                  "%", "mdi:brightness-percent", "measurement",
-                  "{{ value_json.led_gain }}");
-    addDiagSensor(cmps, unique_id, "auto_brightness_source", "Lichtsensor",
-                  nullptr, nullptr, "mdi:lightbulb-auto", nullptr,
-                  "{{ value_json.auto_brightness_source }}");
-    addDiagSensor(cmps, unique_id, "rssi", "WLAN-Signal", "signal_strength",
-                  "dBm", nullptr, "measurement", "{{ value_json.rssi }}");
-    addDiagSensor(cmps, unique_id, "ip", "IP-Adresse", nullptr, nullptr,
-                  "mdi:ip-network", nullptr, "{{ value_json.ip }}");
-    addDiagSensor(cmps, unique_id, "uptime", "Laufzeit", "duration", "s",
-                  nullptr, "total_increasing", "{{ value_json.uptime }}");
+    publishDiagSensor(doc, unique_id, discoveryNode, "lux",
+                      "Umgebungshelligkeit", "illuminance", "lx",
+                      "mdi:white-balance-sunny", "measurement",
+                      "{{ value_json.lux }}");
+    publishDiagSensor(doc, unique_id, discoveryNode, "led_gain",
+                      "LED-Helligkeit", "power_factor", "%",
+                      "mdi:brightness-percent", "measurement",
+                      "{{ value_json.led_gain }}");
+    publishDiagSensor(doc, unique_id, discoveryNode, "auto_brightness_source",
+                      "Lichtsensor", nullptr, nullptr, "mdi:lightbulb-auto",
+                      nullptr, "{{ value_json.auto_brightness_source }}");
+    publishDiagSensor(doc, unique_id, discoveryNode, "rssi", "WLAN-Signal",
+                      "signal_strength", "dBm", nullptr, "measurement",
+                      "{{ value_json.rssi }}");
+    publishDiagSensor(doc, unique_id, discoveryNode, "ip", "IP-Adresse",
+                      nullptr, nullptr, "mdi:ip-network", nullptr,
+                      "{{ value_json.ip }}");
+    publishDiagSensor(doc, unique_id, discoveryNode, "uptime", "Laufzeit",
+                      "duration", "s", nullptr, "total_increasing",
+                      "{{ value_json.uptime }}");
 
-    // Extras: sound, animations, events, BME280
+#if EXTRAS_ENABLED
+    // Extras: sound, animations, events, BME280. They are described as
+    // components ({"<id>": {"p": "<platform>", ...}}) and announced here one
+    // entity at a time, like the entities above.
+    JsonObject cmps = extrasDoc.to<JsonObject>();
     extras::mqttAddDiscovery(cmps, unique_id, base);
-
-    publishJsonStream(String(HOMEASSISTANT_DISCOVERY_TOPIC) + "/device/" +
-                          discoveryNode + "/config",
-                      doc);
+    for (JsonPair component : cmps) {
+        JsonObjectConst c = component.value().as<JsonObjectConst>();
+        const char *platform = c["p"] | "sensor";
+        beginDiscovery(doc, unique_id);
+        for (JsonPairConst field : c) {
+            if (strcmp(field.key().c_str(), "p") != 0)
+                doc[field.key()] = field.value();
+        }
+        publishJsonStream(discoveryTopic(platform, discoveryNode + "_" +
+                                                       component.key().c_str()),
+                          doc);
+    }
+#endif
 
     // Make the device available now that its entities are announced.
     mqttClient.publish(topic("availability").c_str(), "online", true);

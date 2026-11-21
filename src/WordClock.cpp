@@ -61,6 +61,7 @@ RTC_Type RTC;
 #include "Led.h"
 #include "Mqtt.h"
 #include "Network.h"
+#include "PortalSettings.h"
 #include "Render/ColorStage.h"
 #include "Render/RenderPipeline.h"
 #include "WifiHelper.h"
@@ -528,6 +529,19 @@ void setup() {
 
     //-------------------------------------
 
+    applyTimezone();
+    network.setPortalHandlers(
+        [](time_t utc) {
+            struct timeval tv;
+            tv.tv_sec = utc;
+            tv.tv_usec = 0;
+            settimeofday(&tv, nullptr);
+            if (externalRTC) {
+                RTC.adjust(DateTime(utc));
+            }
+        },
+        portalSettings::render, portalSettings::apply);
+
     // Read the power cycle count from EEPROM
     powerCycleCount = EEPROM.read(POWER_CYCLE_COUNT_ADDRESS);
     incrementPowerCycleCount();
@@ -768,8 +782,8 @@ void setup() {
     Serial.printf("Signal strength: %i\n", strength);
 #endif
     wifiStart();
-    configTime(0, 0, G.timeserver);
-    applyTimezone();
+    ensureTimezone();
+    configTzTime(G.timezone, G.timeserver);
 
     delay(50);
 
