@@ -63,6 +63,29 @@ let TRANSLATION_IT = {
 			"fire": "Fuoco",
 			"symbol": "Simbolo"
 		},
+		"birthdays": {
+			"h1": "Compleanni",
+			"help": "Nei compleanni ogni 5 minuti compare un'animazione di fuochi d'artificio.\n" +
+				"I tipi di orologio compatibili mostrano le parole “Happy Birthday” al posto dell'ora durante l'animazione. Formato data MM-DD\n",
+			"dates": {
+				"save": "Salva",
+				"date0": {
+					"label": "Data 1:"
+				},
+				"date1": {
+					"label": "Data 2:"
+				},
+				"date2": {
+					"label": "Data 3:"
+				},
+				"date3": {
+					"label": "Data 4:"
+				},
+				"date4": {
+					"label": "Data 5:"
+				}
+			}
+		},
 		"transition": {
 			"h2": "Transizione",
 			"type": {
@@ -97,9 +120,7 @@ let TRANSLATION_IT = {
 			"save": "Salvar",
 			"speed": "Velocità ",
 			"fire-cooling": "Raffreddamento ",
-			"fire-sparking": "Scintille ",
-			"leds": "Numero de LEDs ",
-			"position": "Posizione "
+			"fire-sparking": "Scintille "
 		}
 	},
 
@@ -146,6 +167,9 @@ let TRANSLATION_IT = {
 			"invert-min-dir": "Invertire la direzione del conteggio dei minuti",
 			"mirror-vertically": "Capovolgi l'orologio verticalmente",
 			"mirror-horizontally": "Capovolgi l'orologio orizzontalmente",
+			"extra-led-per-row": "Aggiungi un LED extra per riga",
+			"flip-horz-vert": "Capovolgi il layout in orizzontale e verticale",
+			"meander-rows": "Righe disposte a meandro",
 			"buildtype": "Tipo di progetto",
 			"normal": "Ogni LED corrisponde ad una lettera",
 			"doubleResM1": "Ogni secondo LED corrisponde a una lettera",
@@ -155,7 +179,7 @@ let TRANSLATION_IT = {
 		},
 		"language": {
 			"h2": "Lingua",
-			"hide-it-is": "Visualizza 'Sono le'“",
+			"hide-it-is": "Visualizza «Sono le»",
 			"it-is-off": "Spento",
 			"it-is-hourly": "Oario",
 			"it-is-half-hourly": "Mezz'ora",
@@ -166,11 +190,14 @@ let TRANSLATION_IT = {
 			"quarter-nine": "un quarto di diez",
 			"at-nine-twenty": "Sono le 9:20 ...",
 			"twenty-past-nine": "nove e venti",
+			"ten-before-half-past-ten": "dieci alle nove e mezza",
 			"at-nine-fourty": "Sono le 9:40 ...",
 			"twenty-before-ten": "dalle venti alle dieci",
+			"ten-after-half-past-ten": "dieci dopo le nove e mezza",
 			"at-nine-fourtyfive-german": "Sono le 9:45 ...",
 			"quarter-to-ten": "dieci meno un quarto",
 			"three-quarter-ten": "quindici minuti alle dieci",
+			"at-nine-fourtyfive-english": "Sono le 9:45 ...",
 			"quarter-to-ten-english": "Quarter to ten",
 			"a-quarter-to-ten-english": "A quarter to ten"
 		},
@@ -206,7 +233,9 @@ let TRANSLATION_IT = {
 		"status": {
 			"h2": "Stato",
 			"label": "Stato della connessione",
-			"connect": "Collegare"
+			"connect": "Collegare",
+			"disconnect": "Disconnetti",
+			"connecting": "Connessione ..."
 		},
 		"led-type": {
 			"h2": "Tipo LED",
@@ -341,7 +370,17 @@ let TRANSLATION_IT = {
 			"client-id": "Client-ID",
 			"topic": "Argomento",
 			"save": "Guardar ajustes",
-			"discovery": "Send HA Discovery"
+			"discovery": "Send HA Discovery",
+			"status": "Stato",
+			"status-not-configured": "Non configurato",
+			"status-connected": "Connesso",
+			"status-disconnected": "Non connesso",
+			"status-server-not-found": "Server non trovato",
+			"status-unreachable": "Server non raggiungibile",
+			"status-bad-credentials": "Rifiutato: credenziali errate",
+			"status-unauthorized": "Rifiutato: non autorizzato",
+			"status-bad-client-id": "Rifiutato: ID client non valido",
+			"status-refused": "Rifiutato dal server"
 		}
 	},
 
@@ -350,7 +389,6 @@ let TRANSLATION_IT = {
 		"text-general": "Il software di questo orologio è basato sull'orologio <a href='https://web.archive.org/web/20180422160812/http://www.ulrichradig.de/home/index.php/projekte/wort-uhr-neu'>Ulrich Radig (Stand 2019)</a> e lo farò ora <a href='https://github.com/ESPWortuhr/Wortuhr/graphs/contributors'>dalla comunità</a> ulteriormente sviluppato <a href='https://github.com/ESPWortuhr/Wortuhr'>GitHub</a>.",
 		"text-update": "È possibile eseguire un aggiornamento software, per favore fallo. <a href='update' onmouseover='javascript:event.target.port=81'>Vai alla pagina di aggiornamento</a>.",
 		"text-license": "Questo progetto è concesso in licenza open source con la licenza <span lang='en'>3-Clause BSD License</span>.",
-		"software": "Librerie e software",
 		"debug": "Uscita di debug"
 	},
 	"footer": {

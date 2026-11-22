@@ -140,6 +140,7 @@ void ClockWork::nextHardwareButtonMode() {
     G.prog = nextMode;
     G.progInit = true;
     parametersChanged = true;
+    webStateChanged = true;
 }
 
 //------------------------------------------------------------------------------
@@ -162,6 +163,7 @@ void ClockWork::nextHardwareButtonTransition() {
     G.prog = COMMAND_MODE_TRANSITION;
     G.progInit = true;
     parametersChanged = true;
+    webStateChanged = true;
 }
 
 //------------------------------------------------------------------------------
@@ -198,6 +200,7 @@ void ClockWork::nextHardwareButtonHue() {
 
 void ClockWork::requestHardwareButtonDisplayRefresh() {
     parametersChanged = true;
+    webStateChanged = true;
     if (G.prog == COMMAND_IDLE) {
         G.prog = COMMAND_MODE_WORD_CLOCK;
     }
@@ -345,6 +348,74 @@ void sendJsonToClient(uint8_t client_nr, const JsonDocument &doc) {
 
 //------------------------------------------------------------------------------
 
+void broadcastJsonToClients(const JsonDocument &doc) {
+    if (doc.overflowed()) {
+        Serial.println("[ERROR] broadcastJsonToClients(): document capacity "
+                       "too small, keys are missing");
+    }
+
+    String payload;
+    serializeJson(doc, payload);
+    webSocket.broadcastTXT(payload);
+}
+
+//------------------------------------------------------------------------------
+
+void fillColorValues(JsonDocument &config) {
+    config["command"] = "set";
+    for (uint8_t i = 0; i < ColorPositionCount; i++) {
+        char string2Send[7];
+        sprintf(string2Send, "hsb%d%d", i, 0);
+        config[string2Send] =
+            static_cast<uint16_t>(lroundf(G.color[i].H * 360));
+        sprintf(string2Send, "hsb%d%d", i, 1);
+        config[string2Send] = static_cast<uint8_t>(lroundf(G.color[i].S * 100));
+        sprintf(string2Send, "hsb%d%d", i, 2);
+        config[string2Send] = static_cast<uint8_t>(lroundf(G.color[i].B * 100));
+    }
+    config["effectBri"] = G.effectBri;
+    config["effectSpeed"] = G.effectSpeed;
+    config["colortype"] = G.Colortype;
+    config["hasSpecialWordHappyBirthday"] =
+        usedClockType->hasSpecialWordHappyBirthday();
+    config["hasSecondsFrame"] = usedClockType->hasSecondsFrame();
+    config["prog"] = G.prog;
+    config["bitmapSymbol"] = static_cast<uint8_t>(G.bitmapSymbol);
+}
+
+//------------------------------------------------------------------------------
+
+void fillTransitionValues(JsonDocument &config) {
+    config["command"] = "transition";
+    config["transitionType"] = G.transitionType;
+    config["transitionDuration"] = G.transitionDuration;
+    config["transitionDemo"] = G.transitionDemo;
+    config["colorize"] = G.colorize;
+}
+
+//------------------------------------------------------------------------------
+
+void broadcastWebState() {
+    if (!webStateChanged) {
+        return;
+    }
+    webStateChanged = false;
+
+    if (webSocket.connectedClients() == 0) {
+        return;
+    }
+
+    DynamicJsonDocument transition(256);
+    fillTransitionValues(transition);
+    broadcastJsonToClients(transition);
+
+    DynamicJsonDocument colors(768);
+    fillColorValues(colors);
+    broadcastJsonToClients(colors);
+}
+
+//------------------------------------------------------------------------------
+
 void sendI2CScanResult(uint8_t client_nr, uint8_t sdaPin, uint8_t sclPin) {
     DynamicJsonDocument config(384);
     config["command"] = "i2c-scan";
@@ -405,11 +476,14 @@ void ClockWork::rainbowCycle() {
     const float hueStep = 360.f / numPixelsWordMatrix;
     uint16_t pixel = 0;
 
-    for (uint8_t row = 0; row < usedClockType->rowsWordMatrix(); row++) {
-        for (uint8_t col = 0; col < usedClockType->colsWordMatrix(); col++) {
+    const uint8_t rows = usedClockType->rowsWordMatrix();
+    const uint8_t cols = usedClockType->colsWordMatrix();
+
+    for (uint8_t row = 0; row < rows; row++) {
+        for (uint8_t col = 0; col < cols; col++) {
             const float displayedHue = fmodf(hue + pixel * hueStep, 360.f);
             led.setPixel(
-                row, col,
+                mirroredRow(row, rows), mirroredCol(col, cols),
                 HsbColor(displayedHue / 360.f, 1.f, G.effectBri / 100.f));
             pixel++;
         }
@@ -488,8 +562,9 @@ void ClockWork::fire() {
         }
 
         for (uint8_t cell = 0; cell < rows; cell++) {
-            led.setPixel(static_cast<uint8_t>(rows - 1 - cell), col,
-                         heatColor(heat[cell][col], brightness));
+            led.setPixel(
+                mirroredRow(static_cast<uint8_t>(rows - 1 - cell), rows),
+                mirroredCol(col, cols), heatColor(heat[cell][col], brightness));
         }
     }
 
@@ -1515,6 +1590,7 @@ void ClockWork::loop(struct tm &tm) {
 
         config["MQTT_ClientId"] = G.mqtt.clientId;
         config["MQTT_Topic"] = G.mqtt.topic;
+        config["MQTT_Status"] = mqtt.status();
 
         sendJsonToClient(G.client_nr, config);
         break;
@@ -1618,25 +1694,7 @@ void ClockWork::loop(struct tm &tm) {
 
     case COMMAND_REQUEST_COLOR_VALUES: {
         DynamicJsonDocument config(768);
-        config["command"] = "set";
-        for (uint8_t i = 0; i < ColorPositionCount; i++) {
-            char string2Send[7];
-            sprintf(string2Send, "hsb%d%d", i, 0);
-            config[string2Send] = static_cast<uint16_t>(G.color[i].H * 360);
-            sprintf(string2Send, "hsb%d%d", i, 1);
-            config[string2Send] = static_cast<uint8_t>(G.color[i].S * 100);
-            sprintf(string2Send, "hsb%d%d", i, 2);
-            config[string2Send] = static_cast<uint8_t>(G.color[i].B * 100);
-        }
-        config["effectBri"] = G.effectBri;
-        config["effectSpeed"] = G.effectSpeed;
-        config["colortype"] = G.Colortype;
-        config["hasSpecialWordHappyBirthday"] =
-            usedClockType->hasSpecialWordHappyBirthday();
-        config["hasSecondsFrame"] = usedClockType->hasSecondsFrame();
-        config["prog"] = G.prog;
-        config["bitmapSymbol"] = static_cast<uint8_t>(G.bitmapSymbol);
-
+        fillColorValues(config);
         sendJsonToClient(G.client_nr, config);
         break;
     }
@@ -1645,11 +1703,9 @@ void ClockWork::loop(struct tm &tm) {
         DynamicJsonDocument config(256);
         config["command"] = "autoBright";
         config["autoBrightEnabled"] = G.autoBrightEnabled;
-        if (G.param1 == 1) {
-            config["autoBrightMin"] = G.autoBrightMin;
-            config["autoBrightMax"] = G.autoBrightMax;
-            config["autoBrightPeak"] = G.autoBrightPeak;
-        }
+        config["autoBrightMin"] = G.autoBrightMin;
+        config["autoBrightMax"] = G.autoBrightMax;
+        config["autoBrightPeak"] = G.autoBrightPeak;
         config["autoBrightSensor"] = (uint32_t)lux;
         config["autoBrightGain"] = (uint8_t)ledGain;
         config["autoBrightSource"] = autoBrightUsingBH1750 ? "BH1750" : "LDR";
@@ -1660,12 +1716,7 @@ void ClockWork::loop(struct tm &tm) {
 
     case COMMAND_REQUEST_TRANSITION: {
         DynamicJsonDocument config(256);
-        config["command"] = "transition";
-        config["transitionType"] = G.transitionType;
-        config["transitionDuration"] = G.transitionDuration;
-        config["transitionDemo"] = G.transitionDemo;
-        config["colorize"] = G.colorize;
-
+        fillTransitionValues(config);
         sendJsonToClient(G.client_nr, config);
         break;
     }
@@ -1676,6 +1727,7 @@ void ClockWork::loop(struct tm &tm) {
     case COMMAND_SET_WEATHER_DATA:
     case COMMAND_SET_SCROLLINGTEXT:
     case COMMAND_SET_TIMESERVER:
+    case COMMAND_SET_SYMBOL:
     case COMMAND_SET_BOOT: {
         eeprom::write();
         delay(100);
@@ -1711,7 +1763,16 @@ void ClockWork::loop(struct tm &tm) {
         parametersChanged = true;
         break;
 
-    case COMMAND_SET_BRIGHTNESS:
+    case COMMAND_SET_BRIGHTNESS: {
+        if (G.param1) {
+            eeprom::write();
+        }
+        led.clear();
+        memset(frameArray, false, sizeof(frameArray));
+        parametersChanged = true;
+        break;
+    }
+
     case COMMAND_SET_AUTO_BRIGHT:
     case COMMAND_SET_WHITETYPE:
     case COMMAND_SET_TIME_MANUAL:
@@ -1725,6 +1786,7 @@ void ClockWork::loop(struct tm &tm) {
 
     case COMMAND_SET_COLORIZE:
     case COMMAND_SET_LANGUAGE_VARIANT:
+    case COMMAND_SET_IT_IS_VARIANT:
     case COMMAND_SET_SETTING_SECOND: {
         eeprom::write();
         led.clear();
@@ -1741,6 +1803,7 @@ void ClockWork::loop(struct tm &tm) {
         delay(100);
 
         eeprom::write();
+        mqtt.notifyStatus();
         break;
     }
 
@@ -1841,6 +1904,14 @@ void ClockWork::loop(struct tm &tm) {
         break;
     }
 
+    case COMMAND_SPEED: {
+        if (G.param1) {
+            eeprom::write();
+            Serial.printf("Effect speed: %u\n", G.effectSpeed);
+        }
+        break;
+    }
+
     case COMMAND_SET_HOSTNAME: {
         Serial.print("Hostname: ");
         Serial.println(G.hostname);
@@ -1872,6 +1943,8 @@ void ClockWork::loop(struct tm &tm) {
     }
 
     G.conf = COMMAND_IDLE;
+
+    broadcastWebState();
 
     switch (G.prog) {
 

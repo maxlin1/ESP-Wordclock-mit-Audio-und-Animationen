@@ -182,14 +182,6 @@ module.exports = function(grunt) {
 					dest: "<%= settings.tempDirectory %>"
 				}]
 			},
-			minified_css_files: {
-				files: [{
-					expand: true,
-					cwd: "node_modules/purecss/build",
-					src: ["*-min.css"],
-					dest: "<%= settings.tempDirectory %>"
-				}]
-			},
 			html_to_h: {
 				options: {
 					process: function(content, srcpath) {
@@ -257,7 +249,6 @@ module.exports = function(grunt) {
 		"lint",
 		"clean:temp",
 		"cssmin",
-		"copy:minified_css_files",
 		"terser",
 		"copy:minified_js_files",
 		"copy:index",

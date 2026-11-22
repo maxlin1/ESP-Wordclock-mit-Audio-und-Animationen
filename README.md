@@ -235,202 +235,56 @@ Die Animationen in `data/animations` stehen unter der GPLv3, damit gilt für die
 
 # ESP Wordclock
 
-![](pics/wortuhr-webpage.png)
+<img src="pics/wortuhr-webpage-light.png" alt="Weboberfläche im hellen Modus, links am Desktop, rechts am Smartphone"/>
+<img src="pics/wortuhr-webpage-dark.png" alt="Weboberfläche im dunklen Modus, links am Desktop, rechts am Smartphone"/>
 
-Dies ist ein Projekt für eine mehrsprachige Wortuhr auf Grundlage eines ESP8266-Mikrocontrollers und einer programmierbaren LED-Leiste (WS2812 oder SK6812). Eine Wortuhr ist ein wunderschönes DIY-Projekt für Anfänger, das Technologie und Design kombiniert, um eine funktionale und ästhetisch ansprechende Uhr zu schaffen. 
-Egal, ob Sie ein Anfänger oder ein erfahrener Bastler sind, dieses Projekt ist eine großartige Möglichkeit, Ihre Fähigkeiten unter Beweis zu stellen und etwas wirklich Besonderes zu schaffen.
-Die Software hat viele Funktionen:
-- Mehrsprachig: 13 Sprachen mit über 30 Frontplatten-Layouts, siehe [Unterstützte Sprachen](#unterstützte-sprachen)
-- Unterstützung für mehrere Layouts und LED-Abstände
-- Farbwechsel der Displayfarbe möglich (RGB oder RGBW)
-- Digitale Uhranzeige
-- Regenbogenfarbwechsel
-- Umgebungslicht (als Sekundenzeiger ausgeführt) 
-- Automatische Helligkeitsregelung (optional über LDR) 
-- Auswahl an dialektspezifischen Anzeigen
-- Home-Assistant-Einbindung mit Autodiscovery
+Firmware für eine mehrsprachige Wortuhr mit ESP8266, ESP32 oder ESP32-C3 und einem LED-Streifen (WS2812 oder SK6812).
 
-<img src="https://community-assets.home-assistant.io/original/4X/0/4/b/04b7e3172e215e6f727c17f55b039ade3986ebcb.png" alt="drawing" width="200"/>
+## Funktionen
 
-## Unterstützte Sprachen
-
-Die Sprache der Uhr wird über das Front-Layout festgelegt. Alle Layouts sind in der Firmware enthalten und lassen sich im Web-Frontend unter „Anzeigeoptionen“ umschalten.
-
-| | Sprache | Eigenname | English | Layouts (Zeilen × Spalten) |
-|---|---|---|---|---|
-| 🇩🇪 | Deutsch | Deutsch | German | 10 × 11 (Standard, Alternativ, Uhr, Nero, mrrioes), 11 × 11 (Standard, Version 2, panbachi), 13 × 13, 16 × 8, 16 × 18, 22 × 11 Wetter, 8 × 8, 8 × 8 Viertelstunden |
-| 🇩🇪 | Bayerisch | Boarisch | Bavarian | 10 × 11 |
-| 🇩🇪 | Schwäbisch | Schwäbisch | Swabian | 10 × 11, 11 × 11 |
-| 🇬🇧 | Englisch | English | English | 10 × 11, 11 × 12, 8 × 8 |
-| 🇳🇱 | Niederländisch | Nederlands | Dutch | 10 × 11 |
-| 🇫🇷 | Französisch | Français | French | 10 × 11 |
-| 🇪🇸 | Spanisch | Español | Spanish | 10 × 11, 8 × 8 Viertelstunden |
-| 🇮🇹 | Italienisch | Italiano | Italian | 10 × 11 |
-| 🇨🇭 | Schweizerdeutsch | Schwiizerdütsch | Swiss German | 10 × 11, 10 × 11 Version 2, 10 × 11 Züridütsch (Zürich) |
-| 🇸🇪 | Schwedisch | Svenska | Swedish | 10 × 11 |
-| 🇭🇺 | Ungarisch | Magyar | Hungarian | 10 × 10 |
-| 🇷🇴 | Rumänisch | Română | Romanian | 10 × 11 |
-| 🇷🇺 | Russisch | Русский | Russian | 10 × 11 |
-| 🇹🇷 | Türkisch | Türkçe | Turkish | 10 × 11 |
-| 🇧🇩 | Bengalisch | বাংলা | Bengali | 9 × 8 |
-
-## Inhaltsverzeichnis
-
-- [Unterstützte Sprachen](#unterstützte-sprachen)
-- [Betriebsmodi der Uhr](#betriebsmodi-der-uhr)
-- [Benötigte Hardware und Software](#benötigte-hardware-und-software)
-- [Installation und Flashen der Firmware](#installation-und-flashen-der-firmware)
-  - [Windows](#windows-über-grafische-oberfläche)
-  - [MacOS](#macos)
-  - [Linux](#linux)
-  - [Fertige Firmware flashen (ohne Entwicklungsumgebung)](#fertige-firmware-flashen-ohne-entwicklungsumgebung)
-  - [Nightly-Builds (aktueller Entwicklungsstand)](#nightly-builds-aktueller-entwicklungsstand)
-  - [Nach der Installation: Der Erste Start](#nach-der-installation-der-erste-start)
-- [Anschluss der Hardware](#anschluss-der-hardware)
-- [Schematischer Aufbau einer Wordclock](#schematischer-aufbau-einer-wordclock)
-- [Konfigurationsübersicht](#konfigurationsübersicht)
-- [MQTT API Dokumentation](#mqtt-api-dokumentation)
-- [Mitwirken](#mitwirken)
-- [BSD-3 Lizenz](#bsd-3-lizenz)
-
-## Betriebsmodi der Uhr
+- **15 Sprachen und Dialekte** mit über 30 Frontlayouts
+- **Weboberfläche** im Liquid-Glass-Stil mit hellem und dunklem Modus, Seitenleiste am Desktop und Tab-Leiste am Smartphone, in sieben Sprachen
+- **Farben:** Farbrad mit Helligkeit, Farbtemperatur und Favoriten. Farbmodi einfarbig, „Polychrom“ (Verlauf von Haupt- zu Zweitfarbe) und „Zufällig pro Wort“. RGB- und RGBW-LEDs
+- **Modi:** Wortuhr, Digitaluhr, Laufschrift, Symbole, Farbe, Regenbogen, Feuer, Sekundenanzeige und Sekundenrahmen
+- **Übergänge** zwischen den Minuten, z. B. Rollen, Überblenden, Laser, Matrix-Regen oder Feuerwerk
+- **Helligkeit** nach Uhrzeit oder automatisch über LDR oder BH1750
+- **Offline einstellen:** Über das Einrichtungsportal lassen sich Uhrzeit (vom Smartphone), Farbe, Frontlayout und Bauart ganz ohne Heimnetz einstellen, eine RTC hält die Zeit bei Stromausfall
+- **Home Assistant** über MQTT mit Auto-Discovery
+- **Updates** über die Weboberfläche ohne Kabel
 
 <p align="center">
 <img src="pics/ModeWordclock.png" alt="Wordclock" width="300"/> <img src="pics/ModeDigitalClock.gif" alt="DigitalClock" width="300"/>
 <img src="pics/ModeColors.gif" alt="Colors" width="300"/> <img src="pics/ModeRainbow.gif" alt="Rainbow" width="300"/>
 <img src="pics/ModeSymbol.gif" alt="Symbol" width="300"/> <img src="pics/ModeSeconds.gif" alt="Seconds" width="300"/>
 <img src="pics/ModeScrollingText.gif" alt="ScrollingText" width="300"/> <img src="pics/Animation.gif" alt="Animation" width="300"/>
-<img src="pics/SecondsInFrame.gif" alt="FrameSeconds" width="300"/> 
+<img src="pics/SecondsInFrame.gif" alt="FrameSeconds" width="300"/>
 </p>
 
-## Benötigte Hardware und Software
-* Hardware
-    * NodeMCU oder vergleichbares Board mit einem dem ESP8266, ESP8285, ESP32 oder ESP32C3
-    * WS2812B RGB-LED-Streifen oder SK6812 RGBW-Streifen
-    * Stromversorgung 5V 2A
-    * Optional: LDR, 10 KOhm-Widerstand
+## Schnellstart
 
-* Software
-    * PlatformIO [Core](https://docs.platformio.org/en/latest/core/installation.html) oder [IDE](https://platformio.org/install/ide?install=vscode)
-    * [Node.js](https://www.nodejs.org/)
-    * [Git](https://git-scm.com)
- 
----
+1. Die passende Firmware von der [Releases-Seite](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/releases) flashen oder selbst bauen.
+2. Mit dem WLAN `Connect_to_Wordclock` verbinden und im Portal das Heim-WLAN eintragen, oder dort ohne WLAN die Uhrzeit, Farbe und Front einstellen.
+3. Die Weboberfläche unter der angezeigten IP-Adresse öffnen.
 
-## Installation und Flashen der Firmware
+## Dokumentation
 
-Bei vielen Entwickler-Boards (wie dem NodeMCU oder Wemos D1 Mini) benötigen Sie vorab den passenden USB-zu-Seriell-Treiber (meist **CH340** oder **CP210x**). Installieren Sie diesen, falls Ihr Computer das Board nach dem Einstecken nicht erkennt.
+Alles Weitere steht im **[Wiki](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/wiki)**:
 
-Es gibt zwei Wege zur fertigen Uhr:
-
-* **Selbst kompilieren** (die folgenden Abschnitte Windows/MacOS/Linux). Nur so lässt sich die Uhr über `include/Config.h` an das eigene Layout, die eigene Sprache und die eigene Hardware anpassen. Für die meisten Nachbauten ist das der richtige Weg.
-* **[Fertige Firmware flashen](#fertige-firmware-flashen-ohne-entwicklungsumgebung)** ohne Entwicklungsumgebung. Schneller, aber die Standard-Einstellungen sind fest einkompiliert.
-
-### Windows (über grafische Oberfläche)
-
-Der einfachste Weg für Windows-Nutzer führt über die grafische Oberfläche von Visual Studio Code (VS Code).
-
-1. **Voraussetzungen installieren:**
-   * Installieren Sie **PlatformIO IDE** (dies installiert automatisch Visual Studio Code), **Node.js** und **Git** manuell über die oben genannten Links.
-   * Nach der Installation von VS Code finden Sie ein neues **PlatformIO-Symbol** (einen kleinen Ameisenkopf oder Alien) in der linken Seitenleiste.
-
-2. **Projekt herunterladen (Klonen):**
-   * Klicken Sie auf das PlatformIO-Symbol.
-   * Gehen Sie im Menü auf `Quick Access` > `Miscellaneous` und wählen Sie `Clone Git Project`.
-   * Geben Sie als URL `https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock` ein und wählen Sie einen Speicherort auf Ihrer Festplatte aus.
-   * Gehen Sie anschließend auf `Projects`, fügen Sie das soeben heruntergeladene Projekt über `Add Existing` hinzu und klicken Sie auf `Open`.
-
-3. **Software kompilieren und hochladen:**
-   * Schließen Sie nun Ihren ESP per USB-Kabel an den Computer an. *(Achtung: Verwenden Sie ein Datenkabel, kein reines Ladekabel!)*
-   * In der PlatformIO-Seitenleiste finden Sie den Bereich `Project Tasks`. 
-   * Klappen Sie Ihre Board-Umgebung auf und wählen Sie `General` > `Upload`.
-   * **Geduld:** Beim ersten Mal dauert dieser Vorgang einige Minuten, da PlatformIO zunächst alle benötigten Bibliotheken im Hintergrund herunterlädt und die Software komplett neu kompiliert. 
-   * Nach Abschluss erscheint eine grüne "SUCCESS"-Meldung.
-
-### MacOS
-
-Unter macOS können Sie ebenfalls den Weg über Visual Studio Code gehen (wie bei Windows beschrieben). Für Nutzer, die das Terminal bevorzugen, ist der Weg über den Paketmanager [Homebrew](https://docs.brew.sh/Installation) jedoch deutlich schneller:
-
-1. Öffnen Sie das Terminal.
-2. Führen Sie nacheinander die folgenden Befehle aus, um die Tools zu installieren, das Projekt herunterzuladen und auf den ESP zu flashen:
-
-```sh
-# PlatformIO und Node.js installieren
-brew install platformio
-brew install node
-
-# Projektverzeichnis herunterladen
-git clone https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock.git
-cd Multilayout-ESP-Wordclock
-
-# ESP anschließen und flashen
-pio run -t upload
-```
-
-### Linux
-
-Auch unter Linux (z. B. Ubuntu, Debian, Raspberry Pi OS) lässt sich die Firmware bequem über das Terminal kompilieren und flashen.
-
-Wichtiger Hinweis für Linux-Nutzer: Stellen Sie sicher, dass Ihr Benutzerkonto die Berechtigung hat, auf serielle Schnittstellen zuzugreifen (meist durch Hinzufügen des Benutzers zur Gruppe dialout via sudo usermod -a -G dialout $USER). Möglicherweise ist danach ein Neustart erforderlich.
-
-```sh
-# PlatformIO Installationsskript ausführen
-python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
-
-# Node.js Paketmanager installieren
-sudo apt update
-sudo apt install npm git
-
-# Projekt herunterladen und ins Verzeichnis wechseln
-git clone https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock.git
-cd Multilayout-ESP-Wordclock
-
-# ESP anschließen und flashen
-pio run -t upload
-```
-
-### Fertige Firmware flashen (ohne Entwicklungsumgebung)
-
-Wer die Uhr nicht selbst kompilieren möchte, kann die fertigen Binärdateien von der [Releases-Seite](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/releases) verwenden. Dort liegt pro Chip eine Datei, z. B. `ESP32_V4.4.0.bin`.
-
-> **Wichtig:** Diese Dateien enthalten die Standard-Konfiguration aus `include/Config.h` (deutsches Layout `Ger10x11Alternative`, GRB-LEDs, kein I2C). Wer ein anderes Layout, eine andere Sprache oder eine RTC nutzt, muss selbst kompilieren.
-
-**Weg 1 — Update über das Webinterface (empfohlen, kein Kabel nötig)**
-
-Läuft auf der Uhr bereits eine Firmware, geht das Update über den eingebauten OTA-Updater:
-
-1. Rufen Sie `http://<IP-der-Uhr>:81/update` im Browser auf (beachten Sie den **Port 81**).
-2. Wählen Sie die heruntergeladene `.bin`-Datei aus und starten Sie den Upload.
-3. Die Uhr startet nach dem Schreiben automatisch neu. Die WLAN- und Farbeinstellungen bleiben erhalten.
-
-Ist in der Konfiguration `WEB_PROTECTED` auf `true` gesetzt, fragt der Updater vorher nach Benutzername und Passwort (`WEB_USER` / `WEB_PASSWORD`).
-
-**Weg 2 — Serielles Flashen mit esptool**
-
-Für ein fabrikneues Board oder eine Uhr, die nicht mehr startet. Voraussetzung ist Python mit `esptool` (`pip install esptool`):
-
-```sh
-# ESP8266 (NodeMCU, Wemos D1 Mini)
-esptool.py --chip esp8266 --port /dev/ttyUSB0 write_flash 0x0 ESP8266_V4.4.0.bin
-
-# ESP32 und ESP32-C3: die Datei enthält nur die Anwendung
-esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash 0x10000 ESP32_V4.4.0.bin
-```
-
-Unter Windows heißt der Port `COM3` o. ä., unter macOS `/dev/cu.usbserial-*`.
-
-**Weg 3 — Browser-Flasher (ohne Installation)**
-
-Wer weder PlatformIO noch Python installieren möchte, kann den ESP direkt aus dem Browser flashen. Diese Werkzeuge sprechen den Chip über die Web-Serial-Schnittstelle an:
-
-| Werkzeug | Anmerkung |
+| | |
 | :--- | :--- |
-| [esptool-js](https://espressif.github.io/esptool-js/) | Die offizielle Browser-Portierung von esptool durch Espressif. Datei und Offset werden von Hand eingetragen — es gelten dieselben Offsets wie oben. |
-| [ESP Web Flasher (esp.huhn.me)](https://esp.huhn.me/) | Schlichtere Oberfläche, ebenfalls mit freier Offset-Angabe. |
+| [Installation](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/wiki/Installation) | Selbst bauen, fertige Firmware flashen, Updates, Nightly-Builds |
+| [Einrichtung](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/wiki/Einrichtung) | Erster Start, Offline-Einrichtung über das Portal, Zurücksetzen |
+| [Hardware](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/wiki/Hardware) | Teile, Aufbau, Verkabelung, Pins, Taster, RTC, Sensoren |
+| [Weboberfläche](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/wiki/Weboberflaeche) | Alle Funktionen und Einstellungen |
+| [Frontlayouts](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/wiki/Frontlayouts) | Sprachen, Layouts, Bauarten |
+| [Konfiguration](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/wiki/Konfiguration) | Einstellungen in `include/Config.h` |
+| [MQTT und Home Assistant](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/wiki/MQTT-und-Home-Assistant) | Topics, Befehle, Entitäten |
+| [Fehlersuche](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/wiki/Fehlersuche) | Häufige Probleme |
+| [Entwicklung](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock/wiki/Entwicklung) | Mitwirken, neue Frontlayouts |
 
-Vorgehen: ESP per USB anschließen, im Werkzeug **Connect** wählen, den seriellen Port des Boards bestätigen, die `.bin`-Datei mit dem passenden Offset laden und den Schreibvorgang starten.
+Änderungen je Version stehen im [Changelog](CHANGELOG.md).
 
-> **Voraussetzung:** Web Serial wird nur von Chromium-basierten Browsern unterstützt (Chrome, Edge, Opera) und nur über HTTPS. Firefox und Safari können das nicht. Der Browser braucht außerdem exklusiven Zugriff auf den Port — schließen Sie vorher alle seriellen Monitore.
+## Lizenz
 
 > **Hinweis für ESP32/ESP32-C3:** Der Offset `0x10000` schreibt ausschließlich die Anwendung. Das setzt voraus, dass Bootloader und Partitionstabelle bereits auf dem Chip liegen — bei einem Board, auf dem schon einmal eine ESP32-Arduino-Firmware lief, ist das der Fall. Ein komplett leerer Chip braucht zusätzlich `bootloader.bin` (Offset `0x1000`, beim ESP32-C3 `0x0`) und `partitions.bin` (Offset `0x8000`). Diese beiden Dateien sind in den Releases nicht enthalten; verwenden Sie in dem Fall den Weg über `pio run -t upload`, der alles Nötige selbst schreibt.
 
