@@ -687,8 +687,7 @@ void ClockWork::scrollingText(const char *buf, bool repeat) {
     uint8_t width = pgm_read_byte(&(fontWidth[normalSizeASCII]));
     uint8_t cols = usedClockType->colsWordMatrix();
     const uint16_t cycleColumns =
-        static_cast<uint16_t>(cols) +
-        static_cast<uint16_t>(len * (width + 1));
+        static_cast<uint16_t>(cols) + static_cast<uint16_t>(len * (width + 1));
 
     if (scrollingTextOffset >= cycleColumns) {
         led.clear();
@@ -703,9 +702,9 @@ void ClockWork::scrollingText(const char *buf, bool repeat) {
     const uint16_t characterIndex = scrollingTextOffset / block;
     const uint8_t fontColumn =
         static_cast<uint8_t>(scrollingTextOffset % block);
-    const uint8_t fontIndex =
-        characterIndex < len ? static_cast<uint8_t>(buf[characterIndex])
-                             : static_cast<uint8_t>(' ');
+    const uint8_t fontIndex = characterIndex < len
+                                  ? static_cast<uint8_t>(buf[characterIndex])
+                                  : static_cast<uint8_t>(' ');
 
     led.setbyFrontMatrix(Foreground);
     led.shiftColumnToRight();
