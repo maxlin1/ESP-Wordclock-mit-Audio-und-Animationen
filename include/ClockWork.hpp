@@ -655,13 +655,19 @@ void ClockWork::displayStaticScrollingText(const char *buf,
 
 //------------------------------------------------------------------------------
 
-void ClockWork::scrollingText(const char *buf) {
-    static uint8_t i = 0, ii = 0;
+void ClockWork::scrollingText(const char *buf, bool repeat) {
     StaticScrollingText staticText;
 
+    if (strcmp(buf, scrollingTextLast) != 0) {
+        scrollingTextOffset = 0;
+        strlcpy(scrollingTextLast, buf, sizeof(scrollingTextLast));
+        led.clear();
+        led.show();
+        return;
+    }
+
     if (getStaticScrollingTextInfo(buf, staticText)) {
-        i = 0;
-        ii = 0;
+        scrollingTextOffset = 0;
         displayStaticScrollingText(buf, staticText);
         return;
     }
@@ -671,26 +677,47 @@ void ClockWork::scrollingText(const char *buf) {
                         2;
 
     uint16_t len = strlen(buf);
-    uint8_t width = pgm_read_byte(&(fontWidth[normalSizeASCII]));
-    uint8_t charsToFlush = (usedClockType->colsWordMatrix() / (width + 1)) + 1;
-
-    if (ii >= len + charsToFlush) {
-        ii = 0;
-        i = 0;
+    if (len == 0) {
+        led.clear();
+        led.show();
+        scrollingTextOffset = 0;
+        return;
     }
 
-    uint8_t fontIndex = (ii < len) ? buf[ii] : ' ';
+    uint8_t width = pgm_read_byte(&(fontWidth[normalSizeASCII]));
+    uint8_t cols = usedClockType->colsWordMatrix();
+    const uint16_t cycleColumns =
+        static_cast<uint16_t>(cols) +
+        static_cast<uint16_t>(len * (width + 1));
 
-    led.setbyFrontMatrix(Foreground); // Needed for Mirrored Display
+    if (scrollingTextOffset >= cycleColumns) {
+        led.clear();
+        led.show();
+        if (repeat) {
+            scrollingTextOffset = 0;
+        }
+        return;
+    }
+
+    const uint16_t block = width + 1;
+    const uint16_t characterIndex = scrollingTextOffset / block;
+    const uint8_t fontColumn =
+        static_cast<uint8_t>(scrollingTextOffset % block);
+    const uint8_t fontIndex =
+        characterIndex < len ? static_cast<uint8_t>(buf[characterIndex])
+                             : static_cast<uint8_t>(' ');
+
+    led.setbyFrontMatrix(Foreground);
     led.shiftColumnToRight();
     led.clearFrontExeptofFontspace(offsetRow);
 
-    if (i < width) {
+    if (fontColumn < width) {
         for (uint8_t row = 0;
              row < pgm_read_byte(&(fontHeight[normalSizeASCII])); row++) {
             usedClockType->setFrontMatrixPixel(
                 row + offsetRow, 0,
-                pgm_read_byte(&(font_7x5[fontIndex][i])) & (1u << row));
+                (pgm_read_byte(&(font_7x5[fontIndex][fontColumn])) &
+                 (1u << row)) != 0);
         }
     } else {
         for (uint8_t row = 0;
@@ -702,15 +729,7 @@ void ClockWork::scrollingText(const char *buf) {
     led.setbyFrontMatrix(Foreground);
     led.show();
 
-    i++;
-    if (i >= width + 1) // +1 for spacing
-    {
-        i = 0;
-        ii++;
-        if (ii >= len + charsToFlush) {
-            ii = 0;
-        }
-    }
+    scrollingTextOffset++;
 }
 
 //------------------------------------------------------------------------------
@@ -1497,6 +1516,9 @@ void ClockWork::calcClockface() {
 void ClockWork::clearClockByProgInit() {
     if (G.progInit) {
         G.progInit = false;
+        if (G.prog == COMMAND_MODE_SCROLLINGTEXT) {
+            scrollingTextOffset = 0;
+        }
         led.clear();
         led.show();
     }
@@ -2007,7 +2029,8 @@ void ClockWork::loop(struct tm &tm) {
             case COMMAND_MODE_SCROLLINGTEXT: {
                 // Events of the extras show their own text.
                 const char *text = extras::scrollingTextOverride();
-                scrollingText(text != nullptr ? text : G.scrollingText);
+                scrollingText(text != nullptr ? text : G.scrollingText,
+                              text == nullptr);
                 break;
             }
             case COMMAND_MODE_RAINBOWCYCLE: {
